@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>School Timetable Builder</title>
+    <title>School Timetable Builder (Multi‑class)</title>
     <style>
         /* ─── RESET & BASE ─── */
         *,
@@ -20,8 +20,6 @@
             padding: 20px 20px 80px 20px;
             min-height: 100vh;
         }
-
-        /* ─── SCROLLBAR ─── */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -174,7 +172,7 @@
 
         /* ─── MAIN LAYOUT ─── */
         .app-wrapper {
-            max-width: 1100px;
+            max-width: 1400px;
             margin: 0 auto;
             padding-right: 340px;
             transition: padding-right 0.25s ease;
@@ -281,94 +279,149 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
-
-        /* ─── TIMETABLE GRID ─── */
-        .timetable-wrap {
-            overflow-x: auto;
-            margin-top: 6px;
+        .controls select[multiple] {
+            min-width: 140px;
+            height: auto;
+            padding: 4px;
+            border-radius: 8px;
+            background: #fafcff;
         }
-        .timetable-grid {
+        .controls select[multiple] option {
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .controls select[multiple] option:checked {
+            background: #1f5c9e;
+            color: white;
+        }
+
+        /* ─── MULTI‑CLASS TIMETABLE CONTAINER ─── */
+        .multi-timetable {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: flex-start;
+            margin-top: 8px;
+        }
+        .class-timetable-card {
+            flex: 1 1 360px;
+            min-width: 300px;
+            background: white;
+            border-radius: 14px;
+            border: 1px solid #e3eaf2;
+            padding: 12px 12px 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            transition: box-shadow 0.15s;
+        }
+        .class-timetable-card:hover {
+            box-shadow: 0 4px 20px rgba(0,20,40,0.08);
+        }
+        .class-timetable-card .class-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 0 4px;
+        }
+        .class-timetable-card .class-header .class-label {
+            font-weight: 700;
+            font-size: 16px;
+            color: #0b1a2e;
+        }
+        .class-timetable-card .class-header .class-badge {
+            font-size: 12px;
+            background: #eef3f9;
+            padding: 2px 12px;
+            border-radius: 20px;
+            color: #2c4a6a;
+        }
+        .class-timetable-card .timetable-wrap {
+            overflow-x: auto;
+        }
+        .class-timetable-card .timetable-grid {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            font-size: 13px;
-            min-width: 600px;
+            font-size: 12px;
+            min-width: 480px;
         }
-        .timetable-grid th,
-        .timetable-grid td {
+        .class-timetable-card .timetable-grid th,
+        .class-timetable-card .timetable-grid td {
             border: 1px solid #dce5ef;
-            padding: 6px 8px;
+            padding: 4px 6px;
             text-align: center;
             vertical-align: middle;
-            min-width: 70px;
+            min-width: 56px;
             background: white;
             transition: background 0.1s;
         }
-        .timetable-grid th {
+        .class-timetable-card .timetable-grid th {
             background: #eef3f9;
             font-weight: 600;
             color: #1a2b3e;
-            font-size: 12px;
+            font-size: 11px;
             letter-spacing: 0.3px;
-            padding: 8px 6px;
-            position: sticky;
-            top: 0;
-            z-index: 5;
+            padding: 6px 4px;
         }
-        .timetable-grid .period-label {
+        .class-timetable-card .timetable-grid .period-label {
             background: #eef3f9;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 11px;
             color: #2c4a6a;
-            min-width: 44px;
+            min-width: 36px;
             white-space: nowrap;
-        }
-        .timetable-grid .cell {
             cursor: pointer;
-            min-height: 48px;
+            transition: background 0.1s;
+        }
+        .class-timetable-card .timetable-grid .period-label:hover {
+            background: #dce6f2;
+        }
+        .class-timetable-card .timetable-grid .cell {
+            cursor: pointer;
+            min-height: 40px;
             position: relative;
             transition: 0.08s;
         }
-        .timetable-grid .cell:hover {
+        .class-timetable-card .timetable-grid .cell:hover {
             background: #f4f9ff;
             box-shadow: inset 0 0 0 2px #b3cce6;
         }
-        .timetable-grid .cell .subj {
+        .class-timetable-card .timetable-grid .cell .subj {
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             color: #0b1a2e;
             display: block;
         }
-        .timetable-grid .cell .teacher {
-            font-size: 11px;
+        .class-timetable-card .timetable-grid .cell .teacher {
+            font-size: 10px;
             color: #4a6688;
             display: block;
             margin-top: 1px;
             font-weight: 500;
         }
-        .timetable-grid .cell.empty .subj {
+        .class-timetable-card .timetable-grid .cell.empty .subj {
             color: #b0c4d9;
             font-weight: 400;
         }
-        .timetable-grid .cell.conflict {
+        .class-timetable-card .timetable-grid .cell.conflict {
             background: #fee9e9 !important;
             border-color: #e8b4b4;
         }
-        .timetable-grid .cell.conflict .subj {
+        .class-timetable-card .timetable-grid .cell.conflict .subj {
             color: #b13a2e;
         }
-        .timetable-grid .cell.conflict .teacher {
+        .class-timetable-card .timetable-grid .cell.conflict .teacher {
             color: #a53b2e;
         }
-        .timetable-grid .cell.conflict::after {
+        .class-timetable-card .timetable-grid .cell.conflict::after {
             content: "⚠";
             position: absolute;
             top: -6px;
             right: -4px;
-            font-size: 14px;
+            font-size: 12px;
             color: #c0392b;
         }
-        .timetable-grid .cell.selected {
+        .class-timetable-card .timetable-grid .cell.selected {
             box-shadow: inset 0 0 0 3px #1f5c9e;
             background: #ecf3fe;
         }
@@ -432,6 +485,7 @@
             display: flex;
             gap: 8px;
             margin-top: 4px;
+            flex-wrap: wrap;
         }
         .cell-editor .editor-actions button {
             padding: 6px 18px;
@@ -468,6 +522,42 @@
             font-size: 11px;
             color: #7a8fa8;
             margin-top: 6px;
+        }
+
+        /* ─── CONTEXT MENU ─── */
+        .context-menu {
+            position: fixed;
+            z-index: 3000;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,20,40,0.18);
+            border: 1px solid #dce5ef;
+            padding: 6px 0;
+            min-width: 140px;
+            display: none;
+            animation: fadeUp 0.12s ease;
+        }
+        .context-menu .menu-item {
+            padding: 8px 20px;
+            font-size: 13px;
+            cursor: pointer;
+            color: #1a2b3e;
+            transition: background 0.08s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .context-menu .menu-item:hover {
+            background: #eef3f9;
+        }
+        .context-menu .menu-item.disabled {
+            color: #b0c4d9;
+            pointer-events: none;
+        }
+        .context-menu .menu-divider {
+            height: 1px;
+            background: #e9edf2;
+            margin: 4px 12px;
         }
 
         /* ─── IMPORT MODAL ─── */
@@ -603,20 +693,24 @@
             .card-header h2 {
                 font-size: 18px;
             }
-            .timetable-grid {
-                font-size: 12px;
-                min-width: 500px;
+            .class-timetable-card {
+                flex: 1 1 280px;
+                min-width: 240px;
             }
-            .timetable-grid th,
-            .timetable-grid td {
-                padding: 4px 5px;
-                min-width: 50px;
+            .class-timetable-card .timetable-grid {
+                font-size: 11px;
+                min-width: 400px;
             }
-            .timetable-grid .cell .subj {
-                font-size: 12px;
+            .class-timetable-card .timetable-grid th,
+            .class-timetable-card .timetable-grid td {
+                padding: 3px 4px;
+                min-width: 44px;
             }
-            .timetable-grid .cell .teacher {
-                font-size: 10px;
+            .class-timetable-card .timetable-grid .cell .subj {
+                font-size: 11px;
+            }
+            .class-timetable-card .timetable-grid .cell .teacher {
+                font-size: 9px;
             }
             .cell-editor {
                 min-width: 200px;
@@ -625,6 +719,10 @@
             }
             .modal-box {
                 padding: 20px 18px;
+            }
+            .controls select[multiple] {
+                min-width: 100px;
+                font-size: 12px;
             }
         }
         @media (max-width: 500px) {
@@ -650,19 +748,23 @@
             .controls {
                 justify-content: flex-start;
             }
-            .timetable-grid {
+            .class-timetable-card {
+                flex: 1 1 100%;
+                min-width: 0;
+            }
+            .class-timetable-card .timetable-grid {
                 font-size: 10px;
-                min-width: 380px;
+                min-width: 320px;
             }
-            .timetable-grid th,
-            .timetable-grid td {
-                padding: 3px 4px;
-                min-width: 36px;
+            .class-timetable-card .timetable-grid th,
+            .class-timetable-card .timetable-grid td {
+                padding: 2px 3px;
+                min-width: 32px;
             }
-            .timetable-grid .cell .subj {
+            .class-timetable-card .timetable-grid .cell .subj {
                 font-size: 10px;
             }
-            .timetable-grid .cell .teacher {
+            .class-timetable-card .timetable-grid .cell .teacher {
                 font-size: 8px;
             }
             .right-sidebar {
@@ -675,7 +777,6 @@
             }
         }
 
-        /* ─── MISC ─── */
         .text-muted {
             color: #7a8fa8;
             font-size: 12px;
@@ -724,6 +825,9 @@
             max-width: 400px;
             margin: 6px auto 16px;
             font-size: 14px;
+        }
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
@@ -787,9 +891,9 @@
                     <h2>📅 Timetable <span class="sub">Monday – Friday · 7 periods</span></h2>
                 </div>
                 <div class="controls">
-                    <label for="classSelect">Class</label>
-                    <select id="classSelect" onchange="onClassChange()"></select>
-                    <button class="success" onclick="clearClassTimetable()" title="Clear all periods for this class">🧹 Clear</button>
+                    <label for="classSelect">Classes</label>
+                    <select id="classSelect" multiple size="3" onchange="onClassSelectionChange()"></select>
+                    <button class="success" onclick="clearSelectedClasses()" title="Clear all periods for selected classes">🧹 Clear</button>
                     <button class="primary" onclick="openImportModal()" style="display:none;" id="mobileImportBtn">📥 Import</button>
                 </div>
             </div>
@@ -801,14 +905,9 @@
                     <p>Import teachers, classes, and subjects using the <strong>Import</strong> button above.</p>
                     <button class="primary" onclick="openImportModal()" style="padding:8px 28px;border-radius:40px;border:none;font-weight:600;font-size:14px;background:#1f5c9e;color:white;cursor:pointer;">📥 Import Data</button>
                 </div>
-                <div id="timetableGridWrap" style="display:none;">
-                    <div class="timetable-wrap">
-                        <table class="timetable-grid" id="timetableGrid">
-                            <thead id="gridHead"></thead>
-                            <tbody id="gridBody"></tbody>
-                        </table>
-                    </div>
-                    <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;">
+                <div id="multiTimetableWrap" style="display:none;">
+                    <div class="multi-timetable" id="multiTimetable"></div>
+                    <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;">
                         <span class="text-muted">Click any cell to edit. Red cells indicate teacher conflicts.</span>
                         <span class="badge" id="classSummaryBadge">0 / 35 filled</span>
                     </div>
@@ -834,6 +933,33 @@
             <button class="close-btn" onclick="closeCellEditor()">Cancel</button>
         </div>
         <div class="editor-hint" id="editorHint">Select a subject and teacher, or clear the cell.</div>
+    </div>
+
+    <!-- ─── PERIOD BULK EDITOR ─── -->
+    <div class="cell-editor" id="periodBulkEditor">
+        <div class="editor-title" id="periodBulkTitle">Apply to all days for this period</div>
+        <div class="editor-row">
+            <label for="bulkSubject">Subject</label>
+            <select id="bulkSubject"></select>
+        </div>
+        <div class="editor-row">
+            <label for="bulkTeacher">Teacher</label>
+            <select id="bulkTeacher"></select>
+        </div>
+        <div class="editor-actions">
+            <button class="save-btn" onclick="savePeriodBulk()">✅ Apply to all days</button>
+            <button class="clear-btn" onclick="clearPeriodBulk()">✕ Clear all</button>
+            <button class="close-btn" onclick="closePeriodBulk()">Cancel</button>
+        </div>
+        <div class="editor-hint" id="bulkHint">This will set the same subject &amp; teacher for this period on all weekdays.</div>
+    </div>
+
+    <!-- ─── CONTEXT MENU ─── -->
+    <div class="context-menu" id="contextMenu">
+        <div class="menu-item" data-action="copy">📋 Copy</div>
+        <div class="menu-item" data-action="paste">📌 Paste</div>
+        <div class="menu-divider"></div>
+        <div class="menu-item" data-action="clear">🗑 Clear</div>
     </div>
 
     <!-- ─── IMPORT MODAL ─── -->
@@ -883,7 +1009,11 @@
             subjects: {}, // code -> { code, name }
             timetable: {}, // "I-A" -> [day][period] = { subject, teacher }
             loaded: false,
+            selectedClasses: [], // array of class keys
         };
+
+        // clipboard for copy/paste
+        let clipboard = null; // { subject, teacher }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  PERSISTENCE (localStorage)
@@ -896,6 +1026,7 @@
                     classSections: state.classSections,
                     subjects: state.subjects,
                     timetable: state.timetable,
+                    selectedClasses: state.selectedClasses,
                 };
                 localStorage.setItem('timetableAppState', JSON.stringify(data));
             } catch (e) { /* ignore */ }
@@ -910,6 +1041,7 @@
                 state.classSections = data.classSections || [];
                 state.subjects = data.subjects || {};
                 state.timetable = data.timetable || {};
+                state.selectedClasses = data.selectedClasses || [];
                 state.loaded = true;
                 return true;
             } catch (e) { return false; }
@@ -921,7 +1053,9 @@
             state.classSections = [];
             state.subjects = {};
             state.timetable = {};
+            state.selectedClasses = [];
             state.loaded = false;
+            clipboard = null;
             localStorage.removeItem('timetableAppState');
             renderAll();
         }
@@ -940,11 +1074,6 @@
         }
 
         function getClassLabel(grade, section) {
-            return grade + '-' + section;
-        }
-
-        function getClassLabelFromKey(key) {
-            const { grade, section } = parseClassKey(key);
             return grade + '-' + section;
         }
 
@@ -1014,11 +1143,24 @@
             setCell(classKeyStr, dayIdx, periodIdx, null, null);
         }
 
-        function clearClassTimetable() {
-            const sel = document.getElementById('classSelect');
-            if (!sel.value) return;
-            if (!confirm(`Clear all periods for ${sel.value}?`)) return;
-            state.timetable[sel.value] = DAYS.map(() => Array(PERIODS).fill(null));
+        // ─── Bulk period apply ───
+        function applyPeriodToAllDays(classKeyStr, periodIdx, subject, teacher) {
+            const tt = getTimetableForClass(classKeyStr);
+            for (let d = 0; d < DAYS.length; d++) {
+                if (!tt[d]) tt[d] = Array(PERIODS).fill(null);
+                tt[d][periodIdx] = (subject || teacher) ? { subject: subject || '', teacher: teacher || '' } : null;
+            }
+            saveState();
+            renderAll();
+        }
+
+        function clearSelectedClasses() {
+            const classes = getSelectedClasses();
+            if (classes.length === 0) return;
+            if (!confirm(`Clear all periods for ${classes.length} selected class(es)?`)) return;
+            for (const ck of classes) {
+                state.timetable[ck] = DAYS.map(() => Array(PERIODS).fill(null));
+            }
             saveState();
             renderAll();
         }
@@ -1028,7 +1170,6 @@
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
         function detectConflicts() {
-            // teacher -> day -> period -> [classKey]
             const assignment = {};
 
             for (const ck in state.timetable) {
@@ -1084,13 +1225,9 @@
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
         function computeStats() {
-            // Per class per day: periods
             const classDayCount = {};
-            // Per teacher per day: periods
             const teacherDayCount = {};
-            // Per subject per day: periods
             const subjectDayCount = {};
-            // Total periods filled
             let totalFilled = 0;
             let totalSlots = 0;
 
@@ -1130,6 +1267,23 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  SELECTED CLASSES
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        function getSelectedClasses() {
+            const sel = document.getElementById('classSelect');
+            return Array.from(sel.selectedOptions).map(opt => opt.value);
+        }
+
+        function onClassSelectionChange() {
+            state.selectedClasses = getSelectedClasses();
+            saveState();
+            renderTimetables();
+            renderBottomBar();
+            renderSidebar();
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  RENDER
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -1138,7 +1292,7 @@
             renderBottomBar();
             renderSidebar();
             renderClassSelect();
-            renderTimetable();
+            renderTimetables();
             saveState();
         }
 
@@ -1178,7 +1332,8 @@
             document.getElementById('filledPeriods').textContent = stats.totalFilled;
             document.getElementById('coveragePct').textContent = Math.round(stats.coverage) + '%';
             const sel = document.getElementById('classSelect');
-            document.getElementById('activeClassLabel').textContent = sel.value || '—';
+            const selected = getSelectedClasses();
+            document.getElementById('activeClassLabel').textContent = selected.length > 0 ? selected.join(', ') : '—';
         }
 
         function renderSidebar() {
@@ -1259,7 +1414,7 @@
 
         function renderClassSelect() {
             const sel = document.getElementById('classSelect');
-            const current = sel.value;
+            const currentSelected = getSelectedClasses();
             sel.innerHTML = '';
             const classes = getClassSectionsList();
             if (classes.length === 0) {
@@ -1270,107 +1425,105 @@
                 const opt = document.createElement('option');
                 opt.value = ck;
                 opt.textContent = ck;
+                if (currentSelected.includes(ck)) opt.selected = true;
                 sel.appendChild(opt);
             }
-            if (current && classes.includes(current)) {
-                sel.value = current;
-            } else if (classes.length > 0) {
-                sel.value = classes[0];
+            // If no selection and we have classes, select first one
+            if (currentSelected.length === 0 && classes.length > 0) {
+                sel.options[0].selected = true;
+                state.selectedClasses = [classes[0]];
             }
-            // Update mobile import button visibility
             document.getElementById('mobileImportBtn').style.display = classes.length === 0 ? 'inline-block' : 'none';
         }
 
-        function renderTimetable() {
-            const sel = document.getElementById('classSelect');
-            const classKeyStr = sel.value;
-            const container = document.getElementById('timetableGridWrap');
+        function renderTimetables() {
+            const container = document.getElementById('multiTimetable');
+            const wrap = document.getElementById('multiTimetableWrap');
             const empty = document.getElementById('emptyState');
 
-            if (!classKeyStr || !state.timetable[classKeyStr]) {
-                if (state.loaded && getClassSectionsList().length > 0) {
-                    // Show empty grid for this class
-                    container.style.display = 'block';
-                    empty.style.display = 'none';
-                    renderGrid(classKeyStr);
-                    return;
-                }
-                container.style.display = 'none';
+            const selected = getSelectedClasses();
+
+            if (!state.loaded || selected.length === 0 || getClassSectionsList().length === 0) {
+                wrap.style.display = 'none';
                 empty.style.display = 'block';
                 return;
             }
 
-            container.style.display = 'block';
+            wrap.style.display = 'block';
             empty.style.display = 'none';
-            renderGrid(classKeyStr);
-        }
 
-        function renderGrid(classKeyStr) {
-            const thead = document.getElementById('gridHead');
-            const tbody = document.getElementById('gridBody');
-            const tt = getTimetableForClass(classKeyStr);
+            let html = '';
+            let totalFilled = 0;
+            const totalSlots = selected.length * DAYS.length * PERIODS;
 
-            // Header
-            let headHtml = '<tr><th>Period</th>';
-            for (const day of DAYS) {
-                headHtml += `<th>${day.slice(0,3)}</th>`;
-            }
-            headHtml += '</tr>';
-            thead.innerHTML = headHtml;
-
-            // Body
-            let bodyHtml = '';
-            const conflicts = detectConflicts();
-
-            // Build conflict lookup: teacher|day|period -> [classes]
-            const conflictMap = {};
-            for (const c of conflicts) {
-                const key = c.teacher + '|' + c.day + '|' + c.period;
-                conflictMap[key] = c.classes;
-            }
-
-            for (let p = 0; p < PERIODS; p++) {
-                bodyHtml += `<tr><td class="period-label">P${p+1}</td>`;
+            for (const ck of selected) {
+                const tt = getTimetableForClass(ck);
+                let filled = 0;
                 for (let d = 0; d < DAYS.length; d++) {
-                    const cell = tt[d] ? tt[d][p] : null;
-                    const hasContent = cell && (cell.subject || cell.teacher);
-                    const subjCode = hasContent ? cell.subject : '';
-                    const teacherId = hasContent ? cell.teacher : '';
-                    const teacherName = teacherId ? getTeacherName(teacherId) : '';
-
-                    // Check conflict
-                    let inConflict = false;
-                    if (teacherId) {
-                        const key = teacherId + '|' + d + '|' + p;
-                        if (conflictMap[key] && conflictMap[key].includes(classKeyStr)) {
-                            inConflict = true;
+                    if (tt[d]) {
+                        for (let p = 0; p < PERIODS; p++) {
+                            if (tt[d][p] && (tt[d][p].subject || tt[d][p].teacher)) filled++;
                         }
                     }
+                }
+                totalFilled += filled;
 
-                    const conflictClass = inConflict ? 'conflict' : '';
-                    const emptyClass = !hasContent ? 'empty' : '';
+                html += `<div class="class-timetable-card" data-class="${ck}">`;
+                html += `<div class="class-header"><span class="class-label">${ck}</span><span class="class-badge">${filled}/${DAYS.length*PERIODS}</span></div>`;
+                html += `<div class="timetable-wrap"><table class="timetable-grid">`;
 
-                    bodyHtml += `<td class="cell ${conflictClass} ${emptyClass}" 
-                                  data-class="${classKeyStr}" data-day="${d}" data-period="${p}"
-                                  onclick="openCellEditor('${classKeyStr}', ${d}, ${p})">
+                // Header
+                html += '<thead><tr><th>Period</th>';
+                for (const day of DAYS) {
+                    html += `<th>${day.slice(0,3)}</th>`;
+                }
+                html += '</tr></thead><tbody>';
+
+                // Conflicts
+                const conflicts = detectConflicts();
+                const conflictMap = {};
+                for (const c of conflicts) {
+                    const key = c.teacher + '|' + c.day + '|' + c.period;
+                    conflictMap[key] = c.classes;
+                }
+
+                for (let p = 0; p < PERIODS; p++) {
+                    html += `<tr>`;
+                    // Period label - clickable for bulk edit
+                    html += `<td class="period-label" data-class="${ck}" data-period="${p}" onclick="openPeriodBulk('${ck}', ${p})">P${p+1}</td>`;
+                    for (let d = 0; d < DAYS.length; d++) {
+                        const cell = tt[d] ? tt[d][p] : null;
+                        const hasContent = cell && (cell.subject || cell.teacher);
+                        const subjCode = hasContent ? cell.subject : '';
+                        const teacherId = hasContent ? cell.teacher : '';
+                        const teacherName = teacherId ? getTeacherName(teacherId) : '';
+
+                        let inConflict = false;
+                        if (teacherId) {
+                            const key = teacherId + '|' + d + '|' + p;
+                            if (conflictMap[key] && conflictMap[key].includes(ck)) {
+                                inConflict = true;
+                            }
+                        }
+
+                        const conflictClass = inConflict ? 'conflict' : '';
+                        const emptyClass = !hasContent ? 'empty' : '';
+
+                        html += `<td class="cell ${conflictClass} ${emptyClass}" 
+                                  data-class="${ck}" data-day="${d}" data-period="${p}"
+                                  onclick="openCellEditor('${ck}', ${d}, ${p})"
+                                  oncontextmenu="openContextMenu(event, '${ck}', ${d}, ${p})">
                                   ${hasContent ? `<span class="subj">${subjCode}</span><span class="teacher">${teacherName}</span>` : `<span class="subj" style="color:#d0dceb;">—</span>`}
                               </td>`;
-                }
-                bodyHtml += '</tr>';
-            }
-
-            tbody.innerHTML = bodyHtml;
-
-            // Summary badge
-            let filled = 0;
-            for (let d = 0; d < DAYS.length; d++) {
-                if (tt[d]) {
-                    for (let p = 0; p < PERIODS; p++) {
-                        if (tt[d][p] && (tt[d][p].subject || tt[d][p].teacher)) filled++;
                     }
+                    html += '</tr>';
                 }
+                html += '</tbody></table></div></div>';
             }
-            document.getElementById('classSummaryBadge').textContent = `${filled} / ${DAYS.length * PERIODS} filled`;
+
+            container.innerHTML = html;
+            document.getElementById('classSummaryBadge').textContent =
+                `${totalFilled} / ${totalSlots} filled (${selected.length} class${selected.length>1?'es':''})`;
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1396,20 +1549,15 @@
                 subjectSelect.appendChild(opt);
             }
 
-            // Populate teachers (filter by class + all teachers)
+            // Populate teachers
             teacherSelect.innerHTML = '<option value="">— Select Teacher —</option>';
             const classTeachers = getTeachersForClass(classKeyStr);
             const allTeachers = getAllTeachers();
-
-            // Use class-specific teachers first, then all others
             const teacherPool = {};
-            for (const t of classTeachers) {
-                teacherPool[t.id] = t;
-            }
+            for (const t of classTeachers) teacherPool[t.id] = t;
             for (const t of allTeachers) {
                 if (!teacherPool[t.id]) teacherPool[t.id] = t;
             }
-
             for (const tid in teacherPool) {
                 const t = teacherPool[tid];
                 const opt = document.createElement('option');
@@ -1420,11 +1568,10 @@
                 teacherSelect.appendChild(opt);
             }
 
-            // Auto-select teacher based on subject if only one matches
+            // Auto-select teacher based on subject
             subjectSelect.onchange = function() {
                 const subj = this.value;
                 if (!subj) return;
-                // Find teachers for this subject in this class
                 const matching = classTeachers.filter(t => t.subject === subj);
                 if (matching.length === 1) {
                     teacherSelect.value = matching[0].id;
@@ -1437,7 +1584,7 @@
             document.getElementById('editorTitle').textContent =
                 `✏️ ${classKeyStr} · ${dayName} · Period ${periodIdx+1}`;
 
-            // Position the editor
+            // Position
             const targetCell = document.querySelector(
                 `.cell[data-class="${classKeyStr}"][data-day="${dayIdx}"][data-period="${periodIdx}"]`
             );
@@ -1460,7 +1607,6 @@
                 'Editing existing entry. Choose a subject and teacher.' :
                 'Select a subject and teacher, or clear the cell.';
 
-            // Focus
             setTimeout(() => subjectSelect.focus(), 50);
         }
 
@@ -1492,6 +1638,171 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  PERIOD BULK EDITOR
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        let periodBulkContext = null; // { classKey, periodIdx }
+
+        function openPeriodBulk(classKeyStr, periodIdx) {
+            const editor = document.getElementById('periodBulkEditor');
+            const subjectSelect = document.getElementById('bulkSubject');
+            const teacherSelect = document.getElementById('bulkTeacher');
+
+            // Populate subjects
+            subjectSelect.innerHTML = '<option value="">— Select Subject —</option>';
+            const subjects = getSubjectList();
+            for (const s of subjects) {
+                const opt = document.createElement('option');
+                opt.value = s.code;
+                opt.textContent = s.code + ' — ' + s.name;
+                subjectSelect.appendChild(opt);
+            }
+
+            // Populate teachers
+            teacherSelect.innerHTML = '<option value="">— Select Teacher —</option>';
+            const classTeachers = getTeachersForClass(classKeyStr);
+            const allTeachers = getAllTeachers();
+            const teacherPool = {};
+            for (const t of classTeachers) teacherPool[t.id] = t;
+            for (const t of allTeachers) {
+                if (!teacherPool[t.id]) teacherPool[t.id] = t;
+            }
+            for (const tid in teacherPool) {
+                const t = teacherPool[tid];
+                const opt = document.createElement('option');
+                opt.value = t.id;
+                const label = t.name + (t.subject ? ' (' + t.subject + ')' : '');
+                opt.textContent = label;
+                teacherSelect.appendChild(opt);
+            }
+
+            subjectSelect.onchange = function() {
+                const subj = this.value;
+                if (!subj) return;
+                const matching = classTeachers.filter(t => t.subject === subj);
+                if (matching.length === 1) {
+                    teacherSelect.value = matching[0].id;
+                }
+            };
+
+            periodBulkContext = { classKey: classKeyStr, periodIdx };
+            document.getElementById('periodBulkTitle').textContent =
+                `📅 ${classKeyStr} · Period ${periodIdx+1} · All days`;
+
+            // Position near the period label
+            const targetLabel = document.querySelector(
+                `.period-label[data-class="${classKeyStr}"][data-period="${periodIdx}"]`
+            );
+            if (targetLabel) {
+                const rect = targetLabel.getBoundingClientRect();
+                const editorWidth = Math.min(340, window.innerWidth - 40);
+                let left = Math.max(20, rect.left + rect.width / 2 - editorWidth / 2);
+                let top = rect.bottom + 10;
+                if (top + 300 > window.innerHeight) {
+                    top = rect.top - 300;
+                }
+                editor.style.left = left + 'px';
+                editor.style.top = top + 'px';
+                editor.style.minWidth = Math.min(260, editorWidth) + 'px';
+            }
+
+            editor.style.display = 'block';
+            document.getElementById('bulkHint').textContent =
+                'This will apply the same subject & teacher to this period on all weekdays.';
+            // pre-fill with existing values from Monday? (day 0)
+            const cell0 = getCell(classKeyStr, 0, periodIdx);
+            if (cell0) {
+                if (cell0.subject) subjectSelect.value = cell0.subject;
+                if (cell0.teacher) teacherSelect.value = cell0.teacher;
+            }
+            setTimeout(() => subjectSelect.focus(), 50);
+        }
+
+        function closePeriodBulk() {
+            document.getElementById('periodBulkEditor').style.display = 'none';
+            periodBulkContext = null;
+        }
+
+        function savePeriodBulk() {
+            if (!periodBulkContext) return;
+            const { classKey, periodIdx } = periodBulkContext;
+            const subject = document.getElementById('bulkSubject').value;
+            const teacher = document.getElementById('bulkTeacher').value;
+            if (!subject && !teacher) {
+                alert('Please select a subject or a teacher.');
+                return;
+            }
+            applyPeriodToAllDays(classKey, periodIdx, subject || '', teacher || '');
+            closePeriodBulk();
+        }
+
+        function clearPeriodBulk() {
+            if (!periodBulkContext) return;
+            const { classKey, periodIdx } = periodBulkContext;
+            applyPeriodToAllDays(classKey, periodIdx, null, null);
+            closePeriodBulk();
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  CONTEXT MENU (Copy / Paste / Clear)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        let contextTarget = null; // { classKey, dayIdx, periodIdx }
+
+        function openContextMenu(event, classKeyStr, dayIdx, periodIdx) {
+            event.preventDefault();
+            const cell = getCell(classKeyStr, dayIdx, periodIdx);
+            const hasContent = cell && (cell.subject || cell.teacher);
+
+            contextTarget = { classKey: classKeyStr, dayIdx, periodIdx };
+
+            const menu = document.getElementById('contextMenu');
+            const copyItem = menu.querySelector('[data-action="copy"]');
+            const pasteItem = menu.querySelector('[data-action="paste"]');
+            const clearItem = menu.querySelector('[data-action="clear"]');
+
+            // Enable/disable based on content and clipboard
+            copyItem.classList.toggle('disabled', !hasContent);
+            pasteItem.classList.toggle('disabled', !clipboard);
+            clearItem.classList.toggle('disabled', !hasContent);
+
+            // Position menu
+            menu.style.left = Math.min(event.clientX, window.innerWidth - 160) + 'px';
+            menu.style.top = Math.min(event.clientY, window.innerHeight - 120) + 'px';
+            menu.style.display = 'block';
+
+            // Store action handlers
+            menu._copyAction = function() { if (hasContent) { clipboard = { subject: cell.subject, teacher: cell
+                        .teacher }; closeContextMenu(); } };
+            menu._pasteAction = function() { if (clipboard) { setCell(classKeyStr, dayIdx, periodIdx, clipboard
+                    .subject, clipboard.teacher); closeContextMenu(); } };
+            menu._clearAction = function() { if (hasContent) { clearCell(classKeyStr, dayIdx, periodIdx);
+                    closeContextMenu(); } };
+
+            // Remove old listeners and attach new ones
+            const items = menu.querySelectorAll('.menu-item');
+            items.forEach(item => {
+                item.onclick = null;
+            });
+            copyItem.onclick = menu._copyAction;
+            pasteItem.onclick = menu._pasteAction;
+            clearItem.onclick = menu._clearAction;
+        }
+
+        function closeContextMenu() {
+            document.getElementById('contextMenu').style.display = 'none';
+            contextTarget = null;
+        }
+
+        // Global click to close context menu
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('contextMenu');
+            if (menu.style.display === 'block' && !menu.contains(e.target)) {
+                closeContextMenu();
+            }
+        });
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  SIDEBAR TOGGLE
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -1511,10 +1822,10 @@
                 wrapper.classList.add('sidebar-collapsed');
                 toggle.textContent = '📊';
             }
-            // Re-position editor if open
-            if (document.getElementById('cellEditor').style.display === 'block') {
-                closeCellEditor();
-            }
+            // Close any open editor
+            closeCellEditor();
+            closePeriodBulk();
+            closeContextMenu();
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1526,7 +1837,6 @@
         function openImportModal() {
             document.getElementById('importModal').classList.add('active');
             document.getElementById('importLog').textContent = 'Ready to import. Select CSV files above.';
-            // Reset file inputs
             document.getElementById('fileTeachers').value = '';
             document.getElementById('fileClasses').value = '';
             document.getElementById('fileSubjects').value = '';
@@ -1540,7 +1850,6 @@
             document.getElementById('importModal').classList.remove('active');
         }
 
-        // File change handlers
         document.getElementById('fileTeachers').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -1585,7 +1894,6 @@
 
                 let messages = [];
 
-                // Import teachers
                 if (teacherData && teacherData.length > 0) {
                     const headers = teacherData[0];
                     const nameIdx = headers.indexOf('Teacher Name');
@@ -1621,7 +1929,6 @@
                     messages.push('ℹ️ No teacher file provided');
                 }
 
-                // Import class-sections
                 if (classData && classData.length > 0) {
                     const headers = classData[0];
                     const classIdx = headers.indexOf('Class');
@@ -1646,7 +1953,6 @@
                     messages.push('ℹ️ No class-sections file provided');
                 }
 
-                // Import subjects
                 if (subjectData && subjectData.length > 0) {
                     const headers = subjectData[0];
                     const codeIdx = headers.indexOf('Subject Code');
@@ -1671,7 +1977,6 @@
                     messages.push('ℹ️ No subjects file provided');
                 }
 
-                // Mark as loaded
                 state.loaded = true;
 
                 // Initialize timetable for all classes
@@ -1681,6 +1986,9 @@
                         state.timetable[ck] = DAYS.map(() => Array(PERIODS).fill(null));
                     }
                 }
+
+                // Auto-select all classes
+                state.selectedClasses = getClassSectionsList();
 
                 saveState();
                 renderAll();
@@ -1703,7 +2011,6 @@
                         const text = e.target.result;
                         const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
                         const data = lines.map(line => {
-                            // Handle quoted fields
                             const fields = [];
                             let current = '';
                             let inQuotes = false;
@@ -1742,8 +2049,6 @@
 
             const classKeys = getClassSectionsList();
             let csvLines = [];
-
-            // Header: Class, Day, Period, Subject, Teacher
             csvLines.push('Class,Day,Period,Subject Code,Subject Name,Teacher ID,Teacher Name');
 
             for (const ck of classKeys) {
@@ -1772,36 +2077,32 @@
         }
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  EVENT: Class change
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-        function onClassChange() {
-            renderTimetable();
-            renderBottomBar();
-            renderSidebar();
-        }
-
-        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        //  KEYBOARD: Close editor on Escape
+        //  KEYBOARD: Close editors on Escape
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeCellEditor();
+                closePeriodBulk();
+                closeContextMenu();
                 closeImportModal();
             }
         });
 
-        // Click outside editor to close
+        // Click outside editors to close
         document.addEventListener('click', function(e) {
             const editor = document.getElementById('cellEditor');
             if (editor.style.display === 'block') {
                 if (!editor.contains(e.target)) {
-                    // Check if click is on a cell
                     const cell = e.target.closest('.cell');
-                    if (!cell) {
-                        closeCellEditor();
-                    }
+                    if (!cell) closeCellEditor();
+                }
+            }
+            const bulkEditor = document.getElementById('periodBulkEditor');
+            if (bulkEditor.style.display === 'block') {
+                if (!bulkEditor.contains(e.target)) {
+                    const label = e.target.closest('.period-label');
+                    if (!label) closePeriodBulk();
                 }
             }
         });
@@ -1813,18 +2114,20 @@
         (function init() {
             const hasSaved = loadState();
             if (hasSaved && state.loaded) {
+                // Ensure selectedClasses are valid
+                const all = getClassSectionsList();
+                state.selectedClasses = state.selectedClasses.filter(ck => all.includes(ck));
+                if (state.selectedClasses.length === 0 && all.length > 0) {
+                    state.selectedClasses = [all[0]];
+                }
                 renderAll();
             } else {
-                // Empty state
                 renderAll();
-                // Try to load sample data from localStorage if available
                 if (state.classSections.length === 0) {
-                    // Show empty state
                     document.getElementById('emptyState').style.display = 'block';
-                    document.getElementById('timetableGridWrap').style.display = 'none';
+                    document.getElementById('multiTimetableWrap').style.display = 'none';
                 }
             }
-            // Close sidebar on mobile initially
             if (window.innerWidth < 820) {
                 sidebarOpen = false;
                 document.getElementById('rightSidebar').classList.add('collapsed');
@@ -1833,7 +2136,6 @@
             }
         })();
 
-        // Handle resize for sidebar
         window.addEventListener('resize', function() {
             if (window.innerWidth < 820 && sidebarOpen) {
                 sidebarOpen = false;
@@ -1849,10 +2151,10 @@
             }
         });
 
-        console.log('📚 School Timetable Builder loaded.');
-        console.log('ℹ️  Use the Import button to load teachers, class-sections, and subjects.');
-        console.log('ℹ️  Click any cell in the timetable to edit.');
-        console.log('ℹ️  Conflicts (teacher overlaps) are shown in red.');
+        console.log('📚 School Timetable Builder (Multi‑class) loaded.');
+        console.log('ℹ️  Select multiple classes (Ctrl+click) to view/edit simultaneously.');
+        console.log('ℹ️  Click a period number (P1..P7) to apply a subject/teacher to all days.');
+        console.log('ℹ️  Right‑click a filled cell to Copy, Paste, or Clear.');
     </script>
 </body>
 </html>
