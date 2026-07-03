@@ -1,0 +1,81 @@
+Class-Section,Day,P1,P2,P3,P4,P5,P6,P7
+Class-I-A,Monday,APA:Aparna:ENG,MOU:Mounika:TEL,SAI:Sai Priya:EVS,MOU:Mounika:TEL,SAR:Sandhya Rani:MTH,SUR:Suresh:PT,SAR:Sandhya Rani:MTH
+Class-I-A,Tuesday,APA:Aparna:ENG,MOU:Mounika:TEL,SAI:Sai Priya:EVS,SAR:Sandhya Rani:MTH,SUR:Suresh:PT,SUS:Sushmitha:HIN,SUS:Sushmitha:HIN
+Class-I-A,Wednesday,APA:Aparna:ENG,MOU:Mounika:TEL,SAI:Sai Priya:EVS,SAR:Sandhya Rani:MTH,PRA:Pravalika:CSC,PRA:Pravalika:CSC,SUS:Sushmitha:HIN
+Class-I-A,Thursday,APA:Aparna:ENG,MOU:Mounika:TEL,SAI:Sai Priya:EVS,SAR:Sandhya Rani:MTH,PRA:Pravalika:CSC,PRA:Pravalika:CSC,SUS:Sushmitha:HIN
+Class-I-A,Friday,APA:Aparna:ENG,MOU:Mounika:TEL,SAI:Sai Priya:EVS,SAR:Sandhya Rani:MTH,SUS:Sushmitha:HIN,,SUS:Sushmitha:HIN
+Class-I-B,Monday,MOU:Mounika:TEL,APA:Aparna:ENG,MOU:Mounika:TEL,APA:Aparna:ENG,SAI:Sai Priya:EVS,SAR:Sandhya Rani:MTH,SUR:Suresh:PT
+Class-I-B,Tuesday,MOU:Mounika:TEL,APA:Aparna:ENG,SAR:Sandhya Rani:MTH,SAI:Sai Priya:EVS,SAR:Sandhya Rani:MTH,SUR:Suresh:PT,
+Class-I-B,Wednesday,PRA:Pravalika:CSC,PRA:Pravalika:CSC,APA:Aparna:ENG,MOU:Mounika:TEL,SAI:Sai Priya:EVS,SAR:Sandhya Rani:MTH,
+Class-I-B,Thursday,PRA:Pravalika:CSC,PRA:Pravalika:CSC,APA:Aparna:ENG,MOU:Mounika:TEL,SAI:Sai Priya:EVS,SAR:Sandhya Rani:MTH,
+Class-I-B,Friday,MOU:Mounika:TEL,APA:Aparna:ENG,SAR:Sandhya Rani:MTH,SAI:Sai Priya:EVS,,SUS:Sushmitha:HIN,
+Class-II-A,Monday,SAI:Sai Priya:EVS,SAR:Sandhya Rani:MTH,APA:Aparna:ENG,SAR:Sandhya Rani:MTH,APA:Aparna:ENG,MOU:Mounika:TEL,SUS:Sushmitha:HIN
+Class-II-A,Tuesday,SAI:Sai Priya:EVS,SAR:Sandhya Rani:MTH,APA:Aparna:ENG,MOU:Mounika:TEL,SUS:Sushmitha:HIN,MOU:Mounika:TEL,SUR:Suresh:PT
+Class-II-A,Wednesday,SAI:Sai Priya:EVS,APA:Aparna:ENG,MOU:Mounika:TEL,SUR:Suresh:PT,SAR:Sandhya Rani:MTH,SUS:Sushmitha:HIN,
+Class-II-A,Thursday,SAI:Sai Priya:EVS,APA:Aparna:ENG,MOU:Mounika:TEL,SUS:Sushmitha:HIN,SAR:Sandhya Rani:MTH,SUS:Sushmitha:HIN,
+Class-II-A,Friday,SAI:Sai Priya:EVS,SAR:Sandhya Rani:MTH,APA:Aparna:ENG,MOU:Mounika:TEL,PRA:Pravalika:CSC,PRA:Pravalika:CSC,
+Class-II-B,Monday,SAR:Sandhya Rani:MTH,SAI:Sai Priya:EVS,SUR:Suresh:PT,SUS:Sushmitha:HIN,MOU:Mounika:TEL,APA:Aparna:ENG,MOU:Mounika:TEL
+Class-II-B,Tuesday,SAR:Sandhya Rani:MTH,SAI:Sai Priya:EVS,MOU:Mounika:TEL,APA:Aparna:ENG,,APA:Aparna:ENG,
+Class-II-B,Wednesday,SAR:Sandhya Rani:MTH,SAI:Sai Priya:EVS,SUR:Suresh:PT,APA:Aparna:ENG,MOU:Mounika:TEL,,
+Class-II-B,Thursday,SAR:Sandhya Rani:MTH,SAI:Sai Priya:EVS,SUS:Sushmitha:HIN,APA:Aparna:ENG,MOU:Mounika:TEL,,
+Class-II-B,Friday,SAR:Sandhya Rani:MTH,SAI:Sai Priya:EVS,MOU:Mounika:TEL,APA:Aparna:ENG,,,
+Class-III-A,Monday,AKH:Akhila:MTH,CHA:Chandrakala:TEL,DIV:Divya:ENG,SAI:Sai Priya:SCI,SRI:Srihitha:SOC,UMA:Uma:HIN,UMA:Uma:HIN
+Class-III-A,Tuesday,AKH:Akhila:MTH,CHA:Chandrakala:TEL,DIV:Divya:ENG,SRI:Srihitha:SOC,SAI:Sai Priya:SCI,UMA:Uma:HIN,
+Class-III-A,Wednesday,AKH:Akhila:MTH,CHA:Chandrakala:TEL,DIV:Divya:ENG,SAI:Sai Priya:SCI,SRI:Srihitha:SOC,SUR:Suresh:PT,UMA:Uma:HIN
+Class-III-A,Thursday,AKH:Akhila:MTH,CHA:Chandrakala:TEL,DIV:Divya:ENG,SAI:Sai Priya:SCI,SRI:Srihitha:SOC,SUR:Suresh:PT,UMA:Uma:HIN
+Class-III-A,Friday,PRA:Pravalika:CSC,PRA:Pravalika:CSC,AKH:Akhila:MTH,CHA:Chandrakala:TEL,DIV:Divya:ENG,SAI:Sai Priya:SCI,SRI:Srihitha:SOC
+Class-III-B,Monday,SRI:Srihitha:SOC,SUR:Suresh:PT,CHA:Chandrakala:TEL,UMA:Uma:HIN,,SAI:Sai Priya:SCI,APA:Aparna:ENG
+Class-III-B,Tuesday,SRI:Srihitha:SOC,SUR:Suresh:PT,CHA:Chandrakala:TEL,UMA:Uma:HIN,APA:Aparna:ENG,SAI:Sai Priya:SCI,SAR:Sandhya Rani:MTH
+Class-III-B,Wednesday,SRI:Srihitha:SOC,SAR:Sandhya Rani:MTH,CHA:Chandrakala:TEL,UMA:Uma:HIN,APA:Aparna:ENG,SAI:Sai Priya:SCI,SAR:Sandhya Rani:MTH
+Class-III-B,Thursday,SRI:Srihitha:SOC,SAR:Sandhya Rani:MTH,CHA:Chandrakala:TEL,UMA:Uma:HIN,APA:Aparna:ENG,SAI:Sai Priya:SCI,
+Class-III-B,Friday,SRI:Srihitha:SOC,CHA:Chandrakala:TEL,UMA:Uma:HIN,,APA:Aparna:ENG,SAR:Sandhya Rani:MTH,SAI:Sai Priya:SCI
+Class-IV-A,Monday,DIV:Divya:ENG,AKH:Akhila:MTH,DEE:Deepika:SCI,AKH:Akhila:MTH,SUR:Suresh:PT,PRA:Pravalika:CSL,PRA:Pravalika:CSL
+Class-IV-A,Tuesday,DIV:Divya:ENG,AKH:Akhila:MTH,DEE:Deepika:SCI,SUR:Suresh:PT,SRI:Srihitha:SOC,PRA:Pravalika:CSL,PRA:Pravalika:CSL
+Class-IV-A,Wednesday,DIV:Divya:ENG,AKH:Akhila:MTH,DEE:Deepika:SCI,SRI:Srihitha:SOC,UMA:Uma:HIT2,SRI:Srihitha:SOC,
+Class-IV-A,Thursday,DIV:Divya:ENG,AKH:Akhila:MTH,DEE:Deepika:SCI,SRI:Srihitha:SOC,UMA:Uma:HIT2,UMA:Uma:HIT2,
+Class-IV-A,Friday,DIV:Divya:ENG,AKH:Akhila:MTH,DEE:Deepika:SCI,SRI:Srihitha:SOC,UMA:Uma:HIT2,UMA:Uma:HIT3,UMA:Uma:HIT2
+Class-IV-B,Monday,PRA:Pravalika:CSL,PRA:Pravalika:CSL,AKH:Akhila:MTH,DEE:Deepika:SCI,AKH:Akhila:MTH,DIV:Divya:ENG,SRI:Srihitha:SOC
+Class-IV-B,Tuesday,PRA:Pravalika:CSL,PRA:Pravalika:CSL,AKH:Akhila:MTH,DEE:Deepika:SCI,DIV:Divya:ENG,SRI:Srihitha:SOC,DIV:Divya:ENG
+Class-IV-B,Wednesday,SUR:Suresh:PT,DEE:Deepika:SCI,AKH:Akhila:MTH,DIV:Divya:ENG,,UMA:Uma:HIT3,SRI:Srihitha:SOC
+Class-IV-B,Thursday,SUR:Suresh:PT,DEE:Deepika:SCI,AKH:Akhila:MTH,DIV:Divya:ENG,,SRI:Srihitha:SOC,
+Class-IV-B,Friday,AKH:Akhila:MTH,DEE:Deepika:SCI,DIV:Divya:ENG,UMA:Uma:HIT3,SRI:Srihitha:SOC,,
+Class-V-A,Monday,SMR:Smrithi:CSL,SMR:Smrithi:CSL,SHA:Shakeer:HIT2,CHA:Chandrakala:HIT3,DEE:Deepika:SCI,AKH:Akhila:MTH,DIV:Divya:ENG
+Class-V-A,Tuesday,SMR:Smrithi:CSL,SMR:Smrithi:CSL,SHA:Shakeer:HIT2,AKH:Akhila:MTH,CHA:Chandrakala:HIT3,AKH:Akhila:MTH,DEE:Deepika:SCI
+Class-V-A,Wednesday,,DIV:Divya:ENG,SHA:Shakeer:HIT2,AKH:Akhila:MTH,DEE:Deepika:SCI,DIV:Divya:ENG,SUR:Suresh:PT
+Class-V-A,Thursday,,DIV:Divya:ENG,SHA:Shakeer:HIT2,AKH:Akhila:MTH,DEE:Deepika:SCI,DIV:Divya:ENG,SRI:Srihitha:SOC
+Class-V-A,Friday,SUR:Suresh:PT,DIV:Divya:ENG,SHA:Shakeer:HIT2,AKH:Akhila:MTH,DEE:Deepika:SCI,SRI:Srihitha:SOC,
+Class-V-B,Monday,DEE:Deepika:SCI,DIV:Divya:ENG,SRI:Srihitha:SOC,DIV:Divya:ENG,CHA:Chandrakala:HIT3,SMR:Smrithi:CSL,SMR:Smrithi:CSL
+Class-V-B,Tuesday,DEE:Deepika:SCI,DIV:Divya:ENG,SRI:Srihitha:SOC,CHA:Chandrakala:HIT3,AKH:Akhila:MTH,SMR:Smrithi:CSL,SMR:Smrithi:CSL
+Class-V-B,Wednesday,DEE:Deepika:SCI,SHA:Shakeer:HIT2,SRI:Srihitha:SOC,SHA:Shakeer:HIT2,AKH:Akhila:MTH,,AKH:Akhila:MTH
+Class-V-B,Thursday,DEE:Deepika:SCI,SHA:Shakeer:HIT2,SRI:Srihitha:SOC,SHA:Shakeer:HIT2,AKH:Akhila:MTH,,AKH:Akhila:MTH
+Class-V-B,Friday,DEE:Deepika:SCI,SHA:Shakeer:HIT2,SRI:Srihitha:SOC,DIV:Divya:ENG,AKH:Akhila:MTH,DIV:Divya:ENG,SUR:Suresh:PT
+Class-VI-A,Monday,ROJ:Roja:MTH,MAN:Manjula:SOC,SAM:Sameera:ENG,SRP:Sripadha:SCI,SRP:Sripadha:SCII,CHA:Chandrakala:HIT3,SRU:Sruthilaya:MTHI
+Class-VI-A,Tuesday,ROJ:Roja:MTH,MAN:Manjula:SOC,SAM:Sameera:ENG,SRP:Sripadha:SCI,SUK:Sukurtha:HIT2,CHA:Chandrakala:HIT3,SUK:Sukurtha:HIT2
+Class-VI-A,Wednesday,ROJ:Roja:MTH,MAN:Manjula:SOC,SAM:Sameera:ENG,SRP:Sripadha:SCI,SUK:Sukurtha:HIT2,SMR:Smrithi:CSL,SMR:Smrithi:CSL
+Class-VI-A,Thursday,ROJ:Roja:MTH,MAN:Manjula:SOC,SAM:Sameera:ENG,SRP:Sripadha:SCI,SUK:Sukurtha:HIT2,SMR:Smrithi:CSL,SMR:Smrithi:CSL
+Class-VI-A,Friday,ROJ:Roja:MTH,MAN:Manjula:SOC,SAM:Sameera:ENG,SRP:Sripadha:SCI,SUK:Sukurtha:HIT2,SUR:Suresh:PT,
+Class-VI-B,Monday,SAM:Sameera:ENG,ROJ:Roja:MTH,MAN:Manjula:SOC,SRU:Sruthilaya:MTHI,SUK:Sukurtha:HIT2,SRP:Sripadha:SCI,CHA:Chandrakala:HIT3
+Class-VI-B,Tuesday,SAM:Sameera:ENG,ROJ:Roja:MTH,MAN:Manjula:SOC,SUK:Sukurtha:HIT2,SRP:Sripadha:SCI,SRP:Sripadha:SCII,CHA:Chandrakala:HIT3
+Class-VI-B,Wednesday,SAM:Sameera:ENG,ROJ:Roja:MTH,MAN:Manjula:SOC,SUK:Sukurtha:HIT2,SRP:Sripadha:SCI,,
+Class-VI-B,Thursday,SAM:Sameera:ENG,ROJ:Roja:MTH,MAN:Manjula:SOC,SUK:Sukurtha:HIT2,SRP:Sripadha:SCI,,SUR:Suresh:PT
+Class-VI-B,Friday,SAM:Sameera:ENG,ROJ:Roja:MTH,MAN:Manjula:SOC,SUK:Sukurtha:HIT2,SRP:Sripadha:SCI,SMR:Smrithi:CSL,SMR:Smrithi:CSL
+Class-VII-A,Monday,CHA:Chandrakala:HIT3,SAM:Sameera:ENG,ROJ:Roja:MTH,MAN:Manjula:SOC,SHA:Shakeer:HIT2,SRU:Sruthilaya:MTHI,SRP:Sripadha:SCI
+Class-VII-A,Tuesday,CHA:Chandrakala:HIT3,SAM:Sameera:ENG,ROJ:Roja:MTH,MAN:Manjula:SOC,SHA:Shakeer:HIT2,,SRP:Sripadha:SCI
+Class-VII-A,Wednesday,SMR:Smrithi:CSL,SMR:Smrithi:CSL,ROJ:Roja:MTH,MAN:Manjula:SOC,SAM:Sameera:ENG,SHA:Shakeer:HIT2,SRP:Sripadha:SCI
+Class-VII-A,Thursday,SMR:Smrithi:CSL,SMR:Smrithi:CSL,ROJ:Roja:MTH,MAN:Manjula:SOC,SAM:Sameera:ENG,SHA:Shakeer:HIT2,SRP:Sripadha:SCI
+Class-VII-A,Friday,SRP:Sripadha:SCI,SAM:Sameera:ENG,ROJ:Roja:MTH,MAN:Manjula:SOC,SHA:Shakeer:HIT2,SRP:Sripadha:SCII,
+Class-VIII-A,Monday,MAN:Manjula:SOC,SHA:Shakeer:HIT2,SRP:Sripadha:SCI,ROJ:Roja:MTH,SAM:Sameera:ENG,,
+Class-VIII-A,Tuesday,MAN:Manjula:SOC,SHA:Shakeer:HIT2,SRP:Sripadha:SCI,ROJ:Roja:MTH,SAM:Sameera:ENG,SRU:Sruthilaya:MTHI,
+Class-VIII-A,Wednesday,MAN:Manjula:SOC,SAM:Sameera:ENG,SRP:Sripadha:SCI,CHA:Chandrakala:HIT3,ROJ:Roja:MTH,SRP:Sripadha:SCII,SHA:Shakeer:HIT2
+Class-VIII-A,Thursday,MAN:Manjula:SOC,SAM:Sameera:ENG,SRP:Sripadha:SCI,CHA:Chandrakala:HIT3,ROJ:Roja:MTH,,SHA:Shakeer:HIT2
+Class-VIII-A,Friday,MAN:Manjula:SOC,SRP:Sripadha:SCI,SUR:Suresh:PT,ROJ:Roja:MTH,SAM:Sameera:ENG,SHA:Shakeer:HIT2,
+Class-IX-A,Monday,SHA:Shakeer:HIN2,SRU:Sruthilaya:BIO,SRU:Sruthilaya:SCI,SAM:Sameera:ENG,MAN:Manjula:SOC,ROJ:Roja:MTH,SUK:Sukurtha:TEL
+Class-IX-A,Tuesday,SHA:Shakeer:HIN2,SRU:Sruthilaya:BIO,SRU:Sruthilaya:SCI,SAM:Sameera:ENG,MAN:Manjula:SOC,ROJ:Roja:MTH,
+Class-IX-A,Wednesday,SHA:Shakeer:HIN2,SRU:Sruthilaya:SCI,SUK:Sukurtha:TEL,ROJ:Roja:MTH,MAN:Manjula:SOC,SAM:Sameera:ENG,SUK:Sukurtha:TEL
+Class-IX-A,Thursday,SHA:Shakeer:HIN2,SRU:Sruthilaya:SCI,SUK:Sukurtha:TEL,ROJ:Roja:MTH,MAN:Manjula:SOC,SAM:Sameera:ENG,
+Class-IX-A,Friday,SHA:Shakeer:HIN2,SUK:Sukurtha:TEL,,SAM:Sameera:ENG,MAN:Manjula:SOC,ROJ:Roja:MTH,
+Class-X-A,Monday,SRP:Sripadha:BIO,SUK:Sukurtha:HIT2,,SUK:Sukurtha:HIT2,ROJ:Roja:MTH,MAN:Manjula:SOC,SAM:Sameera:ENG
+Class-X-A,Tuesday,SRP:Sripadha:BIO,SUK:Sukurtha:HIT2,SUR:Suresh:PT,SRU:Sruthilaya:SCI,ROJ:Roja:MTH,MAN:Manjula:SOC,SAM:Sameera:ENG
+Class-X-A,Wednesday,SRP:Sripadha:BIO,SUK:Sukurtha:HIT2,SRU:Sruthilaya:SCI,SAM:Sameera:ENG,SRU:Sruthilaya:SCI,MAN:Manjula:SOC,ROJ:Roja:MTH
+Class-X-A,Thursday,SRP:Sripadha:BIO,SUK:Sukurtha:HIT2,SRU:Sruthilaya:SCI,SAM:Sameera:ENG,SRU:Sruthilaya:SCI,MAN:Manjula:SOC,ROJ:Roja:MTH
+Class-X-A,Friday,SMR:Smrithi:CSL,SMR:Smrithi:CSL,SRU:Sruthilaya:SCI,SRU:Sruthilaya:SCI,ROJ:Roja:MTH,MAN:Manjula:SOC,SAM:Sameera:ENG
