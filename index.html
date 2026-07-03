@@ -829,6 +829,97 @@
         .hidden {
             display: none !important;
         }
+
+        /* ─── TIMETABLE WORKFLOW MODES ─── */
+        .timetable-mode-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            background: #f4f8fc;
+            border: 1px solid #e0ebf5;
+            border-radius: 12px;
+        }
+        .mode-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            letter-spacing: 0.2px;
+        }
+        .mode-btn-primary {
+            background: linear-gradient(135deg, #1f5c9e 0%, #174a7d 100%);
+            color: #ffffff;
+            border: 1px solid #1f5c9e;
+            box-shadow: 0 4px 12px rgba(31, 92, 158, 0.25);
+        }
+        .mode-btn-primary:hover {
+            background: linear-gradient(135deg, #2469b3 0%, #1f5c9e 100%);
+            box-shadow: 0 6px 16px rgba(31, 92, 158, 0.35);
+            transform: translateY(-1px);
+        }
+        .mode-btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(31, 92, 158, 0.2);
+        }
+        .mode-btn-secondary {
+            background: #ffffff;
+            color: #1f5c9e;
+            border: 1px solid #c5d8ed;
+            box-shadow: 0 2px 8px rgba(0, 20, 40, 0.04);
+        }
+        .mode-btn-secondary:hover {
+            background: #eef3f9;
+            border-color: #8aaac8;
+            color: #174a7d;
+            box-shadow: 0 4px 12px rgba(0, 20, 40, 0.08);
+            transform: translateY(-1px);
+        }
+        .mode-btn-secondary:active {
+            transform: translateY(0);
+        }
+        /* ─── HOVER EDIT BUTTON (FLOW 2) ─── */
+        .timetable-grid .cell .hover-edit-btn {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #1f5c9e;
+            color: white;
+            border: none;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            cursor: pointer;
+            transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.15s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            z-index: 5;
+        }
+        .timetable-grid .cell:hover .hover-edit-btn {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: scale(1.05);
+        }
+        .timetable-grid .cell .hover-edit-btn:hover {
+            background: #174a7d;
+            transform: scale(1.15);
+        }
     </style>
 </head>
 <body>
@@ -896,6 +987,12 @@
                     <button class="success" onclick="clearSelectedClasses()" title="Clear all periods for selected classes">🧹 Clear</button>
                     <button class="primary" onclick="openImportModal()" style="display:none;" id="mobileImportBtn">📥 Import</button>
                 </div>
+            </div>
+
+            <!-- ─── TIMETABLE WORKFLOW MODES ─── -->
+            <div class="timetable-mode-bar">
+                <button class="mode-btn mode-btn-primary" id="createTimetableBtn">➕ Create Timetable</button>
+                <button class="mode-btn mode-btn-secondary" id="editTimetableBtn">✏ Edit Existing Timetable</button>
             </div>
 
             <div id="timetableContainer">
@@ -986,11 +1083,47 @@
                 <div class="status" id="statusSubjects">Not loaded</div>
             </div>
 
+            <div class="file-row" id="rowExistingTimetable" style="display:none;">
+                <label>Existing Timetable <span style="font-weight:400;color:#7a8fa8;">(school_timetable.csv)</span></label>
+                <input type="file" id="fileExistingTimetable" accept=".csv" />
+                <div class="status" id="statusExistingTimetable">Not loaded</div>
+            </div>
+
             <div class="import-log" id="importLog">Ready to import.</div>
 
             <div class="modal-actions">
                 <button class="close-modal-btn" onclick="closeImportModal()">Cancel</button>
-                <button class="import-btn" onclick="performImport()">📥 Import All</button>
+                <button class="import-btn" id="importActionBtn" onclick="performImport()">📥 Import All</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ─── EDIT TIMETABLE CELL MODAL (FLOW 2) ─── -->
+    <div class="modal-overlay" id="existingEditCellModal">
+        <div class="modal-box" style="max-width: 440px;">
+            <h3>Edit Timetable Cell</h3>
+            <div style="background:#f4f8fc;border:1px solid #e0ebf5;padding:12px 16px;border-radius:10px;margin:14px 0;font-size:13.5px;line-height:1.6;color:#1a2b3e;">
+                <div><strong>Class:</strong> <span id="eecClass"></span></div>
+                <div><strong>Day:</strong> <span id="eecDay"></span></div>
+                <div><strong>Period:</strong> <span id="eecPeriod"></span></div>
+                <div><strong>Current Subject:</strong> <span id="eecCurrSubject"></span></div>
+                <div><strong>Current Teacher:</strong> <span id="eecCurrTeacher"></span></div>
+            </div>
+
+            <div class="file-row" style="margin-bottom:14px;">
+                <label style="display:block;margin-bottom:6px;font-weight:600;color:#1a2b3e;">Select Subject</label>
+                <select id="eecSelectSubject" style="width:100%;padding:8px 12px;border:1px solid #c5d8ed;border-radius:8px;font-size:14px;background:#fff;"></select>
+            </div>
+
+            <div class="file-row" style="margin-bottom:20px;">
+                <label style="display:block;margin-bottom:6px;font-weight:600;color:#1a2b3e;">Select Teacher</label>
+                <select id="eecSelectTeacher" style="width:100%;padding:8px 12px;border:1px solid #c5d8ed;border-radius:8px;font-size:14px;background:#fff;"></select>
+            </div>
+
+            <div class="modal-actions">
+                <button class="close-modal-btn" onclick="closeExistingEditModal()">Cancel</button>
+                <button class="import-btn" onclick="saveExistingEditCell()">Save</button>
             </div>
         </div>
     </div>
@@ -1038,10 +1171,17 @@
                 if (!raw) return false;
                 const data = JSON.parse(raw);
                 state.teachers = data.teachers || {};
-                state.classSections = data.classSections || [];
+                state.classSections = (data.classSections || []).map(c => ({
+                    grade: (c.grade || '').toString().trim().replace(/^Class-/i, ''),
+                    section: (c.section || '').toString().trim()
+                }));
                 state.subjects = data.subjects || {};
-                state.timetable = data.timetable || {};
-                state.selectedClasses = data.selectedClasses || [];
+                const normTimetable = {};
+                for (const ck in (data.timetable || {})) {
+                    normTimetable[ck.replace(/^Class-/i, '')] = data.timetable[ck];
+                }
+                state.timetable = normTimetable;
+                state.selectedClasses = (data.selectedClasses || []).map(ck => (ck || '').toString().trim().replace(/^Class-/i, ''));
                 state.loaded = true;
                 return true;
             } catch (e) { return false; }
@@ -1055,8 +1195,11 @@
             state.timetable = {};
             state.selectedClasses = [];
             state.loaded = false;
+            state.mode = 'create';
             clipboard = null;
+            editingExistingTarget = null;
             localStorage.removeItem('timetableAppState');
+            if (typeof updateModeButtons === 'function') updateModeButtons();
             renderAll();
         }
 
@@ -1065,16 +1208,19 @@
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
         function classKey(grade, section) {
-            return grade + '-' + section;
+            const g = (grade || '').toString().trim().replace(/^Class-/i, '');
+            const s = (section || '').toString().trim();
+            return g + '-' + s;
         }
 
         function parseClassKey(key) {
-            const parts = key.split('-');
+            const clean = (key || '').toString().trim().replace(/^Class-/i, '');
+            const parts = clean.split('-');
             return { grade: parts[0], section: parts[1] || '' };
         }
 
         function getClassLabel(grade, section) {
-            return grade + '-' + section;
+            return classKey(grade, section);
         }
 
         function getClassSectionsList() {
@@ -1155,13 +1301,18 @@
         }
 
         function clearSelectedClasses() {
-            const classes = getSelectedClasses();
-            if (classes.length === 0) return;
-            if (!confirm(`Clear all periods for ${classes.length} selected class(es)?`)) return;
-            for (const ck of classes) {
-                state.timetable[ck] = DAYS.map(() => Array(PERIODS).fill(null));
-            }
-            saveState();
+            if (!confirm('⚠️ Clear ALL imported timetable data and reset application? This cannot be undone.')) return;
+            state.teachers = {};
+            state.classSections = [];
+            state.subjects = {};
+            state.timetable = {};
+            state.selectedClasses = [];
+            state.loaded = false;
+            state.mode = 'create';
+            clipboard = null;
+            editingExistingTarget = null;
+            localStorage.removeItem('timetableAppState');
+            if (typeof updateModeButtons === 'function') updateModeButtons();
             renderAll();
         }
 
@@ -1288,6 +1439,11 @@
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
         function renderAll() {
+            if (typeof updateModeButtons === 'function') updateModeButtons();
+            console.log("Current mode:", state.mode);
+            console.log("Class sections:", state.classSections);
+            console.log("Timetable keys:", Object.keys(state.timetable));
+            console.log("Sample timetable data:", state.timetable);
             renderTopBar();
             renderBottomBar();
             renderSidebar();
@@ -1468,57 +1624,111 @@
                 }
                 totalFilled += filled;
 
-                html += `<div class="class-timetable-card" data-class="${ck}">`;
-                html += `<div class="class-header"><span class="class-label">${ck}</span><span class="class-badge">${filled}/${DAYS.length*PERIODS}</span></div>`;
-                html += `<div class="timetable-wrap"><table class="timetable-grid">`;
+                if (state.mode === 'editExisting') {
+                    // FLOW 2: Edit Existing Timetable rendering
+                    html += `<div class="class-timetable-card" data-class="${ck}" style="margin-bottom:24px;border-radius:14px;box-shadow:0 4px 16px rgba(0,20,40,0.06);border:1px solid #e0ebf5;overflow:hidden;background:#fff;">`;
+                    html += `<div class="class-header" style="background:#1f5c9e;color:white;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;"><span class="class-label" style="font-weight:700;font-size:16px;">${ck}</span><span class="class-badge" style="background:rgba(255,255,255,0.2);padding:4px 10px;border-radius:20px;font-size:12px;">${filled}/${DAYS.length*PERIODS}</span></div>`;
+                    html += `<div class="timetable-wrap" style="padding:16px;overflow-x:auto;"><table class="timetable-grid" style="width:100%;border-collapse:separate;border-spacing:8px;">`;
 
-                // Header
-                html += '<thead><tr><th>Period</th>';
-                for (const day of DAYS) {
-                    html += `<th>${day.slice(0,3)}</th>`;
-                }
-                html += '</tr></thead><tbody>';
-
-                // Conflicts
-                const conflicts = detectConflicts();
-                const conflictMap = {};
-                for (const c of conflicts) {
-                    const key = c.teacher + '|' + c.day + '|' + c.period;
-                    conflictMap[key] = c.classes;
-                }
-
-                for (let p = 0; p < PERIODS; p++) {
-                    html += `<tr>`;
-                    // Period label - clickable for bulk edit
-                    html += `<td class="period-label" data-class="${ck}" data-period="${p}" onclick="openPeriodBulk('${ck}', ${p})">P${p+1}</td>`;
-                    for (let d = 0; d < DAYS.length; d++) {
-                        const cell = tt[d] ? tt[d][p] : null;
-                        const hasContent = cell && (cell.subject || cell.teacher);
-                        const subjCode = hasContent ? cell.subject : '';
-                        const teacherId = hasContent ? cell.teacher : '';
-                        const teacherName = teacherId ? getTeacherName(teacherId) : '';
-
-                        let inConflict = false;
-                        if (teacherId) {
-                            const key = teacherId + '|' + d + '|' + p;
-                            if (conflictMap[key] && conflictMap[key].includes(ck)) {
-                                inConflict = true;
-                            }
-                        }
-
-                        const conflictClass = inConflict ? 'conflict' : '';
-                        const emptyClass = !hasContent ? 'empty' : '';
-
-                        html += `<td class="cell ${conflictClass} ${emptyClass}" 
-                                  data-class="${ck}" data-day="${d}" data-period="${p}"
-                                  onclick="openCellEditor('${ck}', ${d}, ${p})"
-                                  oncontextmenu="openContextMenu(event, '${ck}', ${d}, ${p})">
-                                  ${hasContent ? `<span class="subj">${subjCode}</span><span class="teacher">${teacherName}</span>` : `<span class="subj" style="color:#d0dceb;">—</span>`}
-                              </td>`;
+                    // Header
+                    html += '<thead><tr style="background:#eef3f9;color:#1a2b3e;"><th style="padding:10px;text-align:left;border-radius:8px;font-weight:600;">Day</th>';
+                    for (let p = 0; p < PERIODS; p++) {
+                        html += `<th style="padding:10px;text-align:center;border-radius:8px;font-weight:600;">P${p+1}</th>`;
                     }
-                    html += '</tr>';
+                    html += '</tr></thead><tbody>';
+
+                    const conflicts = detectConflicts();
+                    const conflictMap = {};
+                    for (const c of conflicts) {
+                        const key = c.teacher + '|' + c.day + '|' + c.period;
+                        conflictMap[key] = c.classes;
+                    }
+
+                    for (let d = 0; d < DAYS.length; d++) {
+                        html += `<tr>`;
+                        html += `<td class="day-label" style="font-weight:600;padding:10px;color:#1f5c9e;background:#f4f8fc;border-radius:8px;white-space:nowrap;">${DAYS[d]}</td>`;
+                        for (let p = 0; p < PERIODS; p++) {
+                            const cell = tt[d] ? tt[d][p] : null;
+                            const hasContent = cell && (cell.subject || cell.teacher);
+                            const subjCode = hasContent ? cell.subject : '';
+                            const teacherId = hasContent ? cell.teacher : '';
+                            const teacherName = teacherId ? getTeacherName(teacherId) : (cell && cell.teacherName ? cell.teacherName : '');
+
+                            let inConflict = false;
+                            if (teacherId) {
+                                const key = teacherId + '|' + d + '|' + p;
+                                if (conflictMap[key] && conflictMap[key].includes(ck)) {
+                                    inConflict = true;
+                                }
+                            }
+
+                            const conflictClass = inConflict ? 'conflict' : '';
+                            const emptyClass = !hasContent ? 'empty' : '';
+
+                            html += `<td class="cell ${conflictClass} ${emptyClass}" style="position:relative;padding:12px 10px;text-align:center;background:${inConflict?'#fee9e9':(!hasContent?'#f8fafc':'#ffffff')};border:1px solid ${inConflict?'#e8b4b4':(!hasContent?'#e2e8f0':'#cbd5e1')};border-radius:8px;transition:all 0.15s;min-width:110px;" 
+                                      data-class="${ck}" data-day="${d}" data-period="${p}"
+                                      onclick="openExistingEditModal(event, '${ck}', ${d}, ${p})">
+                                      <div style="font-weight:700;font-size:14px;color:${inConflict?'#b13a2e':(!hasContent?'#64748b':'#0f172a')};margin-bottom:4px;">${hasContent ? subjCode : 'UNFILLED'}</div>
+                                      <div style="font-size:12px;color:${inConflict?'#a53b2e':(!hasContent?'#94a3b8':'#475569')};">${hasContent ? teacherName : 'No Teacher'}</div>
+                                      <button class="hover-edit-btn" onclick="openExistingEditModal(event, '${ck}', ${d}, ${p})" title="Edit Cell">✏️</button>
+                                  </td>`;
+                        }
+                        html += '</tr>';
+                    }
+                    html += '</tbody></table></div></div>';
+                } else {
+                    html += `<div class="class-timetable-card" data-class="${ck}">`;
+                    html += `<div class="class-header"><span class="class-label">${ck}</span><span class="class-badge">${filled}/${DAYS.length*PERIODS}</span></div>`;
+                    html += `<div class="timetable-wrap"><table class="timetable-grid">`;
+
+                    // Header
+                    html += '<thead><tr><th>Period</th>';
+                    for (const day of DAYS) {
+                        html += `<th>${day.slice(0,3)}</th>`;
+                    }
+                    html += '</tr></thead><tbody>';
+
+                    // Conflicts
+                    const conflicts = detectConflicts();
+                    const conflictMap = {};
+                    for (const c of conflicts) {
+                        const key = c.teacher + '|' + c.day + '|' + c.period;
+                        conflictMap[key] = c.classes;
+                    }
+
+                    for (let p = 0; p < PERIODS; p++) {
+                        html += `<tr>`;
+                        // Period label - clickable for bulk edit
+                        html += `<td class="period-label" data-class="${ck}" data-period="${p}" onclick="openPeriodBulk('${ck}', ${p})">P${p+1}</td>`;
+                        for (let d = 0; d < DAYS.length; d++) {
+                            const cell = tt[d] ? tt[d][p] : null;
+                            const hasContent = cell && (cell.subject || cell.teacher);
+                            const subjCode = hasContent ? cell.subject : '';
+                            const teacherId = hasContent ? cell.teacher : '';
+                            const teacherName = teacherId ? getTeacherName(teacherId) : '';
+
+                            let inConflict = false;
+                            if (teacherId) {
+                                const key = teacherId + '|' + d + '|' + p;
+                                if (conflictMap[key] && conflictMap[key].includes(ck)) {
+                                    inConflict = true;
+                                }
+                            }
+
+                            const conflictClass = inConflict ? 'conflict' : '';
+                            const emptyClass = !hasContent ? 'empty' : '';
+
+                            html += `<td class="cell ${conflictClass} ${emptyClass}" 
+                                      data-class="${ck}" data-day="${d}" data-period="${p}"
+                                      onclick="openCellEditor('${ck}', ${d}, ${p})"
+                                      oncontextmenu="openContextMenu(event, '${ck}', ${d}, ${p})">
+                                      ${hasContent ? `<span class="subj">${subjCode}</span><span class="teacher">${teacherName}</span>` : `<span class="subj" style="color:#d0dceb;">—</span>`}
+                                  </td>`;
+                        }
+                        html += '</tr>';
+                    }
+                    html += '</tbody></table></div></div>';
                 }
-                html += '</tbody></table></div></div>';
             }
 
             container.innerHTML = html;
@@ -1834,16 +2044,357 @@
 
         let importFiles = { teachers: null, classes: null, subjects: null };
 
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  EDIT EXISTING TIMETABLE WORKFLOW (FLOW 2)
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        let editingExistingTarget = null;
+
+        function updateModeButtons() {
+            const createBtn = document.getElementById('createTimetableBtn');
+            const editBtn = document.getElementById('editTimetableBtn');
+            if (!createBtn || !editBtn) return;
+            if (state.mode === 'editExisting') {
+                createBtn.className = 'mode-btn mode-btn-secondary';
+                editBtn.className = 'mode-btn mode-btn-primary';
+            } else {
+                createBtn.className = 'mode-btn mode-btn-primary';
+                editBtn.className = 'mode-btn mode-btn-secondary';
+            }
+        }
+
+        function openExistingTimetableModal() {
+            state.mode = 'editExisting';
+            updateModeButtons();
+            openImportModal();
+        }
+
+        function closeExistingTimetableModal() {
+            closeImportModal();
+        }
+
+        const fileExistingTimetableElem = document.getElementById('fileExistingTimetable');
+        if (fileExistingTimetableElem) {
+            fileExistingTimetableElem.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const statusElem = document.getElementById('statusExistingTimetable');
+                if (file) {
+                    importFiles.existing = file;
+                    if (statusElem) statusElem.textContent = '✅ ' + file.name;
+                } else {
+                    importFiles.existing = null;
+                    if (statusElem) statusElem.textContent = 'Not loaded';
+                }
+            });
+        }
+
+        async function performExistingTimetableImport() {
+            const fileInput = document.getElementById('fileExistingTimetable');
+            const file = fileInput ? fileInput.files[0] : (importFiles.existing || null);
+            const log = document.getElementById('importLog') || document.getElementById('existingTimetableLog');
+            if (!file) {
+                if (log) log.textContent = '❌ Please select required Existing Timetable (school_timetable.csv) file first.';
+                alert('❌ Please select required Existing Timetable (school_timetable.csv) file first.');
+                return;
+            }
+            try {
+                if (log) log.textContent = '⏳ Reading CSV...';
+                const rows = await readCSVFile(file);
+                console.log('Parsed CSV rows (first 3):', rows.slice(0, 3));
+                if (!rows || rows.length <= 1) {
+                    throw new Error('CSV is empty or invalid.');
+                }
+
+                // Reset state completely for new workflow to prevent state corruption/appending
+                state.teachers = {};
+                state.classSections = [];
+                state.subjects = {};
+                state.timetable = {};
+                state.selectedClasses = [];
+                state.mode = 'editExisting';
+
+                if (importFiles.teachers) {
+                    const teacherData = await readCSVFile(importFiles.teachers);
+                    if (teacherData && teacherData.length > 1) {
+                        const headers = teacherData[0];
+                        const nameIdx = headers.indexOf('Teacher Name');
+                        const idIdx = headers.indexOf('Teacher ID');
+                        const subjectIdx = headers.indexOf('Class Teacher Subject');
+                        for (let i = 1; i < teacherData.length; i++) {
+                            const row = teacherData[i];
+                            const id = row[idIdx]?.trim() || '';
+                            if (!id) continue;
+                            state.teachers[id] = { id, name: row[nameIdx]?.trim() || id, subject: row[subjectIdx]?.trim() || '', grade: '', section: '', phone: '', email: '' };
+                        }
+                    }
+                }
+                if (importFiles.classes) {
+                    const classData = await readCSVFile(importFiles.classes);
+                    if (classData && classData.length > 1) {
+                        const headers = classData[0];
+                        const classIdx = headers.indexOf('Class');
+                        const sectionIdx = headers.indexOf('Section');
+                        for (let i = 1; i < classData.length; i++) {
+                            const row = classData[i];
+                            const grade = (row[classIdx]?.trim() || '').replace(/^Class-/i, '');
+                            const section = row[sectionIdx]?.trim() || '';
+                            if (grade && section && !state.classSections.some(c => classKey(c.grade, c.section) === classKey(grade, section))) {
+                                state.classSections.push({ grade, section });
+                            }
+                        }
+                    }
+                }
+                if (importFiles.subjects) {
+                    const subjectData = await readCSVFile(importFiles.subjects);
+                    if (subjectData && subjectData.length > 1) {
+                        const headers = subjectData[0];
+                        const codeIdx = headers.indexOf('Subject Code');
+                        const nameIdx = headers.indexOf('Subject Name');
+                        for (let i = 1; i < subjectData.length; i++) {
+                            const row = subjectData[i];
+                            const code = row[codeIdx]?.trim() || '';
+                            const name = row[nameIdx]?.trim() || '';
+                            if (code && name) state.subjects[code] = { code, name };
+                        }
+                    }
+                }
+
+                const classMap = new Set();
+
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i];
+                    if (!row || row.length < 2) continue;
+                    const ckRaw = row[0]?.trim() || '';
+                    const ck = ckRaw.replace(/^Class-/i, '');
+                    const dayStr = row[1]?.trim();
+                    if (!ck || !dayStr) continue;
+
+                    classMap.add(ck);
+
+                    const dayIdx = DAYS.findIndex(d => d.toLowerCase() === dayStr.toLowerCase() || d.toLowerCase().startsWith(dayStr.toLowerCase().slice(0, 3)));
+                    if (dayIdx === -1) continue;
+
+                    if (!state.timetable[ck]) {
+                        state.timetable[ck] = DAYS.map(() => Array(PERIODS).fill(null));
+                    }
+
+                    for (let p = 0; p < PERIODS; p++) {
+                        const cellStr = row[p + 2]?.trim();
+                        let cellData = null;
+                        if (!cellStr || cellStr === '' || cellStr === 'null' || cellStr === 'NaN' || cellStr.toUpperCase() === 'UNFILLED') {
+                            cellData = {
+                                subjectCode: 'UNFILLED',
+                                teacherName: 'No Teacher',
+                                teacherCode: ''
+                            };
+                        } else {
+                            const parts = cellStr.split(':');
+                            if (parts.length >= 3) {
+                                const tCode = parts[0].trim();
+                                const tName = parts[1].trim();
+                                const sCode = parts[2].trim();
+                                cellData = {
+                                    teacherCode: tCode,
+                                    teacherName: tName,
+                                    subjectCode: sCode
+                                };
+                                if (tCode && !state.teachers[tCode]) {
+                                    state.teachers[tCode] = {
+                                        id: tCode,
+                                        name: tName || tCode,
+                                        subject: sCode || '',
+                                        grade: '',
+                                        section: '',
+                                        phone: '',
+                                        email: ''
+                                    };
+                                }
+                                if (sCode && !state.subjects[sCode]) {
+                                    state.subjects[sCode] = {
+                                        code: sCode,
+                                        name: sCode
+                                    };
+                                }
+                            } else {
+                                cellData = {
+                                    subjectCode: 'UNFILLED',
+                                    teacherName: 'No Teacher',
+                                    teacherCode: ''
+                                };
+                            }
+                        }
+
+                        if (cellData.subjectCode === 'UNFILLED' || !cellData.teacherCode) {
+                            state.timetable[ck][dayIdx][p] = null;
+                        } else {
+                            state.timetable[ck][dayIdx][p] = {
+                                subject: cellData.subjectCode,
+                                teacher: cellData.teacherCode,
+                                teacherName: cellData.teacherName
+                            };
+                        }
+                    }
+                }
+
+                for (const ck of classMap) {
+                    const lastIdx = ck.lastIndexOf('-');
+                    const grade = lastIdx !== -1 ? ck.substring(0, lastIdx) : ck;
+                    const section = lastIdx !== -1 ? ck.substring(lastIdx + 1) : '';
+                    if (!state.classSections.some(c => classKey(c.grade, c.section) === ck)) {
+                        state.classSections.push({ grade, section });
+                    }
+                    if (!state.timetable[ck]) {
+                        state.timetable[ck] = DAYS.map(() => Array(PERIODS).fill(null));
+                    }
+                }
+
+                state.loaded = true;
+                state.selectedClasses = getClassSectionsList();
+                console.log('Normalized class keys in state:', Object.keys(state.timetable));
+                updateModeButtons();
+                saveState();
+                renderAll();
+                closeImportModal();
+                alert('✅ Existing timetable loaded successfully!');
+            } catch (err) {
+                if (log) log.textContent = '❌ Error: ' + err.message;
+                alert('❌ Error loading timetable: ' + err.message);
+            }
+        }
+
+        function openExistingEditModal(event, ck, dayIdx, periodIdx) {
+            if (event) event.stopPropagation();
+            editingExistingTarget = { ck, dayIdx, periodIdx };
+
+            const cell = getCell(ck, dayIdx, periodIdx);
+            const currSubjCode = cell && cell.subject ? cell.subject : 'UNFILLED';
+            const currTeacherId = cell && cell.teacher ? cell.teacher : '';
+            const currTeacherName = currTeacherId ? getTeacherName(currTeacherId) : (cell && cell.teacherName ? cell.teacherName : 'No Teacher');
+
+            document.getElementById('eecClass').textContent = ck;
+            document.getElementById('eecDay').textContent = DAYS[dayIdx];
+            document.getElementById('eecPeriod').textContent = 'P' + (periodIdx + 1);
+            document.getElementById('eecCurrSubject').textContent = currSubjCode;
+            document.getElementById('eecCurrTeacher').textContent = currTeacherName;
+
+            const subjSelect = document.getElementById('eecSelectSubject');
+            subjSelect.innerHTML = '<option value="">-- Unfilled --</option>';
+            for (const code in state.subjects) {
+                const s = state.subjects[code];
+                const selected = (code === currSubjCode) ? 'selected' : '';
+                subjSelect.innerHTML += `<option value="${code}" ${selected}>${code} (${s.name})</option>`;
+            }
+
+            const teacherSelect = document.getElementById('eecSelectTeacher');
+            teacherSelect.innerHTML = '<option value="">-- No Teacher --</option>';
+            for (const tid in state.teachers) {
+                const t = state.teachers[tid];
+                const selected = (tid === currTeacherId) ? 'selected' : '';
+                teacherSelect.innerHTML += `<option value="${tid}" ${selected}>${t.name} (${t.id})</option>`;
+            }
+
+            document.getElementById('existingEditCellModal').classList.add('active');
+        }
+
+        function closeExistingEditModal() {
+            document.getElementById('existingEditCellModal').classList.remove('active');
+            editingExistingTarget = null;
+        }
+
+        function saveExistingEditCell() {
+            if (!editingExistingTarget) return;
+            const { ck, dayIdx, periodIdx } = editingExistingTarget;
+
+            const subjSelect = document.getElementById('eecSelectSubject');
+            const teacherSelect = document.getElementById('eecSelectTeacher');
+
+            const newSubj = subjSelect ? subjSelect.value : '';
+            const newTeacher = teacherSelect ? teacherSelect.value : '';
+
+            const tt = getTimetableForClass(ck);
+            if (!tt[dayIdx]) tt[dayIdx] = Array(PERIODS).fill(null);
+
+            if (!newSubj && !newTeacher) {
+                tt[dayIdx][periodIdx] = null;
+            } else {
+                const tName = newTeacher ? getTeacherName(newTeacher) : 'No Teacher';
+                tt[dayIdx][periodIdx] = {
+                    subject: newSubj || 'UNFILLED',
+                    teacher: newTeacher || '',
+                    teacherName: tName
+                };
+            }
+
+            saveState();
+            renderAll();
+            closeExistingEditModal();
+        }
+
+        // ─── TIMETABLE WORKFLOW MODE LISTENERS ───
+        const createTimetableBtn = document.getElementById('createTimetableBtn');
+        if (createTimetableBtn) {
+            createTimetableBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                state.mode = 'create';
+                state.timetable = {};
+                for (const c of state.classSections) {
+                    state.timetable[classKey(c.grade, c.section)] = DAYS.map(() => Array(PERIODS).fill(null));
+                }
+                saveState();
+                renderAll();
+                updateModeButtons();
+                openImportModal();
+            });
+        }
+
+        const editTimetableBtn = document.getElementById('editTimetableBtn');
+        if (editTimetableBtn) {
+            editTimetableBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                state.mode = 'editExisting';
+                updateModeButtons();
+                openImportModal();
+            });
+        }
+
         function openImportModal() {
+            const isEditMode = (state.mode === 'editExisting');
+            const modalTitle = document.querySelector('#importModal h3');
+            const modalDesc = document.querySelector('#importModal p');
+            const rowExisting = document.getElementById('rowExistingTimetable');
+            const actionBtn = document.getElementById('importActionBtn');
+
+            if (isEditMode) {
+                if (modalTitle) modalTitle.textContent = 'Existing Timetable';
+                if (modalDesc) modalDesc.textContent = 'Upload CSV files for teachers, class-sections, subjects, and existing timetable.';
+                if (rowExisting) rowExisting.style.display = 'flex';
+                if (actionBtn) {
+                    actionBtn.textContent = 'Load Timetable';
+                    actionBtn.onclick = performExistingTimetableImport;
+                }
+            } else {
+                if (modalTitle) modalTitle.textContent = '📥 Import Data';
+                if (modalDesc) modalDesc.textContent = 'Upload CSV files for teachers, class-sections, and subjects.';
+                if (rowExisting) rowExisting.style.display = 'none';
+                if (actionBtn) {
+                    actionBtn.textContent = '📥 Import All';
+                    actionBtn.onclick = performImport;
+                }
+            }
+
             document.getElementById('importModal').classList.add('active');
-            document.getElementById('importLog').textContent = 'Ready to import. Select CSV files above.';
+            document.getElementById('importLog').textContent = isEditMode ? 'Ready to load timetable. Select CSV files above.' : 'Ready to import. Select CSV files above.';
             document.getElementById('fileTeachers').value = '';
             document.getElementById('fileClasses').value = '';
             document.getElementById('fileSubjects').value = '';
+            const fileExisting = document.getElementById('fileExistingTimetable');
+            if (fileExisting) fileExisting.value = '';
             document.getElementById('statusTeachers').textContent = 'Not loaded';
             document.getElementById('statusClasses').textContent = 'Not loaded';
             document.getElementById('statusSubjects').textContent = 'Not loaded';
-            importFiles = { teachers: null, classes: null, subjects: null };
+            const statusExisting = document.getElementById('statusExistingTimetable');
+            if (statusExisting) statusExisting.textContent = 'Not loaded';
+            importFiles = { teachers: null, classes: null, subjects: null, existing: null };
         }
 
         function closeImportModal() {
@@ -1937,9 +2488,9 @@
                     const newClasses = [];
                     for (let i = 1; i < classData.length; i++) {
                         const row = classData[i];
-                        const grade = row[classIdx]?.trim() || '';
+                        const grade = (row[classIdx]?.trim() || '').replace(/^Class-/i, '');
                         const section = row[sectionIdx]?.trim() || '';
-                        if (grade && section) {
+                        if (grade && section && !newClasses.some(c => classKey(c.grade, c.section) === classKey(grade, section))) {
                             newClasses.push({ grade, section });
                         }
                     }
@@ -1979,10 +2530,14 @@
 
                 state.loaded = true;
 
+                // In Create mode, ALWAYS reset timetable to a blank grid
+                if (state.mode === 'create') {
+                    state.timetable = {};
+                }
                 // Initialize timetable for all classes
                 for (const c of state.classSections) {
                     const ck = classKey(c.grade, c.section);
-                    if (!state.timetable[ck]) {
+                    if (!state.timetable[ck] || state.mode === 'create') {
                         state.timetable[ck] = DAYS.map(() => Array(PERIODS).fill(null));
                     }
                 }
@@ -2009,7 +2564,7 @@
                 reader.onload = function(e) {
                     try {
                         const text = e.target.result;
-                        const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+                        const lines = text.split(/\r\n|\r|\n/).filter(line => line.trim() !== '');
                         const data = lines.map(line => {
                             const fields = [];
                             let current = '';
@@ -2018,13 +2573,13 @@
                                 if (ch === '"') {
                                     inQuotes = !inQuotes;
                                 } else if (ch === ',' && !inQuotes) {
-                                    fields.push(current.trim());
+                                    fields.push(current.trim().replace(/^["']|["']$/g, ''));
                                     current = '';
                                 } else {
                                     current += ch;
                                 }
                             }
-                            fields.push(current.trim());
+                            fields.push(current.trim().replace(/^["']|["']$/g, ''));
                             return fields;
                         });
                         resolve(data);
