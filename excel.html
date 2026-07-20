@@ -1790,6 +1790,78 @@
                     });
                     showToast('Imported ' + count + ' teachers');
                     render();
+                } else if (type === 'timetable') {
+                    const expectedHeader = ['Class-Section', 'Day'];
+                    if (headers.length < 3 || headers[0] !== expectedHeader[0] || headers[1] !== expectedHeader[1]) {
+                        showToast('Invalid timetable CSV header', 'error');
+                    } else {
+                        let importedRows = 0;
+                        const periodsInFile = headers.slice(2).map(h => h.trim()).filter(h => /^P\d+$/.test(h));
+                        if (periodsInFile.length > 0) {
+                            const targetPeriods = Math.min(Math.max(periodsInFile.length, 4), 10);
+                            if (targetPeriods !== getPeriodsPerDay()) {
+                                appData.settings.periodsPerDay = targetPeriods;
+                                getClassKeys().forEach(c => {
+                                    if (!appData.timetable[c]) appData.timetable[c] = {};
+                                    DAYS.forEach(d => {
+                                        if (!appData.timetable[c][d]) appData.timetable[c][d] = {};
+                                        for (let p = 1; p <= targetPeriods; p++) {
+                                            const key = 'P' + p;
+                                            if (!appData.timetable[c][d][key]) {
+                                                appData.timetable[c][d][key] = { subject: null, teacher: null };
+                                            }
+                                        }
+                                    });
+                                });
+                            }
+                        }
+                        data.forEach(row => {
+                            if (row.length < 3) return;
+                            const classSection = row[0].trim();
+                            const day = row[1].trim();
+                            if (!classSection || !day) return;
+                            const parts = classSection.split('-');
+                            if (parts.length < 2) return;
+                            const cls = parts[0].trim();
+                            const sec = parts.slice(1).join('-').trim();
+                            if (!cls || !sec) return;
+                            if (!classExists(cls, sec)) {
+                                addClass(cls, sec);
+                            }
+                            const key = getClassKey(cls, sec);
+                            if (!appData.timetable[key]) {
+                                addClass(cls, sec);
+                            }
+                            row.slice(2).forEach((cell, index) => {
+                                const periodKey = 'P' + (index + 1);
+                                if (!cell || !cell.trim()) {
+                                    clearCell(key, day, periodKey);
+                                    return;
+                                }
+                                const parts = cell.split(':');
+                                const teacherId = parts[0] ? parts[0].trim().toUpperCase() : '';
+                                const teacherName = parts[1] ? parts[1].trim() : teacherId;
+                                const subjectCode = parts[2] ? parts[2].trim().toUpperCase() : '';
+                                if (!teacherId || !subjectCode) return;
+                                if (!appData.teachers[teacherId]) {
+                                    appData.teachers[teacherId] = {
+                                        name: teacherName || teacherId,
+                                        minimalId: teacherId.slice(0, 2)
+                                    };
+                                }
+                                if (!appData.subjects[subjectCode]) {
+                                    appData.subjects[subjectCode] = {
+                                        name: subjectCode,
+                                        minimalCode: subjectCode.slice(0, 2)
+                                    };
+                                }
+                                setCellValue(key, day, periodKey, subjectCode, teacherId);
+                            });
+                            importedRows++;
+                        });
+                        showToast('Imported ' + importedRows + ' timetable rows');
+                        render();
+                    }
                 }
                 saveData();
             };
@@ -2392,18 +2464,12 @@
 
         // ───────────── BUTTON BINDINGS ─────────────
         document.getElementById('btnImport').addEventListener('click', function() {
-            const type = prompt('Import type: classes, subjects, teachers');
-            if (!type) return;
-            if (!['classes', 'subjects', 'teachers'].includes(type)) {
-                showToast('Type must be: classes, subjects, teachers', 'error');
-                return;
-            }
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = '.csv';
             input.onchange = function(e) {
                 if (this.files && this.files[0]) {
-                    importCSV(this.files[0], type);
+                    importCSV(this.files[0], 'timetable');
                 }
             };
             input.click();
