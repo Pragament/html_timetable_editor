@@ -21,7 +21,6 @@
             font-size: 12px;
             user-select: none;
         }
-        /* ───────────── SCROLLBAR ───────────── */
         ::-webkit-scrollbar {
             width: 4px;
             height: 4px;
@@ -47,7 +46,7 @@
             background: #f8fafc;
         }
 
-        /* top bar – collapsible */
+        /* top bar */
         #topBar {
             flex-shrink: 0;
             background: #ffffff;
@@ -90,266 +89,16 @@
             color: #334155;
             white-space: nowrap;
         }
-        #topBar .stat-item strong {
-            color: #0f172a;
-            font-weight: 600;
-        }
         #topBar .stat-item .num {
             font-weight: 700;
             color: #2563eb;
             margin: 0 2px;
         }
-
-        /* main area – table + right sidebar */
-        #mainArea {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-        }
-
-        #tableWrap {
-            flex: 1;
-            overflow: auto;
-            padding: 4px 6px 6px 6px;
-            background: #f8fafc;
-        }
-        #tableWrap table {
-            border-collapse: collapse;
-            width: 100%;
-            min-width: 1200px;
-            table-layout: fixed;
-            font-size: 10px;
-            border: 1px solid #dbe0e7;
-            background: #ffffff;
-            border-radius: 6px;
-            overflow: hidden;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
-        }
-        #tableWrap th,
-        #tableWrap td {
-            border: 1px solid #e2e8f0;
-            padding: 2px 3px;
-            text-align: center;
-            vertical-align: middle;
-            height: 28px;
-            min-height: 28px;
-            max-height: 28px;
-            overflow: hidden;
-            white-space: nowrap;
-            position: relative;
-        }
-        #tableWrap th {
-            background: #f1f5f9;
-            font-weight: 600;
-            color: #1e293b;
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            height: 26px;
-            min-height: 26px;
-            max-height: 26px;
-        }
-        #tableWrap .col-class {
-            width: 52px;
-            min-width: 52px;
-            max-width: 52px;
-            font-weight: 600;
-            background: #f8fafc;
-            font-size: 10px;
-        }
-        #tableWrap .col-teacher {
-            width: 50px;
-            min-width: 50px;
-            max-width: 50px;
-            background: #f8fafc;
-            font-size: 9px;
-        }
-        #tableWrap .col-period {
-            width: 30px;
-            min-width: 28px;
-            max-width: 32px;
-        }
-        #tableWrap .col-period .cell-content {
-            font-size: 8.5px;
-            line-height: 1.2;
-            cursor: pointer;
-            border-radius: 2px;
-            padding: 1px 2px;
-            transition: background 0.08s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            min-height: 22px;
-        }
-        #tableWrap .col-period .cell-content .subj {
-            font-weight: 700;
-            color: #0f172a;
-            font-size: 9px;
-        }
-        #tableWrap .col-period .cell-content .tchr {
-            font-weight: 400;
-            color: #475569;
-            font-size: 7.5px;
-            opacity: 0.8;
-        }
-        #tableWrap .col-period .cell-content.empty {
-            color: #cbd5e1;
-            font-size: 14px;
-            font-weight: 300;
-        }
-        #tableWrap .col-period .cell-content:hover {
-            background: #eef2ff;
-        }
-        #tableWrap .col-period .cell-content.filled {
-            background: #f0f4ff;
-        }
-        #tableWrap .col-period .cell-content.filled:hover {
-            background: #dbeafe;
-        }
-        /* conflict highlight */
-        #tableWrap .col-period .cell-content.conflict {
-            background: #fee2e2 !important;
-            box-shadow: inset 0 0 0 1px #f87171;
-        }
-        #tableWrap .col-period .cell-content.conflict::after {
-            content: "⚡";
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            font-size: 8px;
+        #topBar .stat-item .num.danger {
             color: #dc2626;
         }
 
-        /* period separator */
-        .period-sep {
-            border-left: 2.5px solid #94a3b8 !important;
-        }
-
-        /* row hover */
-        #tableWrap tbody tr:hover td {
-            background: #f8fafc;
-        }
-        #tableWrap tbody tr:hover td.col-class,
-        #tableWrap tbody tr:hover td.col-teacher {
-            background: #f1f5f9;
-        }
-
-        /* ───────────── RIGHT SIDEBAR ───────────── */
-        #rightSidebar {
-            flex-shrink: 0;
-            width: 200px;
-            background: #ffffff;
-            border-left: 1px solid #e2e8f0;
-            overflow: hidden;
-            transition: width 0.2s;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            z-index: 15;
-        }
-        #rightSidebar.collapsed {
-            width: 28px !important;
-        }
-        #rightSidebar .sidebar-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            color: #64748b;
-            padding: 4px 6px;
-            width: 28px;
-            text-align: center;
-        }
-        #rightSidebar .sidebar-toggle:hover {
-            color: #0f172a;
-        }
-        #rightSidebar .sidebar-inner {
-            flex: 1;
-            overflow: auto;
-            padding: 6px 8px;
-        }
-        #rightSidebar .sidebar-inner h4 {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #64748b;
-            margin: 6px 0 4px 0;
-            border-bottom: 1px solid #e9eef3;
-            padding-bottom: 3px;
-        }
-        #rightSidebar .sidebar-inner .stat-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 9px;
-            padding: 1px 0;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        #rightSidebar .sidebar-inner .stat-row .label {
-            color: #475569;
-        }
-        #rightSidebar .sidebar-inner .stat-row .value {
-            font-weight: 600;
-            color: #0f172a;
-        }
-        #rightSidebar .sidebar-inner .stat-row .value.highlight {
-            color: #2563eb;
-        }
-
-        /* ───────────── BOTTOM BAR ───────────── */
-        #bottomBar {
-            flex-shrink: 0;
-            background: #ffffff;
-            border-top: 1px solid #e2e8f0;
-            transition: all 0.2s;
-            overflow: hidden;
-            position: relative;
-            z-index: 20;
-        }
-        #bottomBar.collapsed {
-            height: 28px !important;
-        }
-        #bottomBar .bar-inner {
-            padding: 4px 14px;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 6px 18px;
-        }
-        #bottomBar .bar-toggle {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            color: #64748b;
-            padding: 0 4px;
-        }
-        #bottomBar .bar-toggle:hover {
-            color: #0f172a;
-        }
-        #bottomBar .stat-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 10px;
-            background: #f1f5f9;
-            padding: 1px 10px;
-            border-radius: 12px;
-            color: #334155;
-            white-space: nowrap;
-        }
-        #bottomBar .stat-item .num {
-            font-weight: 700;
-            color: #2563eb;
-            margin: 0 2px;
-        }
-
-        /* ───────────── TOOLBAR (above table) ───────────── */
+        /* toolbar */
         #toolbar {
             flex-shrink: 0;
             display: flex;
@@ -422,8 +171,283 @@
             background: #fff;
             height: 22px;
         }
+        #toolbar input[type="number"] {
+            width: 42px;
+        }
+        #toolbar input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
 
-        /* ───────────── CONTEXT MENU ───────────── */
+        /* main area */
+        #mainArea {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #tableWrap {
+            flex: 1;
+            overflow: auto;
+            padding: 4px 6px 6px 6px;
+            background: #f8fafc;
+        }
+        #tableWrap table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 1000px;
+            table-layout: fixed;
+            font-size: 10px;
+            border: 1px solid #dbe0e7;
+            background: #ffffff;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+        }
+        #tableWrap th,
+        #tableWrap td {
+            border: 1px solid #e2e8f0;
+            padding: 2px 3px;
+            text-align: center;
+            vertical-align: middle;
+            height: 28px;
+            min-height: 28px;
+            max-height: 28px;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+        #tableWrap th {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        #tableWrap th .period-time {
+            font-weight: 400;
+            font-size: 7px;
+            color: #64748b;
+            display: block;
+            margin-top: 1px;
+        }
+        #tableWrap .col-class {
+            width: 40px;
+            min-width: 40px;
+            max-width: 40px;
+            font-weight: 600;
+            background: #f8fafc;
+            font-size: 10px;
+        }
+        #tableWrap .col-section {
+            width: 30px;
+            min-width: 30px;
+            max-width: 30px;
+            font-weight: 600;
+            background: #f8fafc;
+            font-size: 10px;
+        }
+        #tableWrap .col-teacher {
+            width: 40px;
+            min-width: 40px;
+            max-width: 40px;
+            background: #f8fafc;
+            font-size: 8.5px;
+            cursor: pointer;
+        }
+        #tableWrap .col-teacher:hover {
+            background: #eef2ff;
+        }
+        #tableWrap .col-period {
+            width: 28px;
+            min-width: 26px;
+            max-width: 30px;
+        }
+        #tableWrap .col-period .cell-content {
+            font-size: 8px;
+            line-height: 1.15;
+            cursor: pointer;
+            border-radius: 2px;
+            padding: 1px 2px;
+            transition: background 0.08s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 22px;
+        }
+        #tableWrap .col-period .cell-content .subj {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 8.5px;
+        }
+        #tableWrap .col-period .cell-content .tchr {
+            font-weight: 400;
+            color: #475569;
+            font-size: 7px;
+            opacity: 0.8;
+        }
+        #tableWrap .col-period .cell-content.empty {
+            color: #cbd5e1;
+            font-size: 12px;
+            font-weight: 300;
+        }
+        #tableWrap .col-period .cell-content:hover {
+            background: #eef2ff;
+        }
+        #tableWrap .col-period .cell-content.filled {
+            background: #f0f4ff;
+        }
+        #tableWrap .col-period .cell-content.filled:hover {
+            background: #dbeafe;
+        }
+        #tableWrap .col-period .cell-content.conflict {
+            background: #fee2e2 !important;
+            box-shadow: inset 0 0 0 1px #f87171;
+        }
+        #tableWrap .col-period .cell-content.conflict::after {
+            content: "⚡";
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            font-size: 8px;
+            color: #dc2626;
+        }
+
+        /* period group separator */
+        .period-group-sep {
+            border-left: 2.5px solid #94a3b8 !important;
+        }
+
+        #tableWrap tbody tr:hover td {
+            background: #f8fafc;
+        }
+        #tableWrap tbody tr:hover td.col-class,
+        #tableWrap tbody tr:hover td.col-section,
+        #tableWrap tbody tr:hover td.col-teacher {
+            background: #f1f5f9;
+        }
+
+        /* right sidebar */
+        #rightSidebar {
+            flex-shrink: 0;
+            width: 200px;
+            background: #ffffff;
+            border-left: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: width 0.2s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 15;
+        }
+        #rightSidebar.collapsed {
+            width: 28px !important;
+        }
+        #rightSidebar .sidebar-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #64748b;
+            padding: 4px 6px;
+            width: 28px;
+            text-align: center;
+        }
+        #rightSidebar .sidebar-toggle:hover {
+            color: #0f172a;
+        }
+        #rightSidebar .sidebar-inner {
+            flex: 1;
+            overflow: auto;
+            padding: 6px 8px;
+        }
+        #rightSidebar .sidebar-inner h4 {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin: 6px 0 4px 0;
+            border-bottom: 1px solid #e9eef3;
+            padding-bottom: 3px;
+        }
+        #rightSidebar .sidebar-inner .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            padding: 1px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        #rightSidebar .sidebar-inner .stat-row .label {
+            color: #475569;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        #rightSidebar .sidebar-inner .stat-row .value {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        #rightSidebar .sidebar-inner .stat-row .value.highlight {
+            color: #2563eb;
+        }
+
+        /* bottom bar */
+        #bottomBar {
+            flex-shrink: 0;
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            transition: all 0.2s;
+            overflow: hidden;
+            position: relative;
+            z-index: 20;
+        }
+        #bottomBar.collapsed {
+            height: 28px !important;
+        }
+        #bottomBar .bar-inner {
+            padding: 4px 14px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px 18px;
+        }
+        #bottomBar .bar-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #64748b;
+            padding: 0 4px;
+        }
+        #bottomBar .bar-toggle:hover {
+            color: #0f172a;
+        }
+        #bottomBar .stat-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            background: #f1f5f9;
+            padding: 1px 10px;
+            border-radius: 12px;
+            color: #334155;
+            white-space: nowrap;
+        }
+        #bottomBar .stat-item .num {
+            font-weight: 700;
+            color: #2563eb;
+            margin: 0 2px;
+        }
+
+        /* context menu */
         #contextMenu {
             display: none;
             position: fixed;
@@ -432,7 +456,7 @@
             border-radius: 6px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
             padding: 4px 0;
-            min-width: 120px;
+            min-width: 130px;
             z-index: 999;
         }
         #contextMenu .menu-item {
@@ -459,7 +483,7 @@
             margin: 3px 8px;
         }
 
-        /* ───────────── MODAL / OVERLAY ───────────── */
+        /* modal overlay */
         #modalOverlay {
             display: none;
             position: fixed;
@@ -476,9 +500,9 @@
             background: #ffffff;
             border-radius: 12px;
             padding: 20px 28px;
-            max-width: 520px;
-            width: 90%;
-            max-height: 80vh;
+            max-width: 560px;
+            width: 92%;
+            max-height: 85vh;
             overflow: auto;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
         }
@@ -487,6 +511,14 @@
             font-weight: 600;
             margin-bottom: 12px;
             color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #modalOverlay .modal h3 .badge {
+            font-size: 10px;
+            font-weight: 400;
+            color: #64748b;
         }
         #modalOverlay .modal label {
             display: block;
@@ -511,11 +543,21 @@
             border-color: #2563eb;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
         }
+        #modalOverlay .modal .form-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        #modalOverlay .modal .form-row>* {
+            flex: 1;
+            min-width: 80px;
+        }
         #modalOverlay .modal .btn-row {
             display: flex;
             gap: 8px;
             margin-top: 16px;
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
         #modalOverlay .modal .btn-row button {
             padding: 6px 18px;
@@ -546,12 +588,19 @@
         #modalOverlay .modal .btn-row .btn-danger:hover {
             background: #b91c1c;
         }
+        #modalOverlay .modal .btn-row .btn-success {
+            background: #16a34a;
+            color: #fff;
+        }
+        #modalOverlay .modal .btn-row .btn-success:hover {
+            background: #15803d;
+        }
         #modalOverlay .modal .item-list {
-            max-height: 180px;
+            max-height: 220px;
             overflow: auto;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
-            padding: 4px 0;
+            padding: 2px 0;
             margin-top: 6px;
         }
         #modalOverlay .modal .item-list .item {
@@ -562,39 +611,94 @@
             font-size: 11px;
             border-bottom: 1px solid #f1f5f9;
         }
+        #modalOverlay .modal .item-list .item:last-child {
+            border-bottom: none;
+        }
         #modalOverlay .modal .item-list .item .actions button {
             background: none;
             border: none;
             cursor: pointer;
             font-size: 12px;
-            padding: 0 4px;
+            padding: 0 5px;
             color: #94a3b8;
+            transition: color 0.1s;
         }
         #modalOverlay .modal .item-list .item .actions button:hover {
+            color: #2563eb;
+        }
+        #modalOverlay .modal .item-list .item .actions button.del:hover {
             color: #dc2626;
         }
         #modalOverlay .modal .item-list .item .code {
             font-weight: 600;
             color: #0f172a;
+            margin-right: 6px;
         }
         #modalOverlay .modal .item-list .item .name {
             color: #475569;
         }
+        #modalOverlay .modal .item-list .item .meta {
+            color: #94a3b8;
+            font-size: 9px;
+        }
+        #modalOverlay .modal .item-list .item .info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        #modalOverlay .modal .empty-msg {
+            color: #94a3b8;
+            font-size: 11px;
+            padding: 12px;
+            text-align: center;
+        }
+        #modalOverlay .modal .import-area {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px dashed #e2e8f0;
+            border-radius: 6px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        #modalOverlay .modal .import-area input[type="file"] {
+            flex: 1;
+            padding: 4px;
+            font-size: 10px;
+            min-width: 140px;
+        }
+        #modalOverlay .modal .import-area button {
+            padding: 4px 14px;
+            font-size: 10px;
+        }
 
-        /* ───────────── CELL EDITOR (inline) ───────────── */
+        /* cell editor */
         .cell-editor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
             display: flex;
             gap: 2px;
             align-items: center;
-            width: 100%;
-            height: 100%;
-            min-height: 24px;
+            width: min(280px, calc(100vw - 40px));
+            min-width: 180px;
+            max-width: 320px;
+            height: auto;
+            padding: 2px;
+            box-sizing: border-box;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            box-shadow: 0 5px 16px rgba(15, 23, 42, 0.14);
         }
         .cell-editor input {
             border: 1px solid #2563eb;
             border-radius: 2px;
             padding: 1px 3px;
-            font-size: 8.5px;
+            font-size: 8px;
             width: 100%;
             height: 20px;
             min-width: 0;
@@ -607,11 +711,11 @@
         }
         .cell-editor .subj-input {
             flex: 1.2;
-            min-width: 30px;
+            min-width: 28px;
         }
         .cell-editor .tchr-input {
             flex: 1;
-            min-width: 24px;
+            min-width: 22px;
         }
         .cell-editor .editor-actions {
             display: flex;
@@ -631,91 +735,7 @@
             background: #e2e8f0;
         }
 
-        /* ───────────── RESPONSIVE ───────────── */
-        @media (max-width: 1200px) {
-            #rightSidebar {
-                width: 160px;
-            }
-            #rightSidebar.collapsed {
-                width: 24px !important;
-            }
-            #tableWrap table {
-                font-size: 9px;
-                min-width: 1000px;
-            }
-            #tableWrap .col-period {
-                width: 26px;
-                min-width: 24px;
-                max-width: 28px;
-            }
-        }
-        @media (max-width: 900px) {
-            #rightSidebar {
-                width: 130px;
-            }
-            #rightSidebar.collapsed {
-                width: 20px !important;
-            }
-            #tableWrap table {
-                font-size: 8px;
-                min-width: 800px;
-            }
-            #tableWrap .col-period {
-                width: 22px;
-                min-width: 20px;
-                max-width: 24px;
-            }
-            #tableWrap .col-class {
-                width: 40px;
-                min-width: 40px;
-                max-width: 40px;
-            }
-            #tableWrap .col-teacher {
-                width: 38px;
-                min-width: 38px;
-                max-width: 38px;
-            }
-            #topBar .stat-item {
-                font-size: 9px;
-                padding: 1px 6px;
-            }
-            #bottomBar .stat-item {
-                font-size: 9px;
-                padding: 1px 6px;
-            }
-        }
-
-        /* ───────────── MISC ───────────── */
-        .badge {
-            display: inline-block;
-            background: #dbeafe;
-            color: #1d4ed8;
-            font-size: 8px;
-            padding: 0 6px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-        .text-muted {
-            color: #94a3b8;
-        }
-        .flex {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .gap-1 {
-            gap: 4px;
-        }
-        .w-full {
-            width: 100%;
-        }
-        .truncate {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        /* ───────────── TOAST ───────────── */
+        /* toast */
         #toast {
             position: fixed;
             bottom: 60px;
@@ -741,22 +761,166 @@
         #toast.error {
             background: #dc2626;
         }
+
+        /* responsive */
+        @media (max-width: 1200px) {
+            #rightSidebar {
+                width: 160px;
+            }
+            #rightSidebar.collapsed {
+                width: 24px !important;
+            }
+            #tableWrap table {
+                font-size: 9px;
+                min-width: 1000px;
+            }
+            #tableWrap .col-period {
+                width: 24px;
+                min-width: 22px;
+                max-width: 26px;
+            }
+        }
+        @media (max-width: 900px) {
+            #rightSidebar {
+                width: 130px;
+            }
+            #rightSidebar.collapsed {
+                width: 20px !important;
+            }
+            #tableWrap table {
+                font-size: 8px;
+                min-width: 800px;
+            }
+            #tableWrap .col-period {
+                width: 20px;
+                min-width: 18px;
+                max-width: 22px;
+            }
+            #tableWrap .col-class {
+                width: 36px;
+                min-width: 36px;
+                max-width: 36px;
+            }
+            #tableWrap .col-section {
+                width: 28px;
+                min-width: 28px;
+                max-width: 28px;
+            }
+            #tableWrap .col-teacher {
+                width: 38px;
+                min-width: 38px;
+                max-width: 38px;
+            }
+            #topBar .stat-item {
+                font-size: 9px;
+                padding: 1px 6px;
+            }
+            #bottomBar .stat-item {
+                font-size: 9px;
+                padding: 1px 6px;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 8px;
+            padding: 0 6px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .text-muted {
+            color: #94a3b8;
+        }
+        .flex {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .w-full {
+            width: 100%;
+        }
+        .mt-1 {
+            margin-top: 6px;
+        }
+        .mb-1 {
+            margin-bottom: 6px;
+        }
+        .gap-1 {
+            gap: 4px;
+        }
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .edit-form {
+            background: #f8fafc;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-top: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .edit-form .form-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .edit-form .form-row>* {
+            flex: 1;
+            min-width: 70px;
+        }
+        .edit-form .btn-row {
+            margin-top: 8px;
+            display: flex;
+            gap: 6px;
+            justify-content: flex-end;
+        }
+        .edit-form .btn-row button {
+            padding: 3px 12px;
+            font-size: 10px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+        .edit-form .btn-row .btn-save {
+            background: #2563eb;
+            color: #fff;
+        }
+        .edit-form .btn-row .btn-save:hover {
+            background: #1d4ed8;
+        }
+        .edit-form .btn-row .btn-cancel {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+        .edit-form .btn-row .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+        .edit-form .btn-row .btn-danger {
+            background: #dc2626;
+            color: #fff;
+        }
+        .edit-form .btn-row .btn-danger:hover {
+            background: #b91c1c;
+        }
     </style>
 </head>
 <body>
 
     <div id="app">
-        <!-- TOP BAR (collapsible) -->
+        <!-- TOP BAR -->
         <div id="topBar">
             <div class="bar-inner">
                 <button class="bar-toggle" id="topBarToggle" title="Toggle top stats">▾</button>
-                <span class="stat-item">📚 Total Periods: <span class="num" id="totalPeriods">0</span></span>
+                <span class="stat-item">📚 Total: <span class="num" id="totalPeriods">0</span></span>
                 <span class="stat-item">📋 Classes: <span class="num" id="totalClasses">0</span></span>
                 <span class="stat-item">👨‍🏫 Teachers: <span class="num" id="totalTeachers">0</span></span>
                 <span class="stat-item">📖 Subjects: <span class="num" id="totalSubjects">0</span></span>
-                <span class="stat-item">⚠️ Conflicts: <span class="num" id="totalConflicts" style="color:#dc2626;">0</span></span>
+                <span class="stat-item">⚠️ Conflicts: <span class="num danger" id="totalConflicts">0</span></span>
                 <span style="flex:1;"></span>
-                <span style="font-size:9px;color:#94a3b8;" id="lastSaved">saved</span>
+                <span style="font-size:9px;color:#94a3b8;" id="lastSaved">ready</span>
             </div>
         </div>
 
@@ -765,18 +929,18 @@
             <button class="primary" id="btnImport">📥 Import CSV</button>
             <button class="success" id="btnExport">📤 Export CSV</button>
             <div class="sep"></div>
-            <button id="btnSettings">⚙️ Settings</button>
+            <button id="btnSettings">⚙️ Times</button>
             <button id="btnManageClasses">📋 Classes</button>
             <button id="btnManageSubjects">📖 Subjects</button>
             <button id="btnManageTeachers">👨‍🏫 Teachers</button>
             <div class="sep"></div>
-            <button id="btnClearAll" class="danger">🗑️ Clear All</button>
+            <button id="btnClearAll" class="danger">🗑️ Clear Data</button>
             <div class="sep"></div>
-            <label>Periods/day: <input type="number" id="periodsPerDay" value="7" min="4" max="10" style="width:42px;" /></label>
-            <label>Apply to all days: <input type="checkbox" id="applyAllDays" /></label>
+            <label>Periods/day: <input type="number" id="periodsPerDay" value="7" min="4" max="10" /></label>
+            <label>Apply all days: <input type="checkbox" id="applyAllDays" /></label>
         </div>
 
-        <!-- MAIN: table + right sidebar -->
+        <!-- MAIN -->
         <div id="mainArea">
             <div id="tableWrap">
                 <table id="timetable">
@@ -797,7 +961,7 @@
             </div>
         </div>
 
-        <!-- BOTTOM BAR (collapsible) -->
+        <!-- BOTTOM BAR -->
         <div id="bottomBar">
             <div class="bar-inner">
                 <button class="bar-toggle" id="bottomBarToggle" title="Toggle bottom stats">▾</button>
@@ -821,11 +985,9 @@
         <div class="menu-item" data-action="applyAll">📌 Apply to all days</div>
     </div>
 
-    <!-- MODAL OVERLAY -->
+    <!-- MODAL -->
     <div id="modalOverlay">
-        <div class="modal" id="modalContent">
-            <!-- dynamic content -->
-        </div>
+        <div class="modal" id="modalContent"></div>
     </div>
 
     <!-- TOAST -->
@@ -833,163 +995,253 @@
 
     <script>
         // ═══════════════════════════════════════════════════════════════
-        //  DATA LAYER
+        // DATA LAYER
         // ═══════════════════════════════════════════════════════════════
 
         const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
         const DAY_SHORT = { Monday: 'M', Tuesday: 'T', Wednesday: 'W', Thursday: 'Th', Friday: 'F' };
+        const DAY_ABBR = { Monday: 'M', Tuesday: 'T', Wednesday: 'W', Thursday: 'Th', Friday: 'F' };
 
         let appData = {
-            classSections: [],
-            classTeachers: {}, // classKey -> teacherId
+            classes: [], // [{ class: "I", section: "A" }, ...]
+            classTeachers: {}, // "I-A" -> teacherId
             subjects: {}, // code -> { name, minimalCode }
             teachers: {}, // id -> { name, minimalId }
-            timetable: {}, // classKey -> day -> period -> { subject, teacher }
+            timetable: {}, // "I-A" -> day -> period -> { subject, teacher }
             settings: {
                 periodsPerDay: 7,
-                periodTimes: {} // P1..P7 -> { start, end }
+                periodTimes: {}
             }
         };
 
-        let clipboard = null; // { subject, teacher }
-        let contextTarget = null; // { classKey, day, period }
-        let editingCell = null; // { classKey, day, period, element }
-        let dataVersion = 0;
+        let clipboard = null;
+        let contextTarget = null;
+        let editingCell = null;
 
-        // ───────────── INIT ─────────────
-        function initDefaultTimes() {
-            const times = {};
-            const slots = [
-                ['08:00', '08:45'],
-                ['08:45', '09:30'],
-                ['09:30', '10:15'],
-                ['10:30', '11:15'],
-                ['11:15', '12:00'],
-                ['12:00', '12:45'],
-                ['13:30', '14:15']
-            ];
-            for (let i = 1; i <= 7; i++) {
-                times['P' + i] = { start: slots[i - 1][0], end: slots[i - 1][1] };
-            }
-            return times;
+        // ───────────── HELPERS ─────────────
+        function getClassKey(cls, sec) { return cls + '-' + sec; }
+
+        function getClassFromKey(key) { const p = key.split('-'); return { class: p[0] || '', section: p[1] || '' }; }
+
+        function getSubjectMinimal(code) { const s = appData.subjects[code]; return s ? s.minimalCode : (code || ''); }
+
+        function getTeacherMinimal(id) { const t = appData.teachers[id]; return t ? t.minimalId : (id || ''); }
+
+        function getSubjectName(code) { const s = appData.subjects[code]; return s ? s.name : code; }
+
+        function getTeacherName(id) { const t = appData.teachers[id]; return t ? t.name : id; }
+
+        function getPeriodsPerDay() { return appData.settings.periodsPerDay || 7; }
+
+        function getPeriodKey(p) { return 'P' + p; }
+
+        function getAllPeriodKeys() {
+            const n = getPeriodsPerDay();
+            const keys = [];
+            for (let i = 1; i <= n; i++) keys.push('P' + i);
+            return keys;
         }
 
-        function initSampleData() {
-            const classes = ['I-A', 'I-B', 'II-A', 'II-B', 'III-A', 'III-B', 'IV-A', 'IV-B', 'V-A', 'V-B', 'VI-A', 'VI-B',
-                'VII-A', 'VIII-A', 'IX-A', 'X-A'
-            ];
-            const teachers = {
-                AKH: { name: 'Akhila', minimalId: 'AK' },
-                APA: { name: 'Aparna', minimalId: 'AP' },
-                CHA: { name: 'Chandrakala', minimalId: 'C' },
-                DEE: { name: 'Deepika', minimalId: 'DE' },
-                DIV: { name: 'Divya', minimalId: 'DI' },
-                MAN: { name: 'Manjula', minimalId: 'MA' },
-                MOU: { name: 'Mounika', minimalId: 'MO' },
-                PRA: { name: 'Pravalika', minimalId: 'P' },
-                ROJ: { name: 'Roja', minimalId: 'R' },
-                SAI: { name: 'Sai Priya', minimalId: 'SP' },
-                SAM: { name: 'Sameera', minimalId: 'SAM' },
-                SAR: { name: 'Sandhya Rani', minimalId: 'SAR' },
-                SHA: { name: 'Shakeer', minimalId: 'SHA' },
-                SHRA: { name: 'Shravani', minimalId: 'SHR' },
-                SRI: { name: 'Srihitha', minimalId: 'SRI' },
-                SRP: { name: 'Sripadha', minimalId: 'SRP' },
-                SRU: { name: 'Sruthilaya', minimalId: 'SRU' },
-                SUK: { name: 'Sukurtha', minimalId: 'SUK' },
-                SUR: { name: 'Suresh', minimalId: 'SUR' },
-                SUS: { name: 'Sushmitha', minimalId: 'SUS' }
-            };
-            const subjects = {
-                BIO: { name: 'Biology', minimalCode: 'B' },
-                CSC: { name: 'Computer', minimalCode: 'C' },
-                CSL: { name: 'Computer Lab', minimalCode: 'CL' },
-                ENG: { name: 'English', minimalCode: 'E' },
-                EVS: { name: 'EVS', minimalCode: 'EV' },
-                HIN: { name: 'Hindi', minimalCode: 'H' },
-                HIN2: { name: 'Hindi (II Lang)', minimalCode: 'H2' },
-                HIN3: { name: 'Hindi (III Lang)', minimalCode: 'H3' },
-                HIT: { name: 'Hindi/Telugu', minimalCode: 'HT' },
-                HIT2: { name: 'Hindi/Telugu (II Lang)', minimalCode: 'HT2' },
-                HIT3: { name: 'Hindi/Telugu (III Lang)', minimalCode: 'HT3' },
-                MTH: { name: 'Maths', minimalCode: 'M' },
-                MTHI: { name: 'Maths (IIT)', minimalCode: 'MI' },
-                PT: { name: 'Physical Training', minimalCode: 'P' },
-                SCI: { name: 'Science', minimalCode: 'S' },
-                SCII: { name: 'Science (IIT)', minimalCode: 'SI' },
-                SOC: { name: 'Social', minimalCode: 'SO' },
-                TEL: { name: 'Telugu', minimalCode: 'T' },
-                TEL2: { name: 'Telugu (II Lang)', minimalCode: 'T2' },
-                TEL3: { name: 'Telugu (III Lang)', minimalCode: 'T3' }
-            };
+        function getCellValue(classKey, day, period) {
+            const c = appData.timetable[classKey];
+            if (!c) return { subject: null, teacher: null };
+            const d = c[day];
+            if (!d) return { subject: null, teacher: null };
+            const pv = d[period];
+            if (!pv) return { subject: null, teacher: null };
+            return pv;
+        }
 
-            appData.classSections = classes;
-            appData.classTeachers = {};
-            classes.forEach(c => {
-                const tIds = Object.keys(teachers);
-                appData.classTeachers[c] = tIds[Math.floor(Math.random() * tIds.length)];
+        function setCellValue(classKey, day, period, subject, teacher) {
+            if (!appData.timetable[classKey]) appData.timetable[classKey] = {};
+            if (!appData.timetable[classKey][day]) appData.timetable[classKey][day] = {};
+            appData.timetable[classKey][day][period] = { subject: subject || null, teacher: teacher || null };
+        }
+
+        function clearCell(classKey, day, period) {
+            if (appData.timetable[classKey] && appData.timetable[classKey][day]) {
+                appData.timetable[classKey][day][period] = { subject: null, teacher: null };
+            }
+        }
+
+        function getPeriodDisplay(p) {
+            const t = appData.settings.periodTimes && appData.settings.periodTimes[p];
+            if (t) return t.start + '–' + t.end;
+            return '';
+        }
+
+        function getClassTeacher(classKey) {
+            return appData.classTeachers[classKey] || null;
+        }
+
+        function setClassTeacher(classKey, teacherId) {
+            if (teacherId && appData.teachers[teacherId]) {
+                appData.classTeachers[classKey] = teacherId;
+            } else {
+                delete appData.classTeachers[classKey];
+            }
+        }
+
+        function getClassList() {
+            return appData.classes || [];
+        }
+
+        function getClassKeys() {
+            return getClassList().map(c => getClassKey(c.class, c.section));
+        }
+
+        function classExists(cls, sec) {
+            return getClassList().some(c => c.class === cls && c.section === sec);
+        }
+
+        function addClass(cls, sec) {
+            if (!cls || !sec) return false;
+            if (classExists(cls, sec)) return false;
+            appData.classes.push({ class: cls, section: sec });
+            const key = getClassKey(cls, sec);
+            appData.timetable[key] = {};
+            DAYS.forEach(d => {
+                appData.timetable[key][d] = {};
+                const pCount = getPeriodsPerDay();
+                for (let p = 1; p <= pCount; p++) {
+                    appData.timetable[key][d]['P' + p] = { subject: null, teacher: null };
+                }
             });
-            appData.subjects = subjects;
-            appData.teachers = teachers;
-            appData.settings.periodTimes = initDefaultTimes();
-            appData.settings.periodsPerDay = 7;
-            appData.timetable = {};
-            classes.forEach(c => {
-                appData.timetable[c] = {};
+            return true;
+        }
+
+        function removeClass(cls, sec) {
+            const key = getClassKey(cls, sec);
+            appData.classes = appData.classes.filter(c => c.class !== cls || c.section !== sec);
+            delete appData.classTeachers[key];
+            delete appData.timetable[key];
+        }
+
+        function updateClass(oldCls, oldSec, newCls, newSec) {
+            if (oldCls === newCls && oldSec === newSec) return true;
+            if (classExists(newCls, newSec)) return false;
+            const oldKey = getClassKey(oldCls, oldSec);
+            const newKey = getClassKey(newCls, newSec);
+            // Move timetable
+            if (appData.timetable[oldKey]) {
+                appData.timetable[newKey] = appData.timetable[oldKey];
+                delete appData.timetable[oldKey];
+            } else {
+                appData.timetable[newKey] = {};
                 DAYS.forEach(d => {
-                    appData.timetable[c][d] = {};
-                    for (let p = 1; p <= 7; p++) {
-                        appData.timetable[c][d]['P' + p] = { subject: null, teacher: null };
+                    appData.timetable[newKey][d] = {};
+                    const pCount = getPeriodsPerDay();
+                    for (let p = 1; p <= pCount; p++) {
+                        appData.timetable[newKey][d]['P' + p] = { subject: null, teacher: null };
                     }
                 });
-            });
-            // Fill some sample data
-            const sampleSubjs = ['ENG', 'TEL', 'EVS', 'MTH', 'SCI', 'SOC', 'HIN', 'PT'];
-            const sampleTeachers = ['APA', 'MOU', 'SAI', 'SAR', 'SUR', 'SUS', 'PRA', 'ROJ'];
-            classes.forEach((c, ci) => {
-                DAYS.forEach((d, di) => {
-                    for (let p = 1; p <= 7; p++) {
-                        const si = (ci + di + p) % sampleSubjs.length;
-                        const ti = (ci + di + p * 2) % sampleTeachers.length;
+            }
+            // Move class teacher
+            if (appData.classTeachers[oldKey]) {
+                appData.classTeachers[newKey] = appData.classTeachers[oldKey];
+                delete appData.classTeachers[oldKey];
+            }
+            // Update class list
+            const idx = appData.classes.findIndex(c => c.class === oldCls && c.section === oldSec);
+            if (idx !== -1) {
+                appData.classes[idx] = { class: newCls, section: newSec };
+            }
+            return true;
+        }
+
+        // ───────────── CONFLICT DETECTION ─────────────
+        function findConflicts() {
+            const conflicts = [];
+            const pCount = getPeriodsPerDay();
+            const teacherSlots = {};
+            getClassKeys().forEach(c => {
+                DAYS.forEach(d => {
+                    for (let p = 1; p <= pCount; p++) {
                         const key = 'P' + p;
-                        if (p <= 5 || (p === 6 && di < 3) || (p === 7 && di < 2)) {
-                            appData.timetable[c][d][key] = {
-                                subject: sampleSubjs[si],
-                                teacher: sampleTeachers[ti]
-                            };
+                        const val = getCellValue(c, d, key);
+                        if (val.subject && val.teacher) {
+                            const tKey = val.teacher + '|' + d + '|' + key;
+                            if (!teacherSlots[tKey]) teacherSlots[tKey] = [];
+                            teacherSlots[tKey].push(c);
                         }
                     }
                 });
             });
+            Object.keys(teacherSlots).forEach(k => {
+                if (teacherSlots[k].length > 1) {
+                    const parts = k.split('|');
+                    conflicts.push({ type: 'teacher', teacher: parts[0], day: parts[1], period: parts[2],
+                        classes: teacherSlots[k] });
+                }
+            });
+            return conflicts;
+        }
+
+        function isConflict(classKey, day, period) {
+            const conflicts = findConflicts();
+            return conflicts.some(c =>
+                c.classes.includes(classKey) && c.day === day && c.period === period
+            );
+        }
+
+        // ───────────── STATS ─────────────
+        function computeStats() {
+            const pCount = getPeriodsPerDay();
+            const stats = {
+                totalPeriods: 0,
+                filledPeriods: 0,
+                byClass: {},
+                byTeacher: {},
+                bySubject: {},
+                byDay: { Monday: 0, Tuesday: 0, Wednesday: 0, Thursday: 0, Friday: 0 }
+            };
+            getClassKeys().forEach(c => {
+                stats.byClass[c] = 0;
+                DAYS.forEach(d => {
+                    for (let p = 1; p <= pCount; p++) {
+                        const key = 'P' + p;
+                        const val = getCellValue(c, d, key);
+                        stats.totalPeriods++;
+                        if (val.subject && val.teacher) {
+                            stats.filledPeriods++;
+                            stats.byClass[c]++;
+                            stats.byDay[d]++;
+                            if (!stats.byTeacher[val.teacher]) stats.byTeacher[val.teacher] = 0;
+                            stats.byTeacher[val.teacher]++;
+                            if (!stats.bySubject[val.subject]) stats.bySubject[val.subject] = 0;
+                            stats.bySubject[val.subject]++;
+                        }
+                    }
+                });
+            });
+            return stats;
         }
 
         // ───────────── STORAGE ─────────────
         function saveData() {
             try {
-                localStorage.setItem('timetableAppData', JSON.stringify(appData));
+                localStorage.setItem('timetableAppData_v2', JSON.stringify(appData));
                 document.getElementById('lastSaved').textContent = 'saved ' + new Date().toLocaleTimeString();
-                dataVersion++;
             } catch (e) { console.warn('Save error', e); }
         }
 
         function loadData() {
             try {
-                const raw = localStorage.getItem('timetableAppData');
+                const raw = localStorage.getItem('timetableAppData_v2');
                 if (raw) {
                     const parsed = JSON.parse(raw);
-                    // deep merge with defaults
-                    appData.classSections = parsed.classSections || [];
+                    appData.classes = parsed.classes || [];
                     appData.classTeachers = parsed.classTeachers || {};
                     appData.subjects = parsed.subjects || {};
                     appData.teachers = parsed.teachers || {};
                     appData.timetable = parsed.timetable || {};
-                    appData.settings = parsed.settings || { periodsPerDay: 7, periodTimes: initDefaultTimes() };
+                    appData.settings = parsed.settings || { periodsPerDay: 7, periodTimes: {} };
                     if (!appData.settings.periodTimes || Object.keys(appData.settings.periodTimes).length === 0) {
                         appData.settings.periodTimes = initDefaultTimes();
                     }
                     if (!appData.settings.periodsPerDay) appData.settings.periodsPerDay = 7;
-                    // ensure all classes have timetable entries
-                    appData.classSections.forEach(c => {
+                    // Ensure all classes have timetable entries
+                    getClassKeys().forEach(c => {
                         if (!appData.timetable[c]) {
                             appData.timetable[c] = {};
                             DAYS.forEach(d => {
@@ -1018,174 +1270,60 @@
             return false;
         }
 
-        // ───────────── HELPERS ─────────────
-        function getSubjectMinimal(code) {
-            const s = appData.subjects[code];
-            return s ? s.minimalCode : (code || '');
+        function clearAllData() {
+            appData.classes = [];
+            appData.classTeachers = {};
+            appData.subjects = {};
+            appData.teachers = {};
+            appData.timetable = {};
+            appData.settings.periodsPerDay = 7;
+            appData.settings.periodTimes = initDefaultTimes();
+            saveData();
+            render();
+            showToast('All data cleared');
         }
 
-        function getTeacherMinimal(id) {
-            const t = appData.teachers[id];
-            return t ? t.minimalId : (id || '');
-        }
-
-        function getSubjectName(code) {
-            const s = appData.subjects[code];
-            return s ? s.name : code;
-        }
-
-        function getTeacherName(id) {
-            const t = appData.teachers[id];
-            return t ? t.name : id;
-        }
-
-        function getPeriodsPerDay() {
-            return appData.settings.periodsPerDay || 7;
-        }
-
-        function getPeriodKey(p) { return 'P' + p; }
-
-        function getCellValue(classKey, day, period) {
-            const c = appData.timetable[classKey];
-            if (!c) return { subject: null, teacher: null };
-            const d = c[day];
-            if (!d) return { subject: null, teacher: null };
-            const pv = d[period];
-            if (!pv) return { subject: null, teacher: null };
-            return pv;
-        }
-
-        function setCellValue(classKey, day, period, subject, teacher) {
-            if (!appData.timetable[classKey]) appData.timetable[classKey] = {};
-            if (!appData.timetable[classKey][day]) appData.timetable[classKey][day] = {};
-            appData.timetable[classKey][day][period] = { subject: subject || null, teacher: teacher || null };
-            dataVersion++;
-        }
-
-        function clearCell(classKey, day, period) {
-            if (appData.timetable[classKey] && appData.timetable[classKey][day]) {
-                appData.timetable[classKey][day][period] = { subject: null, teacher: null };
-                dataVersion++;
+        function initDefaultTimes() {
+            const times = {};
+            const slots = [
+                ['08:00', '08:45'],
+                ['08:45', '09:30'],
+                ['09:30', '10:15'],
+                ['10:30', '11:15'],
+                ['11:15', '12:00'],
+                ['12:00', '12:45'],
+                ['13:30', '14:15']
+            ];
+            for (let i = 1; i <= 7; i++) {
+                times['P' + i] = { start: slots[i - 1][0], end: slots[i - 1][1] };
             }
-        }
-
-        function getAllPeriodKeys() {
-            const n = getPeriodsPerDay();
-            const keys = [];
-            for (let i = 1; i <= n; i++) keys.push('P' + i);
-            return keys;
-        }
-
-        function getDayShort(day) { return DAY_SHORT[day] || day.slice(0, 1); }
-
-        function getPeriodDisplay(p) {
-            const t = appData.settings.periodTimes && appData.settings.periodTimes[p];
-            if (t) return t.start + '–' + t.end;
-            return '';
-        }
-
-        // ───────────── CONFLICT DETECTION ─────────────
-        function findConflicts() {
-            const conflicts = [];
-            const pCount = getPeriodsPerDay();
-            // teacher conflict: same teacher at same day & period across classes
-            const teacherSlots = {};
-            const subjectSlots = {};
-            appData.classSections.forEach(c => {
-                DAYS.forEach(d => {
-                    for (let p = 1; p <= pCount; p++) {
-                        const key = 'P' + p;
-                        const val = getCellValue(c, d, key);
-                        if (val.subject && val.teacher) {
-                            const tKey = val.teacher + '|' + d + '|' + key;
-                            const sKey = val.subject + '|' + d + '|' + key;
-                            if (!teacherSlots[tKey]) teacherSlots[tKey] = [];
-                            teacherSlots[tKey].push(c);
-                            if (!subjectSlots[sKey]) subjectSlots[sKey] = [];
-                            subjectSlots[sKey].push(c);
-                        }
-                    }
-                });
-            });
-            // teacher conflicts (more than 1 class)
-            Object.keys(teacherSlots).forEach(k => {
-                if (teacherSlots[k].length > 1) {
-                    const parts = k.split('|');
-                    conflicts.push({ type: 'teacher', teacher: parts[0], day: parts[1], period: parts[2],
-                        classes: teacherSlots[k] });
-                }
-            });
-            // subject conflicts (more than 1 class) - only flag as warning
-            Object.keys(subjectSlots).forEach(k => {
-                if (subjectSlots[k].length > 1) {
-                    const parts = k.split('|');
-                    // only add if not already a teacher conflict for same slot
-                    const existing = conflicts.find(c =>
-                        c.type === 'teacher' && c.day === parts[1] && c.period === parts[2] &&
-                        c.classes.some(cl => subjectSlots[k].includes(cl))
-                    );
-                    if (!existing) {
-                        conflicts.push({ type: 'subject', subject: parts[0], day: parts[1], period: parts[2],
-                            classes: subjectSlots[k] });
-                    }
-                }
-            });
-            return conflicts;
-        }
-
-        function isConflict(classKey, day, period) {
-            const conflicts = findConflicts();
-            return conflicts.some(c =>
-                c.classes.includes(classKey) && c.day === day && c.period === period
-            );
-        }
-
-        // ───────────── STATS ─────────────
-        function computeStats() {
-            const pCount = getPeriodsPerDay();
-            const stats = {
-                totalPeriods: 0,
-                filledPeriods: 0,
-                byClass: {},
-                byTeacher: {},
-                bySubject: {},
-                byDay: { Monday: 0, Tuesday: 0, Wednesday: 0, Thursday: 0, Friday: 0 }
-            };
-            appData.classSections.forEach(c => {
-                stats.byClass[c] = 0;
-                DAYS.forEach(d => {
-                    for (let p = 1; p <= pCount; p++) {
-                        const key = 'P' + p;
-                        const val = getCellValue(c, d, key);
-                        stats.totalPeriods++;
-                        if (val.subject && val.teacher) {
-                            stats.filledPeriods++;
-                            stats.byClass[c]++;
-                            stats.byDay[d]++;
-                            if (!stats.byTeacher[val.teacher]) stats.byTeacher[val.teacher] = 0;
-                            stats.byTeacher[val.teacher]++;
-                            if (!stats.bySubject[val.subject]) stats.bySubject[val.subject] = 0;
-                            stats.bySubject[val.subject]++;
-                        }
-                    }
-                });
-            });
-            return stats;
+            return times;
         }
 
         // ───────────── RENDER ─────────────
         function render() {
             const pCount = getPeriodsPerDay();
             const periodKeys = getAllPeriodKeys();
+            const classList = getClassList();
             const conflicts = findConflicts();
 
-            // ── header ──
+            // ── header: two rows ──
             const thead = document.getElementById('tableHead');
-            let headerHtml = '<tr><th class="col-class">Class</th><th class="col-teacher">Teacher</th>';
+            let headerHtml = '<tr>';
+            headerHtml += '<th class="col-class" rowspan="2">Class</th>';
+            headerHtml += '<th class="col-section" rowspan="2">Sec</th>';
+            headerHtml += '<th class="col-teacher" rowspan="2">Teacher</th>';
+
             periodKeys.forEach((p, pi) => {
-                const isFirst = pi === 0;
-                const cls = isFirst ? 'col-period' : 'col-period period-sep';
-                headerHtml += `<th class="${cls}">${p}<br><span style="font-weight:400;font-size:7px;color:#64748b;">${getPeriodDisplay(p)}</span></th>`;
+                const timeStr = getPeriodDisplay(p);
+                const cls = pi === 0 ? 'col-period' : 'col-period period-group-sep';
+                headerHtml += `<th class="${cls}" colspan="5">${p}${timeStr ? '<span class="period-time">'+timeStr+'</span>' : ''}</th>`;
+            });
+            headerHtml += '</tr><tr>';
+
+            periodKeys.forEach((p, pi) => {
+                const cls = pi === 0 ? 'col-period' : 'col-period period-group-sep';
+                headerHtml += `<th class="${cls}">M</th><th class="${cls}">T</th><th class="${cls}">W</th><th class="${cls}">Th</th><th class="${cls}">F</th>`;
             });
             headerHtml += '</tr>';
             thead.innerHTML = headerHtml;
@@ -1193,81 +1331,61 @@
             // ── body ──
             const tbody = document.getElementById('tableBody');
             let bodyHtml = '';
-            appData.classSections.forEach(c => {
-                const teacherId = appData.classTeachers[c] || '';
-                const teacherMin = getTeacherMinimal(teacherId);
-                bodyHtml += `<tr data-class="${c}">`;
-                bodyHtml += `<td class="col-class" style="font-weight:600;">${c}</td>`;
+
+            if (classList.length === 0) {
+                bodyHtml =
+                    `<tr><td colspan="${3 + periodKeys.length * 5}" style="text-align:center;padding:30px 0;color:#94a3b8;font-size:13px;">No classes yet. Add classes via the 📋 Classes button.</td></tr>`;
+                tbody.innerHTML = bodyHtml;
+                updateStats();
+                updateSidebar();
+                updateBottomBar();
+                document.getElementById('totalConflicts').textContent = 0;
+                saveData();
+                return;
+            }
+
+            classList.forEach((clsObj) => {
+                const cls = clsObj.class;
+                const sec = clsObj.section;
+                const key = getClassKey(cls, sec);
+                const teacherId = getClassTeacher(key);
+                const teacherMin = teacherId ? getTeacherMinimal(teacherId) : '—';
+                const teacherName = teacherId ? getTeacherName(teacherId) : '';
+
+                bodyHtml += `<tr data-key="${key}">`;
+                bodyHtml += `<td class="col-class">${cls}</td>`;
+                bodyHtml += `<td class="col-section">${sec}</td>`;
                 bodyHtml +=
-                    `<td class="col-teacher" style="font-size:8.5px;cursor:pointer;" title="${getTeacherName(teacherId)}">${teacherMin || '—'}</td>`;
+                    `<td class="col-teacher" data-key="${key}" title="${teacherName}" style="cursor:pointer;">${teacherMin}</td>`;
+
                 periodKeys.forEach((p, pi) => {
                     const isFirst = pi === 0;
-                    const cls = isFirst ? 'col-period' : 'col-period period-sep';
-                    const val = getCellValue(c, 'Monday', p); // placeholder, will render per day
-                    // We need to render all 5 days in one cell? No — each cell is a period for a specific day.
-                    // Wait — the user wants columns: P1_M, P1_T, P1_W, P1_Th, P1_F, P2_M, ...
-                    // So each column is period+day combination.
-                    // We need to map periodKeys to actual period+day combos.
-                    // Let's redo: each column is a specific period for a specific day.
+                    const clsTd = isFirst ? 'col-period' : 'col-period period-group-sep';
+                    // 5 days
+                    DAYS.forEach((d, di) => {
+                        const val = getCellValue(key, d, p);
+                        const subj = val.subject;
+                        const tchr = val.teacher;
+                        const subjMin = getSubjectMinimal(subj);
+                        const tchrMin = getTeacherMinimal(tchr);
+                        const filled = !!(subj && tchr);
+                        const conflict = isConflict(key, d, p);
+                        const contentClass = 'cell-content' + (filled ? ' filled' : ' empty') + (conflict ?
+                            ' conflict' : '');
+                        const titleText = filled ? `${subj} / ${getSubjectName(subj)} — ${tchr} / ${getTeacherName(tchr)}` :
+                            'empty';
+                        const displayText = filled ? `${subjMin} ${tchrMin}` : '·';
+                        bodyHtml += `<td class="${clsTd}" data-key="${key}" data-day="${d}" data-period="${p}">
+                                    <div class="${contentClass}" title="${titleText}">
+                                        ${filled ? `<span class="subj">${subjMin}</span><span class="tchr">${tchrMin}</span>` : '<span style="color:#cbd5e1;font-size:11px;">·</span>'}
+                                    </div>
+                                </td>`;
+                    });
                 });
-                // Actually, let's redo the header to be period+day combos.
                 bodyHtml += '</tr>';
             });
 
-            // Rebuild header with period+day combos
-            let headerHtml2 = '<tr><th class="col-class">Class</th><th class="col-teacher">Teacher</th>';
-            const dayKeys = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-            const dayShort = { Monday: 'M', Tuesday: 'T', Wednesday: 'W', Thursday: 'Th', Friday: 'F' };
-            const periodKeysAll = [];
-            for (let p = 1; p <= pCount; p++) {
-                for (let di = 0; di < dayKeys.length; di++) {
-                    const d = dayKeys[di];
-                    const key = 'P' + p + '_' + d;
-                    periodKeysAll.push({ period: 'P' + p, day: d, key: key });
-                }
-            }
-            // Build header
-            periodKeysAll.forEach((item, idx) => {
-                const isFirst = idx === 0;
-                const isPeriodStart = idx % dayKeys.length === 0;
-                const cls = (isFirst || isPeriodStart) ? 'col-period' : 'col-period period-sep';
-                const label = item.period + ' ' + dayShort[item.day];
-                headerHtml2 += `<th class="${cls}" data-period="${item.period}" data-day="${item.day}">${label}<br><span style="font-weight:400;font-size:7px;color:#64748b;">${getPeriodDisplay(item.period)}</span></th>`;
-            });
-            headerHtml2 += '</tr>';
-            thead.innerHTML = headerHtml2;
-
-            // Body rows
-            let bodyHtml2 = '';
-            appData.classSections.forEach(c => {
-                const teacherId = appData.classTeachers[c] || '';
-                const teacherMin = getTeacherMinimal(teacherId);
-                bodyHtml2 += `<tr data-class="${c}">`;
-                bodyHtml2 += `<td class="col-class" style="font-weight:600;">${c}</td>`;
-                bodyHtml2 +=
-                    `<td class="col-teacher" style="font-size:8.5px;cursor:pointer;" title="${getTeacherName(teacherId)}">${teacherMin || '—'}</td>`;
-                periodKeysAll.forEach((item) => {
-                    const val = getCellValue(c, item.day, item.period);
-                    const subj = val.subject;
-                    const tchr = val.teacher;
-                    const subjMin = getSubjectMinimal(subj);
-                    const tchrMin = getTeacherMinimal(tchr);
-                    const filled = !!(subj && tchr);
-                    const conflict = isConflict(c, item.day, item.period);
-                    const cls = 'col-period' + (item.period === 'P1' ? '' : ' period-sep');
-                    const contentClass = 'cell-content' + (filled ? ' filled' : ' empty') + (conflict ? ' conflict' : '');
-                    const displayText = filled ? `${subjMin} ${tchrMin}` : '•';
-                    const titleText = filled ? `${subj} / ${getSubjectName(subj)} — ${tchr} / ${getTeacherName(tchr)}` :
-                        'empty';
-                    bodyHtml2 += `<td class="${cls}" data-class="${c}" data-day="${item.day}" data-period="${item.period}">
-                                <div class="${contentClass}" title="${titleText}">
-                                    ${filled ? `<span class="subj">${subjMin}</span><span class="tchr">${tchrMin}</span>` : '<span style="color:#cbd5e1;font-size:10px;">·</span>'}
-                                </div>
-                            </td>`;
-                });
-                bodyHtml2 += '</tr>';
-            });
-            tbody.innerHTML = bodyHtml2;
+            tbody.innerHTML = bodyHtml;
 
             // ── update stats ──
             updateStats();
@@ -1277,75 +1395,76 @@
 
             // ── attach events ──
             attachCellEvents();
+            attachTeacherClickEvents();
 
             saveData();
         }
 
-        // ───────────── ATTACH CELL EVENTS ─────────────
+        // ───────────── ATTACH EVENTS ─────────────
         function attachCellEvents() {
             document.querySelectorAll('#tableBody td.col-period').forEach(td => {
                 td.addEventListener('click', function(e) {
                     if (e.target.closest('.cell-editor')) return;
-                    const classKey = this.dataset.class;
+                    const key = this.dataset.key;
                     const day = this.dataset.day;
                     const period = this.dataset.period;
-                    if (!classKey || !day || !period) return;
-                    startEditing(classKey, day, period, this);
+                    if (!key || !day || !period) return;
+                    startEditing(key, day, period, this);
                 });
                 td.addEventListener('contextmenu', function(e) {
                     e.preventDefault();
-                    const classKey = this.dataset.class;
+                    const key = this.dataset.key;
                     const day = this.dataset.day;
                     const period = this.dataset.period;
-                    if (!classKey || !day || !period) return;
-                    contextTarget = { classKey, day, period };
+                    if (!key || !day || !period) return;
+                    contextTarget = { key, day, period };
                     const menu = document.getElementById('contextMenu');
-                    const val = getCellValue(classKey, day, period);
+                    const val = getCellValue(key, day, period);
                     const filled = !!(val.subject && val.teacher);
-                    document.querySelector('#contextMenu [data-action="copy"]').style.display = filled ? 'flex' : 'none';
-                    document.querySelector('#contextMenu [data-action="paste"]').style.display = clipboard ? 'flex' :
-                    'none';
+                    document.querySelector('#contextMenu [data-action="copy"]').style.display = filled ? 'flex' :
+                        'none';
+                    document.querySelector('#contextMenu [data-action="paste"]').style.display = clipboard ?
+                        'flex' : 'none';
                     document.querySelector('#contextMenu [data-action="clear"]').style.display = filled ? 'flex' :
-                    'none';
-                    document.querySelector('#contextMenu [data-action="applyAll"]').style.display = filled ? 'flex' :
-                    'none';
+                        'none';
+                    document.querySelector('#contextMenu [data-action="applyAll"]').style.display = filled ?
+                        'flex' : 'none';
                     menu.style.display = 'block';
                     menu.style.left = Math.min(e.clientX, window.innerWidth - 160) + 'px';
                     menu.style.top = Math.min(e.clientY, window.innerHeight - 140) + 'px';
                 });
             });
-            // close context menu on click outside
+
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('#contextMenu')) {
                     document.getElementById('contextMenu').style.display = 'none';
                 }
             });
-            // context menu actions
+
             document.querySelectorAll('#contextMenu .menu-item').forEach(item => {
                 item.addEventListener('click', function() {
                     const action = this.dataset.action;
                     if (!contextTarget) return;
-                    const { classKey, day, period } = contextTarget;
-                    const val = getCellValue(classKey, day, period);
+                    const { key, day, period } = contextTarget;
+                    const val = getCellValue(key, day, period);
                     if (action === 'copy') {
                         clipboard = { subject: val.subject, teacher: val.teacher };
                         showToast('Copied: ' + getSubjectMinimal(val.subject) + '-' + getTeacherMinimal(val
-                        .teacher));
+                            .teacher));
                     } else if (action === 'paste') {
                         if (clipboard) {
-                            setCellValue(classKey, day, period, clipboard.subject, clipboard.teacher);
+                            setCellValue(key, day, period, clipboard.subject, clipboard.teacher);
                             render();
                             showToast('Pasted');
                         }
                     } else if (action === 'clear') {
-                        clearCell(classKey, day, period);
+                        clearCell(key, day, period);
                         render();
                         showToast('Cleared');
                     } else if (action === 'applyAll') {
-                        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-                        days.forEach(d => {
+                        DAYS.forEach(d => {
                             if (d !== day) {
-                                setCellValue(classKey, d, period, val.subject, val.teacher);
+                                setCellValue(key, d, period, val.subject, val.teacher);
                             }
                         });
                         render();
@@ -1356,35 +1475,86 @@
             });
         }
 
-        // ───────────── CELL EDITING ─────────────
-        function startEditing(classKey, day, period, td) {
-            // close any existing editor
-            stopEditing();
+        function attachTeacherClickEvents() {
+            document.querySelectorAll('#tableBody td.col-teacher').forEach(td => {
+                td.addEventListener('click', function(e) {
+                    const key = this.dataset.key;
+                    if (!key) return;
+                    const current = getClassTeacher(key);
+                    // Show a simple prompt to select a teacher
+                    const teacherIds = Object.keys(appData.teachers);
+                    if (teacherIds.length === 0) {
+                        showToast('No teachers available. Add teachers first.', 'error');
+                        return;
+                    }
+                    // Build a quick select modal
+                    let options = teacherIds.map(id =>
+                        `<option value="${id}" ${id === current ? 'selected' : ''}>${id} — ${getTeacherName(id)}</option>`
+                        ).join('');
+                    const html = `
+                                <h3>Assign Class Teacher</h3>
+                                <p style="font-size:11px;color:#475569;margin-bottom:8px;">${key}</p>
+                                <label>Teacher</label>
+                                <select id="teacherSelect">${options}</select>
+                                <div class="btn-row">
+                                    <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                                    <button class="btn-primary" onclick="assignTeacherFromModal('${key}')">Assign</button>
+                                </div>
+                            `;
+                    openModal(html);
+                });
+            });
+        }
 
-            const val = getCellValue(classKey, day, period);
+        function assignTeacherFromModal(key) {
+            const sel = document.getElementById('teacherSelect');
+            if (!sel) return;
+            const val = sel.value;
+            if (val) {
+                setClassTeacher(key, val);
+                render();
+                showToast('Assigned teacher to ' + key);
+            } else {
+                setClassTeacher(key, null);
+                render();
+                showToast('Removed teacher assignment');
+            }
+            closeModal();
+            saveData();
+        }
+
+        // ───────────── CELL EDITING ─────────────
+        function startEditing(key, day, period, td) {
+            stopEditing();
+            const val = getCellValue(key, day, period);
             const subjCode = val.subject || '';
             const tchrId = val.teacher || '';
-            const subjMin = getSubjectMinimal(subjCode);
-            const tchrMin = getTeacherMinimal(tchrId);
 
             const editor = document.createElement('div');
             editor.className = 'cell-editor';
+            const subjOptions = Object.keys(appData.subjects).map(k =>
+                `<option value="${k}">${k} — ${appData.subjects[k].name}</option>`).join('');
+            const tchrOptions = Object.keys(appData.teachers).map(k =>
+                `<option value="${k}">${k} — ${appData.teachers[k].name}</option>`).join('');
+
             editor.innerHTML = `
-                        <input class="subj-input" type="text" placeholder="Subj" value="${subjCode}" list="subjDatalist_${classKey}" autocomplete="off" />
-                        <input class="tchr-input" type="text" placeholder="Tchr" value="${tchrId}" list="tchrDatalist_${classKey}" autocomplete="off" />
+                        <input class="subj-input" type="text" placeholder="Subj" value="${subjCode}" list="subjDatalist_${key}" autocomplete="off" />
+                        <input class="tchr-input" type="text" placeholder="Tchr" value="${tchrId}" list="tchrDatalist_${key}" autocomplete="off" />
                         <div class="editor-actions">
                             <button class="save-btn">✓</button>
                             <button class="cancel-btn">✕</button>
                         </div>
-                        <datalist id="subjDatalist_${classKey}">
-                            ${Object.keys(appData.subjects).map(k => `<option value="${k}">${k} — ${appData.subjects[k].name}</option>`).join('')}
+                        <datalist id="subjDatalist_${key}">
+                            ${subjOptions}
                         </datalist>
-                        <datalist id="tchrDatalist_${classKey}">
-                            ${Object.keys(appData.teachers).map(k => `<option value="${k}">${k} — ${appData.teachers[k].name}</option>`).join('')}
+                        <datalist id="tchrDatalist_${key}">
+                            ${tchrOptions}
                         </datalist>
                     `;
             const contentDiv = td.querySelector('.cell-content');
             if (contentDiv) contentDiv.style.display = 'none';
+            td.classList.add('editing');
+            td.style.overflow = 'visible';
             td.appendChild(editor);
 
             const subjInput = editor.querySelector('.subj-input');
@@ -1398,11 +1568,19 @@
             function saveEdit() {
                 const newSubj = subjInput.value.trim();
                 const newTchr = tchrInput.value.trim();
+                const applyAll = document.getElementById('applyAllDays').checked;
+
                 if (newSubj && newTchr) {
                     if (appData.subjects[newSubj] && appData.teachers[newTchr]) {
-                        setCellValue(classKey, day, period, newSubj, newTchr);
+                        if (applyAll) {
+                            DAYS.forEach(d => {
+                                setCellValue(key, d, period, newSubj, newTchr);
+                            });
+                        } else {
+                            setCellValue(key, day, period, newSubj, newTchr);
+                        }
                         render();
-                        showToast('Updated');
+                        showToast(applyAll ? 'Applied to all days' : 'Updated');
                     } else {
                         showToast('Invalid subject or teacher', 'error');
                     }
@@ -1410,43 +1588,54 @@
                     if (newSubj || newTchr) {
                         showToast('Both subject and teacher required', 'error');
                     } else {
-                        clearCell(classKey, day, period);
+                        if (applyAll) {
+                            DAYS.forEach(d => {
+                                clearCell(key, d, period);
+                            });
+                        } else {
+                            clearCell(key, day, period);
+                        }
                         render();
+                        showToast('Cleared');
                     }
                 }
+                document.removeEventListener('click', closeOutside);
                 stopEditing();
             }
 
             function cancelEdit() {
+                document.removeEventListener('click', closeOutside);
                 if (contentDiv) contentDiv.style.display = 'flex';
-                editor.remove();
+                if (editor.parentNode) editor.remove();
                 editingCell = null;
             }
 
             saveBtn.addEventListener('click', saveEdit);
             cancelBtn.addEventListener('click', cancelEdit);
-            subjInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') tchrInput.focus(); if (e.key === 'Escape')
-                    cancelEdit(); });
+            subjInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') tchrInput.focus(); if (e.key ===
+                    'Escape') cancelEdit(); });
             tchrInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') saveEdit(); if (e.key === 'Escape')
                     cancelEdit(); });
 
-            // close when clicking outside
             const closeOutside = (e) => {
-                if (!td.contains(e.target)) {
-                    saveEdit();
-                    document.removeEventListener('click', closeOutside);
-                }
+                if (td.contains(e.target)) return;
+                const active = document.activeElement;
+                if (active === subjInput || active === tchrInput) return;
+                saveEdit();
+                document.removeEventListener('click', closeOutside);
             };
             setTimeout(() => document.addEventListener('click', closeOutside), 50);
 
-            editingCell = { classKey, day, period, td, editor, contentDiv };
+            editingCell = { key, day, period, td, editor, contentDiv };
         }
 
         function stopEditing() {
             if (editingCell) {
-                const { editor, contentDiv } = editingCell;
+                const { editor, contentDiv, td } = editingCell;
                 if (contentDiv) contentDiv.style.display = 'flex';
                 if (editor && editor.parentNode) editor.remove();
+                td.classList.remove('editing');
+                td.style.overflow = '';
                 editingCell = null;
             }
         }
@@ -1455,23 +1644,26 @@
         function updateStats() {
             const stats = computeStats();
             document.getElementById('totalPeriods').textContent = stats.totalPeriods;
-            document.getElementById('totalClasses').textContent = appData.classSections.length;
+            document.getElementById('totalClasses').textContent = getClassList().length;
             document.getElementById('totalTeachers').textContent = Object.keys(appData.teachers).length;
             document.getElementById('totalSubjects').textContent = Object.keys(appData.subjects).length;
             document.getElementById('totalConflicts').textContent = findConflicts().length;
+            document.getElementById('totalConflicts').style.color = findConflicts().length > 0 ? '#dc2626' : '#2563eb';
         }
 
         function updateSidebar() {
             const stats = computeStats();
             const container = document.getElementById('statsByClass');
             let html = '';
-            appData.classSections.forEach(c => {
-                const count = stats.byClass[c] || 0;
+            const classList = getClassList();
+            classList.forEach(c => {
+                const key = getClassKey(c.class, c.section);
+                const count = stats.byClass[key] || 0;
                 const total = getPeriodsPerDay() * 5;
                 html +=
-                    `<div class="stat-row"><span class="label">${c}</span><span class="value">${count}/${total}</span></div>`;
+                    `<div class="stat-row"><span class="label">${c.class}-${c.section}</span><span class="value">${count}/${total}</span></div>`;
             });
-            container.innerHTML = html;
+            container.innerHTML = html || '<div class="empty-msg">No classes</div>';
 
             const teacherContainer = document.getElementById('statsByTeacher');
             let tHtml = '';
@@ -1482,7 +1674,7 @@
                 tHtml +=
                     `<div class="stat-row"><span class="label">${min} ${name.slice(0,8)}</span><span class="value highlight">${stats.byTeacher[t]}</span></div>`;
             });
-            teacherContainer.innerHTML = tHtml || '<div style="font-size:9px;color:#94a3b8;padding:4px 0;">No data</div>';
+            teacherContainer.innerHTML = tHtml || '<div class="empty-msg">No data</div>';
 
             const subjectContainer = document.getElementById('statsBySubject');
             let sHtml = '';
@@ -1493,7 +1685,7 @@
                 sHtml +=
                     `<div class="stat-row"><span class="label">${min} ${name.slice(0,8)}</span><span class="value highlight">${stats.bySubject[s]}</span></div>`;
             });
-            subjectContainer.innerHTML = sHtml || '<div style="font-size:9px;color:#94a3b8;padding:4px 0;">No data</div>';
+            subjectContainer.innerHTML = sHtml || '<div class="empty-msg">No data</div>';
         }
 
         function updateBottomBar() {
@@ -1503,7 +1695,6 @@
             document.getElementById('dayWed').textContent = stats.byDay.Wednesday || 0;
             document.getElementById('dayThu').textContent = stats.byDay.Thursday || 0;
             document.getElementById('dayFri').textContent = stats.byDay.Friday || 0;
-            // show first period time
             const p1 = appData.settings.periodTimes && appData.settings.periodTimes.P1;
             if (p1) {
                 document.getElementById('periodTimeDisplay').textContent = p1.start + '–' + p1.end;
@@ -1517,6 +1708,17 @@
             el.className = 'show' + (type === 'error' ? ' error' : type === 'success' ? ' success' : '');
             clearTimeout(el._hide);
             el._hide = setTimeout(() => { el.className = ''; }, 2200);
+        }
+
+        // ───────────── MODAL HELPERS ─────────────
+        function openModal(html) {
+            const overlay = document.getElementById('modalOverlay');
+            document.getElementById('modalContent').innerHTML = html;
+            overlay.classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('open');
         }
 
         // ───────────── IMPORT CSV ─────────────
@@ -1541,54 +1743,49 @@
                 });
 
                 if (type === 'classes') {
-                    appData.classSections = [];
-                    appData.classTeachers = {};
+                    let count = 0;
                     data.forEach(row => {
-                        if (row.length >= 1) {
+                        if (row.length >= 2 && row[0] && row[1]) {
                             const cls = row[0];
-                            if (cls) {
-                                appData.classSections.push(cls);
-                                if (row.length >= 2 && row[1]) {
-                                    appData.classTeachers[cls] = row[1];
-                                }
+                            const sec = row[1];
+                            if (!classExists(cls, sec)) {
+                                if (addClass(cls, sec)) count++;
                             }
                         }
                     });
-                    // rebuild timetable
-                    appData.timetable = {};
-                    appData.classSections.forEach(c => {
-                        appData.timetable[c] = {};
-                        DAYS.forEach(d => {
-                            appData.timetable[c][d] = {};
-                            const pCount = getPeriodsPerDay();
-                            for (let p = 1; p <= pCount; p++) {
-                                appData.timetable[c][d]['P' + p] = { subject: null, teacher: null };
-                            }
-                        });
-                    });
-                    showToast('Imported ' + appData.classSections.length + ' classes');
+                    showToast('Imported ' + count + ' classes');
                     render();
                 } else if (type === 'subjects') {
-                    // Format: Subject Code,Subject Name,Minimal Code
-                    appData.subjects = {};
+                    let count = 0;
                     data.forEach(row => {
                         if (row.length >= 3 && row[0]) {
-                            appData.subjects[row[0]] = { name: row[1] || row[0], minimalCode: row[2] || row[0]
-                                    .slice(0, 2) };
+                            const code = row[0].toUpperCase();
+                            if (!appData.subjects[code]) {
+                                appData.subjects[code] = {
+                                    name: row[1] || code,
+                                    minimalCode: row[2] || code.slice(0, 2)
+                                };
+                                count++;
+                            }
                         }
                     });
-                    showToast('Imported ' + Object.keys(appData.subjects).length + ' subjects');
+                    showToast('Imported ' + count + ' subjects');
                     render();
                 } else if (type === 'teachers') {
-                    // Format: Teacher ID,Teacher Name,Minimal ID
-                    appData.teachers = {};
+                    let count = 0;
                     data.forEach(row => {
                         if (row.length >= 3 && row[0]) {
-                            appData.teachers[row[0]] = { name: row[1] || row[0], minimalId: row[2] || row[0]
-                                    .slice(0, 2) };
+                            const id = row[0].toUpperCase();
+                            if (!appData.teachers[id]) {
+                                appData.teachers[id] = {
+                                    name: row[1] || id,
+                                    minimalId: row[2] || id.slice(0, 2)
+                                };
+                                count++;
+                            }
                         }
                     });
-                    showToast('Imported ' + Object.keys(appData.teachers).length + ' teachers');
+                    showToast('Imported ' + count + ' teachers');
                     render();
                 }
                 saveData();
@@ -1602,9 +1799,8 @@
             const periodKeys = [];
             for (let p = 1; p <= pCount; p++) periodKeys.push('P' + p);
             const rows = [];
-            // header: Class-Section,Day,P1,P2,...
             rows.push(['Class-Section', 'Day', ...periodKeys].join(','));
-            appData.classSections.forEach(c => {
+            getClassKeys().forEach(c => {
                 DAYS.forEach(d => {
                     const row = [c, d];
                     periodKeys.forEach(p => {
@@ -1630,26 +1826,13 @@
             showToast('Exported successfully');
         }
 
-        // ───────────── MODALS ─────────────
-        function openModal(html) {
-            const overlay = document.getElementById('modalOverlay');
-            document.getElementById('modalContent').innerHTML = html;
-            overlay.classList.add('open');
-        }
-
-        function closeModal() {
-            document.getElementById('modalOverlay').classList.remove('open');
-        }
-
-        // ───────────── SETTINGS ─────────────
+        // ───────────── SETTINGS (period times) ─────────────
         function openSettings() {
             const pCount = getPeriodsPerDay();
             let html = `
-                        <h3>⚙️ Settings</h3>
-                        <label>Periods per day</label>
-                        <input type="number" id="settingsPeriods" value="${pCount}" min="4" max="10" />
-                        <label>Period times</label>
-                        <div style="max-height:200px;overflow:auto;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;margin-top:4px;">
+                        <h3>⏱️ Period Times</h3>
+                        <p style="font-size:11px;color:#475569;margin-bottom:8px;">Set start and end time for each period.</p>
+                        <div style="max-height:260px;overflow:auto;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;margin-top:4px;">
                     `;
             const periodKeys = [];
             for (let p = 1; p <= 10; p++) periodKeys.push('P' + p);
@@ -1658,8 +1841,8 @@
                 const start = t ? t.start : '08:00';
                 const end = t ? t.end : '08:45';
                 html += `
-                            <div style="display:flex;gap:6px;align-items:center;font-size:11px;margin:2px 0;">
-                                <span style="width:28px;font-weight:600;">${p}</span>
+                            <div style="display:flex;gap:6px;align-items:center;font-size:11px;margin:3px 0;">
+                                <span style="width:32px;font-weight:600;">${p}</span>
                                 <input type="time" id="timeStart_${p}" value="${start}" style="width:70px;padding:2px 4px;border:1px solid #e2e8f0;border-radius:3px;font-size:10px;" />
                                 <span>–</span>
                                 <input type="time" id="timeEnd_${p}" value="${end}" style="width:70px;padding:2px 4px;border:1px solid #e2e8f0;border-radius:3px;font-size:10px;" />
@@ -1677,8 +1860,6 @@
         }
 
         function saveSettings() {
-            const periods = parseInt(document.getElementById('settingsPeriods').value) || 7;
-            appData.settings.periodsPerDay = Math.min(10, Math.max(4, periods));
             const times = {};
             for (let p = 1; p <= 10; p++) {
                 const start = document.getElementById('timeStart_P' + p)?.value || '08:00';
@@ -1687,7 +1868,7 @@
             }
             appData.settings.periodTimes = times;
             // Ensure all classes have the new periods
-            appData.classSections.forEach(c => {
+            getClassKeys().forEach(c => {
                 if (!appData.timetable[c]) appData.timetable[c] = {};
                 DAYS.forEach(d => {
                     if (!appData.timetable[c][d]) appData.timetable[c][d] = {};
@@ -1701,28 +1882,53 @@
             });
             closeModal();
             render();
-            showToast('Settings saved');
+            showToast('Times saved');
             saveData();
         }
 
         // ───────────── MANAGE CLASSES ─────────────
         function manageClasses() {
+            const classList = getClassList();
             let html = `
-                        <h3>📋 Manage Classes</h3>
-                        <div style="display:flex;gap:6px;margin-bottom:8px;">
-                            <input type="text" id="newClass" placeholder="e.g. XI-A" style="flex:1;" />
-                            <input type="text" id="newClassTeacher" placeholder="Teacher ID" style="flex:1;" />
-                            <button class="btn-primary" onclick="addClass()">Add</button>
+                        <h3>📋 Manage Classes <span class="badge">${classList.length}</span></h3>
+                        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+                            <input type="text" id="newClass" placeholder="Class (e.g. I)" style="flex:1;min-width:60px;" />
+                            <input type="text" id="newSection" placeholder="Section (e.g. A)" style="flex:1;min-width:60px;" />
+                            <button class="btn-primary" onclick="addClassFromModal()">Add</button>
+                        </div>
+                        <div class="import-area">
+                            <span style="font-size:10px;color:#475569;">Import CSV:</span>
+                            <input type="file" id="importClassesFile" accept=".csv" />
+                            <button class="btn-success" onclick="importClassesFromModal()">Import</button>
+                            <button class="btn-secondary" onclick="clearClassesFromModal()" style="color:#dc2626;">Clear All</button>
                         </div>
                         <div class="item-list">
-                            ${appData.classSections.map(c => `
+                    `;
+
+            if (classList.length === 0) {
+                html += `<div class="empty-msg">No classes added yet.</div>`;
+            } else {
+                classList.forEach(c => {
+                    const key = getClassKey(c.class, c.section);
+                    const teacherId = getClassTeacher(key);
+                    const teacherName = teacherId ? getTeacherName(teacherId) : '—';
+                    html += `
                                 <div class="item">
-                                    <span><span class="code">${c}</span> <span class="name">${getTeacherName(appData.classTeachers[c] || '')}</span></span>
+                                    <div class="info">
+                                        <span class="code">${c.class}</span>
+                                        <span class="name">${c.section}</span>
+                                        <span class="meta">👨‍🏫 ${teacherName}</span>
+                                    </div>
                                     <div class="actions">
-                                        <button onclick="removeClass('${c}')" title="Remove">✕</button>
+                                        <button onclick="editClassFromModal('${c.class}','${c.section}')" title="Edit">✏️</button>
+                                        <button class="del" onclick="deleteClassFromModal('${c.class}','${c.section}')" title="Delete">✕</button>
                                     </div>
                                 </div>
-                            `).join('')}
+                            `;
+                });
+            }
+
+            html += `
                         </div>
                         <div class="btn-row">
                             <button class="btn-secondary" onclick="closeModal()">Close</button>
@@ -1731,64 +1937,144 @@
             openModal(html);
         }
 
-        function addClass() {
-            const name = document.getElementById('newClass').value.trim();
-            const teacher = document.getElementById('newClassTeacher').value.trim();
-            if (!name) { showToast('Enter class name', 'error'); return; }
-            if (appData.classSections.includes(name)) { showToast('Class already exists', 'error'); return; }
-            appData.classSections.push(name);
-            if (teacher && appData.teachers[teacher]) {
-                appData.classTeachers[name] = teacher;
-            }
-            appData.timetable[name] = {};
-            DAYS.forEach(d => {
-                appData.timetable[name][d] = {};
-                const pCount = getPeriodsPerDay();
-                for (let p = 1; p <= pCount; p++) {
-                    appData.timetable[name][d]['P' + p] = { subject: null, teacher: null };
-                }
-            });
+        function addClassFromModal() {
+            const cls = document.getElementById('newClass').value.trim();
+            const sec = document.getElementById('newSection').value.trim();
+            if (!cls || !sec) { showToast('Enter class and section', 'error'); return; }
+            if (classExists(cls, sec)) { showToast('Class already exists', 'error'); return; }
+            addClass(cls, sec);
             closeModal();
             render();
-            showToast('Added class ' + name);
+            showToast('Added ' + cls + '-' + sec);
             saveData();
             manageClasses();
         }
 
-        function removeClass(name) {
-            if (!confirm('Remove class ' + name + '?')) return;
-            appData.classSections = appData.classSections.filter(c => c !== name);
-            delete appData.classTeachers[name];
-            delete appData.timetable[name];
+        function deleteClassFromModal(cls, sec) {
+            if (!confirm('Delete class ' + cls + '-' + sec + '? This will remove all timetable data for this class.')) return;
+            removeClass(cls, sec);
             closeModal();
             render();
-            showToast('Removed ' + name);
+            showToast('Deleted ' + cls + '-' + sec);
+            saveData();
+            manageClasses();
+        }
+
+        function editClassFromModal(cls, sec) {
+            const key = getClassKey(cls, sec);
+            const teacherId = getClassTeacher(key);
+            const html = `
+                        <h3>✏️ Edit Class</h3>
+                        <div class="edit-form">
+                            <div class="form-row">
+                                <div><label>Class</label><input type="text" id="editClass" value="${cls}" /></div>
+                                <div><label>Section</label><input type="text" id="editSection" value="${sec}" /></div>
+                            </div>
+                            <div style="margin-top:6px;font-size:10px;color:#94a3b8;">
+                                Current teacher: ${teacherId ? getTeacherName(teacherId) : '—'}
+                                (change via main table)
+                            </div>
+                            <div class="btn-row">
+                                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                                <button class="btn-danger" onclick="deleteClassFromModal('${cls}','${sec}')">Delete</button>
+                                <button class="btn-save" onclick="saveClassEdit('${cls}','${sec}')">Save</button>
+                            </div>
+                        </div>
+                    `;
+            openModal(html);
+        }
+
+        function saveClassEdit(oldCls, oldSec) {
+            const newCls = document.getElementById('editClass').value.trim();
+            const newSec = document.getElementById('editSection').value.trim();
+            if (!newCls || !newSec) { showToast('Class and section required', 'error'); return; }
+            if (oldCls === newCls && oldSec === newSec) {
+                closeModal();
+                return;
+            }
+            if (classExists(newCls, newSec)) {
+                showToast('Class already exists', 'error');
+                return;
+            }
+            if (!confirm('Changing class from ' + oldCls + '-' + oldSec + ' to ' + newCls + '-' + newSec +
+                    '. Timetable data will be moved.')) return;
+            if (updateClass(oldCls, oldSec, newCls, newSec)) {
+                closeModal();
+                render();
+                showToast('Updated to ' + newCls + '-' + newSec);
+                saveData();
+                manageClasses();
+            } else {
+                showToast('Update failed', 'error');
+            }
+        }
+
+        function importClassesFromModal() {
+            const fileInput = document.getElementById('importClassesFile');
+            if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+                showToast('Select a CSV file first', 'error');
+                return;
+            }
+            importCSV(fileInput.files[0], 'classes');
+            setTimeout(() => { closeModal();
+                manageClasses(); }, 300);
+        }
+
+        function clearClassesFromModal() {
+            if (!confirm('Remove ALL classes? This will delete all timetable data.')) return;
+            if (!confirm('Are you sure?')) return;
+            appData.classes = [];
+            appData.classTeachers = {};
+            appData.timetable = {};
+            closeModal();
+            render();
+            showToast('All classes cleared');
             saveData();
             manageClasses();
         }
 
         // ───────────── MANAGE SUBJECTS ─────────────
         function manageSubjects() {
+            const subjKeys = Object.keys(appData.subjects).sort();
             let html = `
-                        <h3>📖 Manage Subjects</h3>
+                        <h3>📖 Manage Subjects <span class="badge">${subjKeys.length}</span></h3>
                         <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
-                            <input type="text" id="newSubjCode" placeholder="Code (e.g. MAT)" style="flex:0.8;min-width:80px;" />
-                            <input type="text" id="newSubjName" placeholder="Name" style="flex:1.2;min-width:100px;" />
-                            <input type="text" id="newSubjMin" placeholder="Minimal (e.g. M)" style="flex:0.6;min-width:60px;" />
-                            <button class="btn-primary" onclick="addSubject()">Add</button>
+                            <input type="text" id="newSubjCode" placeholder="Code (e.g. MAT)" style="flex:0.8;min-width:70px;" />
+                            <input type="text" id="newSubjName" placeholder="Name" style="flex:1.2;min-width:80px;" />
+                            <input type="text" id="newSubjMin" placeholder="Minimal (e.g. M)" style="flex:0.6;min-width:50px;" />
+                            <button class="btn-primary" onclick="addSubjectFromModal()">Add</button>
+                        </div>
+                        <div class="import-area">
+                            <span style="font-size:10px;color:#475569;">Import CSV:</span>
+                            <input type="file" id="importSubjectsFile" accept=".csv" />
+                            <button class="btn-success" onclick="importSubjectsFromModal()">Import</button>
+                            <button class="btn-secondary" onclick="clearSubjectsFromModal()" style="color:#dc2626;">Clear All</button>
                         </div>
                         <div class="item-list">
-                            ${Object.keys(appData.subjects).sort().map(k => {
-                                const s = appData.subjects[k];
-                                return `
-                                    <div class="item">
-                                        <span><span class="code">${k}</span> <span class="name">${s.name}</span> <span class="badge">${s.minimalCode}</span></span>
-                                        <div class="actions">
-                                            <button onclick="removeSubject('${k}')" title="Remove">✕</button>
-                                        </div>
+                    `;
+
+            if (subjKeys.length === 0) {
+                html += `<div class="empty-msg">No subjects added yet.</div>`;
+            } else {
+                subjKeys.forEach(k => {
+                    const s = appData.subjects[k];
+                    html += `
+                                <div class="item">
+                                    <div class="info">
+                                        <span class="code">${k}</span>
+                                        <span class="name">${s.name}</span>
+                                        <span class="meta">min: ${s.minimalCode}</span>
                                     </div>
-                                `;
-                            }).join('')}
+                                    <div class="actions">
+                                        <button onclick="editSubjectFromModal('${k}')" title="Edit">✏️</button>
+                                        <button class="del" onclick="deleteSubjectFromModal('${k}')" title="Delete">✕</button>
+                                    </div>
+                                </div>
+                            `;
+                });
+            }
+
+            html += `
                         </div>
                         <div class="btn-row">
                             <button class="btn-secondary" onclick="closeModal()">Close</button>
@@ -1797,7 +2083,7 @@
             openModal(html);
         }
 
-        function addSubject() {
+        function addSubjectFromModal() {
             const code = document.getElementById('newSubjCode').value.trim().toUpperCase();
             const name = document.getElementById('newSubjName').value.trim();
             const min = document.getElementById('newSubjMin').value.trim().toUpperCase() || code.slice(0, 2);
@@ -1807,16 +2093,16 @@
             appData.subjects[code] = { name, minimalCode: min };
             closeModal();
             render();
-            showToast('Added subject ' + code);
+            showToast('Added ' + code);
             saveData();
             manageSubjects();
         }
 
-        function removeSubject(code) {
-            if (!confirm('Remove subject ' + code + '?')) return;
+        function deleteSubjectFromModal(code) {
+            if (!confirm('Delete subject ' + code + '?')) return;
             delete appData.subjects[code];
-            // Also clear from timetable
-            appData.classSections.forEach(c => {
+            // Clear from timetable
+            getClassKeys().forEach(c => {
                 DAYS.forEach(d => {
                     const pCount = getPeriodsPerDay();
                     for (let p = 1; p <= pCount; p++) {
@@ -1830,33 +2116,120 @@
             });
             closeModal();
             render();
-            showToast('Removed ' + code);
+            showToast('Deleted ' + code);
+            saveData();
+            manageSubjects();
+        }
+
+        function editSubjectFromModal(code) {
+            const s = appData.subjects[code];
+            if (!s) return;
+            const html = `
+                        <h3>✏️ Edit Subject</h3>
+                        <div class="edit-form">
+                            <div class="form-row">
+                                <div><label>Code</label><input type="text" id="editSubjCode" value="${code}" disabled style="background:#f1f5f9;" /></div>
+                                <div><label>Name</label><input type="text" id="editSubjName" value="${s.name}" /></div>
+                                <div><label>Minimal</label><input type="text" id="editSubjMin" value="${s.minimalCode}" /></div>
+                            </div>
+                            <div class="btn-row">
+                                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                                <button class="btn-danger" onclick="deleteSubjectFromModal('${code}')">Delete</button>
+                                <button class="btn-save" onclick="saveSubjectEdit('${code}')">Save</button>
+                            </div>
+                        </div>
+                    `;
+            openModal(html);
+        }
+
+        function saveSubjectEdit(code) {
+            const name = document.getElementById('editSubjName').value.trim();
+            const min = document.getElementById('editSubjMin').value.trim().toUpperCase();
+            if (!name) { showToast('Name is required', 'error'); return; }
+            if (appData.subjects[code]) {
+                appData.subjects[code].name = name;
+                if (min) appData.subjects[code].minimalCode = min;
+            }
+            closeModal();
+            render();
+            showToast('Updated ' + code);
+            saveData();
+            manageSubjects();
+        }
+
+        function importSubjectsFromModal() {
+            const fileInput = document.getElementById('importSubjectsFile');
+            if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+                showToast('Select a CSV file first', 'error');
+                return;
+            }
+            importCSV(fileInput.files[0], 'subjects');
+            setTimeout(() => { closeModal();
+                manageSubjects(); }, 300);
+        }
+
+        function clearSubjectsFromModal() {
+            if (!confirm('Remove ALL subjects?')) return;
+            appData.subjects = {};
+            // Clear from timetable
+            getClassKeys().forEach(c => {
+                DAYS.forEach(d => {
+                    const pCount = getPeriodsPerDay();
+                    for (let p = 1; p <= pCount; p++) {
+                        const key = 'P' + p;
+                        clearCell(c, d, key);
+                    }
+                });
+            });
+            closeModal();
+            render();
+            showToast('All subjects cleared');
             saveData();
             manageSubjects();
         }
 
         // ───────────── MANAGE TEACHERS ─────────────
         function manageTeachers() {
+            const tchKeys = Object.keys(appData.teachers).sort();
             let html = `
-                        <h3>👨‍🏫 Manage Teachers</h3>
+                        <h3>👨‍🏫 Manage Teachers <span class="badge">${tchKeys.length}</span></h3>
                         <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
-                            <input type="text" id="newTchrId" placeholder="ID (e.g. JOH)" style="flex:0.8;min-width:70px;" />
-                            <input type="text" id="newTchrName" placeholder="Name" style="flex:1.2;min-width:100px;" />
-                            <input type="text" id="newTchrMin" placeholder="Minimal (e.g. JO)" style="flex:0.6;min-width:60px;" />
-                            <button class="btn-primary" onclick="addTeacher()">Add</button>
+                            <input type="text" id="newTchrId" placeholder="ID (e.g. JOH)" style="flex:0.8;min-width:60px;" />
+                            <input type="text" id="newTchrName" placeholder="Name" style="flex:1.2;min-width:80px;" />
+                            <input type="text" id="newTchrMin" placeholder="Minimal (e.g. JO)" style="flex:0.6;min-width:50px;" />
+                            <button class="btn-primary" onclick="addTeacherFromModal()">Add</button>
+                        </div>
+                        <div class="import-area">
+                            <span style="font-size:10px;color:#475569;">Import CSV:</span>
+                            <input type="file" id="importTeachersFile" accept=".csv" />
+                            <button class="btn-success" onclick="importTeachersFromModal()">Import</button>
+                            <button class="btn-secondary" onclick="clearTeachersFromModal()" style="color:#dc2626;">Clear All</button>
                         </div>
                         <div class="item-list">
-                            ${Object.keys(appData.teachers).sort().map(k => {
-                                const t = appData.teachers[k];
-                                return `
-                                    <div class="item">
-                                        <span><span class="code">${k}</span> <span class="name">${t.name}</span> <span class="badge">${t.minimalId}</span></span>
-                                        <div class="actions">
-                                            <button onclick="removeTeacher('${k}')" title="Remove">✕</button>
-                                        </div>
+                    `;
+
+            if (tchKeys.length === 0) {
+                html += `<div class="empty-msg">No teachers added yet.</div>`;
+            } else {
+                tchKeys.forEach(k => {
+                    const t = appData.teachers[k];
+                    html += `
+                                <div class="item">
+                                    <div class="info">
+                                        <span class="code">${k}</span>
+                                        <span class="name">${t.name}</span>
+                                        <span class="meta">min: ${t.minimalId}</span>
                                     </div>
-                                `;
-                            }).join('')}
+                                    <div class="actions">
+                                        <button onclick="editTeacherFromModal('${k}')" title="Edit">✏️</button>
+                                        <button class="del" onclick="deleteTeacherFromModal('${k}')" title="Delete">✕</button>
+                                    </div>
+                                </div>
+                            `;
+                });
+            }
+
+            html += `
                         </div>
                         <div class="btn-row">
                             <button class="btn-secondary" onclick="closeModal()">Close</button>
@@ -1865,7 +2238,7 @@
             openModal(html);
         }
 
-        function addTeacher() {
+        function addTeacherFromModal() {
             const id = document.getElementById('newTchrId').value.trim().toUpperCase();
             const name = document.getElementById('newTchrName').value.trim();
             const min = document.getElementById('newTchrMin').value.trim().toUpperCase() || id.slice(0, 2);
@@ -1875,16 +2248,16 @@
             appData.teachers[id] = { name, minimalId: min };
             closeModal();
             render();
-            showToast('Added teacher ' + id);
+            showToast('Added ' + id);
             saveData();
             manageTeachers();
         }
 
-        function removeTeacher(id) {
-            if (!confirm('Remove teacher ' + id + '?')) return;
+        function deleteTeacherFromModal(id) {
+            if (!confirm('Delete teacher ' + id + '?')) return;
             delete appData.teachers[id];
-            // Also clear from timetable
-            appData.classSections.forEach(c => {
+            // Clear from timetable
+            getClassKeys().forEach(c => {
                 DAYS.forEach(d => {
                     const pCount = getPeriodsPerDay();
                     for (let p = 1; p <= pCount; p++) {
@@ -1901,39 +2274,77 @@
             });
             closeModal();
             render();
-            showToast('Removed ' + id);
+            showToast('Deleted ' + id);
             saveData();
             manageTeachers();
         }
 
-        // ───────────── CLEAR ALL ─────────────
-        function clearAll() {
-            if (!confirm('⚠️ Clear all timetable data? This cannot be undone.')) return;
-            if (!confirm('Are you sure?')) return;
-            appData.timetable = {};
-            appData.classSections.forEach(c => {
-                appData.timetable[c] = {};
+        function editTeacherFromModal(id) {
+            const t = appData.teachers[id];
+            if (!t) return;
+            const html = `
+                        <h3>✏️ Edit Teacher</h3>
+                        <div class="edit-form">
+                            <div class="form-row">
+                                <div><label>ID</label><input type="text" id="editTchrId" value="${id}" disabled style="background:#f1f5f9;" /></div>
+                                <div><label>Name</label><input type="text" id="editTchrName" value="${t.name}" /></div>
+                                <div><label>Minimal</label><input type="text" id="editTchrMin" value="${t.minimalId}" /></div>
+                            </div>
+                            <div class="btn-row">
+                                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                                <button class="btn-danger" onclick="deleteTeacherFromModal('${id}')">Delete</button>
+                                <button class="btn-save" onclick="saveTeacherEdit('${id}')">Save</button>
+                            </div>
+                        </div>
+                    `;
+            openModal(html);
+        }
+
+        function saveTeacherEdit(id) {
+            const name = document.getElementById('editTchrName').value.trim();
+            const min = document.getElementById('editTchrMin').value.trim().toUpperCase();
+            if (!name) { showToast('Name is required', 'error'); return; }
+            if (appData.teachers[id]) {
+                appData.teachers[id].name = name;
+                if (min) appData.teachers[id].minimalId = min;
+            }
+            closeModal();
+            render();
+            showToast('Updated ' + id);
+            saveData();
+            manageTeachers();
+        }
+
+        function importTeachersFromModal() {
+            const fileInput = document.getElementById('importTeachersFile');
+            if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+                showToast('Select a CSV file first', 'error');
+                return;
+            }
+            importCSV(fileInput.files[0], 'teachers');
+            setTimeout(() => { closeModal();
+                manageTeachers(); }, 300);
+        }
+
+        function clearTeachersFromModal() {
+            if (!confirm('Remove ALL teachers?')) return;
+            appData.teachers = {};
+            appData.classTeachers = {};
+            // Clear from timetable
+            getClassKeys().forEach(c => {
                 DAYS.forEach(d => {
-                    appData.timetable[c][d] = {};
                     const pCount = getPeriodsPerDay();
                     for (let p = 1; p <= pCount; p++) {
-                        appData.timetable[c][d]['P' + p] = { subject: null, teacher: null };
+                        const key = 'P' + p;
+                        clearCell(c, d, key);
                     }
                 });
             });
+            closeModal();
             render();
-            showToast('Cleared all data');
+            showToast('All teachers cleared');
             saveData();
-        }
-
-        // ───────────── APPLY TO ALL DAYS (toolbar) ─────────────
-        function applyToAllDays(classKey, period, subject, teacher) {
-            DAYS.forEach(d => {
-                setCellValue(classKey, d, period, subject, teacher);
-            });
-            render();
-            showToast('Applied to all days');
-            saveData();
+            manageTeachers();
         }
 
         // ───────────── PERIODS PER DAY CHANGE ─────────────
@@ -1942,8 +2353,7 @@
             const clamped = Math.min(10, Math.max(4, val));
             this.value = clamped;
             appData.settings.periodsPerDay = clamped;
-            // Ensure all classes have the new periods
-            appData.classSections.forEach(c => {
+            getClassKeys().forEach(c => {
                 if (!appData.timetable[c]) appData.timetable[c] = {};
                 DAYS.forEach(d => {
                     if (!appData.timetable[c][d]) appData.timetable[c][d] = {};
@@ -1977,7 +2387,7 @@
             this.textContent = bar.classList.contains('collapsed') ? '▶' : '◀';
         });
 
-        // ───────────── IMPORT BUTTONS ─────────────
+        // ───────────── BUTTON BINDINGS ─────────────
         document.getElementById('btnImport').addEventListener('click', function() {
             const type = prompt('Import type: classes, subjects, teachers');
             if (!type) return;
@@ -2001,44 +2411,34 @@
         document.getElementById('btnManageClasses').addEventListener('click', manageClasses);
         document.getElementById('btnManageSubjects').addEventListener('click', manageSubjects);
         document.getElementById('btnManageTeachers').addEventListener('click', manageTeachers);
-        document.getElementById('btnClearAll').addEventListener('click', clearAll);
+
+        document.getElementById('btnClearAll').addEventListener('click', function() {
+            if (!confirm('⚠️ Clear ALL data (classes, subjects, teachers, timetable) from local storage?')) return;
+            if (!confirm('This cannot be undone. Are you sure?')) return;
+            clearAllData();
+        });
 
         // ───────────── INIT ─────────────
         function init() {
             const hasData = loadData();
-            if (!hasData || appData.classSections.length === 0) {
-                initSampleData();
+            if (!hasData || getClassList().length === 0) {
+                // No sample data - start empty
+                appData.settings.periodTimes = initDefaultTimes();
+                appData.settings.periodsPerDay = 7;
                 saveData();
             }
-            // Ensure all classes have timetable entries
-            appData.classSections.forEach(c => {
-                if (!appData.timetable[c]) {
-                    appData.timetable[c] = {};
-                    DAYS.forEach(d => {
-                        appData.timetable[c][d] = {};
-                        const pCount = getPeriodsPerDay();
-                        for (let p = 1; p <= pCount; p++) {
-                            appData.timetable[c][d]['P' + p] = { subject: null, teacher: null };
-                        }
-                    });
-                }
-            });
             document.getElementById('periodsPerDay').value = getPeriodsPerDay();
             render();
             saveData();
-
-            // auto-save every 30s
             setInterval(() => { saveData(); }, 30000);
         }
 
-        // ───────────── START ─────────────
         document.addEventListener('DOMContentLoaded', init);
-        // close modal on overlay click
+
         document.getElementById('modalOverlay').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
 
-        // keyboard shortcut: Escape to close modal
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeModal();
@@ -2047,9 +2447,40 @@
             }
         });
 
+        // Expose functions to global scope for inline onclick
+        window.closeModal = closeModal;
+        window.openModal = openModal;
+        window.showToast = showToast;
+        window.manageClasses = manageClasses;
+        window.manageSubjects = manageSubjects;
+        window.manageTeachers = manageTeachers;
+        window.openSettings = openSettings;
+        window.saveSettings = saveSettings;
+        window.addClassFromModal = addClassFromModal;
+        window.deleteClassFromModal = deleteClassFromModal;
+        window.editClassFromModal = editClassFromModal;
+        window.saveClassEdit = saveClassEdit;
+        window.importClassesFromModal = importClassesFromModal;
+        window.clearClassesFromModal = clearClassesFromModal;
+        window.addSubjectFromModal = addSubjectFromModal;
+        window.deleteSubjectFromModal = deleteSubjectFromModal;
+        window.editSubjectFromModal = editSubjectFromModal;
+        window.saveSubjectEdit = saveSubjectEdit;
+        window.importSubjectsFromModal = importSubjectsFromModal;
+        window.clearSubjectsFromModal = clearSubjectsFromModal;
+        window.addTeacherFromModal = addTeacherFromModal;
+        window.deleteTeacherFromModal = deleteTeacherFromModal;
+        window.editTeacherFromModal = editTeacherFromModal;
+        window.saveTeacherEdit = saveTeacherEdit;
+        window.importTeachersFromModal = importTeachersFromModal;
+        window.clearTeachersFromModal = clearTeachersFromModal;
+        window.assignTeacherFromModal = assignTeacherFromModal;
+        window.exportCSV = exportCSV;
+        window.clearAllData = clearAllData;
+        window.render = render;
+
         console.log('🏫 School Timetable Manager loaded.');
-        console.log('📊 Data version:', dataVersion);
-        console.log('📚 Classes:', appData.classSections.length);
+        console.log('📚 Classes:', getClassList().length);
         console.log('👨‍🏫 Teachers:', Object.keys(appData.teachers).length);
         console.log('📖 Subjects:', Object.keys(appData.subjects).length);
     </script>
