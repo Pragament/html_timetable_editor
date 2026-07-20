@@ -1322,8 +1322,12 @@
             headerHtml += '</tr><tr>';
 
             periodKeys.forEach((p, pi) => {
-                const cls = pi === 0 ? 'col-period' : 'col-period period-group-sep';
-                headerHtml += `<th class="${cls}">M</th><th class="${cls}">T</th><th class="${cls}">W</th><th class="${cls}">Th</th><th class="${cls}">F</th>`;
+                const groupSep = pi !== 0;
+                const days = ['M', 'T', 'W', 'Th', 'F'];
+                days.forEach((label, di) => {
+                    const cls = di === 0 && groupSep ? 'col-period period-group-sep' : 'col-period';
+                    headerHtml += `<th class="${cls}">${label}</th>`;
+                });
             });
             headerHtml += '</tr>';
             thead.innerHTML = headerHtml;
