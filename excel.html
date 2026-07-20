@@ -1363,10 +1363,9 @@
                     `<td class="col-teacher" data-key="${key}" title="${teacherName}" style="cursor:pointer;">${teacherMin}</td>`;
 
                 periodKeys.forEach((p, pi) => {
-                    const isFirst = pi === 0;
-                    const clsTd = isFirst ? 'col-period' : 'col-period period-group-sep';
-                    // 5 days
+                    // first day cell of each new period group should get the separator
                     DAYS.forEach((d, di) => {
+                        const clsTd = (pi !== 0 && di === 0) ? 'col-period period-group-sep' : 'col-period';
                         const val = getCellValue(key, d, p);
                         const subj = val.subject;
                         const tchr = val.teacher;
