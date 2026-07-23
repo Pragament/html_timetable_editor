@@ -402,6 +402,16 @@
         #rightSidebar .sidebar-inner .stat-row .value.highlight {
             color: #2563eb;
         }
+        #rightSidebar .sidebar-inner .stat-row.teacher-filter:hover {
+            background: #eef2ff;
+        }
+        #rightSidebar .sidebar-inner .stat-row.teacher-filter.active-filter {
+            background: #e0f2fe;
+        }
+        #rightSidebar .sidebar-inner .stat-row.clear-filter-row {
+            cursor: pointer;
+            color: #1d4ed8;
+        }
 
         /* bottom bar */
         #bottomBar {
@@ -1070,6 +1080,7 @@
 
         let clipboard = null;
         let contextTarget = null;
+        let activeTeacherFilter = null;
 
         // Multi-selection state (Multiple Days feature)
         let isSelectionMode = false;
@@ -1440,18 +1451,20 @@
                 periodKeys.forEach((p, pi) => {
                     DAYS.forEach((d, di) => {
                         const clsTd = (pi !== 0 && di === 0) ? 'col-period period-group-sep' : 'col-period';
-                        const val = getCellValue(key, d, p);
+                                    const val = getCellValue(key, d, p);
                         const subj = val.subject;
                         const tchr = val.teacher;
                         const subjMin = getSubjectMinimal(subj);
                         const tchrMin = getTeacherMinimal(tchr);
-                        const filled = !!(subj && tchr);
-                        const conflict = isConflict(key, d, p);
+                        const matchesFilter = !activeTeacherFilter || tchr === activeTeacherFilter;
+                        const filled = !!(subj && tchr && matchesFilter);
+                        const conflict = filled && isConflict(key, d, p);
                         const selected = isCellSelected(key, d, p);
                         const contentClass = 'cell-content' + (filled ? ' filled' : ' empty') + (conflict ?
-                            ' conflict' : '') + (selected ? ' selected-cell' : '');
+                            ' conflict' : '') + (selected ? ' selected-cell' : '') +
+                            (activeTeacherFilter && tchr === activeTeacherFilter ? ' filtered-match' : '');
                         const titleText = filled ? `${subj} / ${getSubjectName(subj)} — ${tchr} / ${getTeacherName(tchr)}` :
-                            'empty';
+                            (activeTeacherFilter && tchr ? 'hidden by filter' : 'empty');
                         bodyHtml += `<td class="${clsTd}" data-key="${key}" data-day="${d}" data-period="${p}">
                                     <div class="${contentClass}" title="${titleText}">
                                         ${filled ? `<span class="subj">${subjMin}</span><span class="tchr">${tchrMin}</span>` : '<span style="color:#cbd5e1;font-size:11px;">·</span>'}
@@ -1466,6 +1479,7 @@
 
             updateStats();
             updateSidebar();
+            attachSidebarTeacherEvents();
             updateBottomBar();
             document.getElementById('totalConflicts').textContent = conflicts.length;
 
@@ -1943,9 +1957,14 @@
             sortedTeachers.forEach(t => {
                 const name = getTeacherName(t);
                 const min = getTeacherMinimal(t);
+                const activeClass = (activeTeacherFilter === t) ? ' active-filter' : '';
+                const activeLabel = (activeTeacherFilter === t) ? ' <small>(active)</small>' : '';
                 tHtml +=
-                    `<div class="stat-row"><span class="label">${min} ${name.slice(0,8)}</span><span class="value highlight">${stats.byTeacher[t]}</span></div>`;
+                    `<div class="stat-row teacher-filter${activeClass}" data-teacher="${t}"><span class="label">${min} ${name.slice(0,8)}${activeLabel}</span><span class="value highlight">${stats.byTeacher[t]}</span></div>`;
             });
+            if (activeTeacherFilter) {
+                tHtml += `<div class="stat-row clear-filter-row"><span class="label">Clear teacher filter</span><span class="value">✕</span></div>`;
+            }
             teacherContainer.innerHTML = tHtml || '<div class="empty-msg">No data</div>';
 
             const subjectContainer = document.getElementById('statsBySubject');
@@ -1970,6 +1989,34 @@
             const p1 = appData.settings.periodTimes && appData.settings.periodTimes.P1;
             if (p1) {
                 document.getElementById('periodTimeDisplay').textContent = p1.start + '–' + p1.end;
+            }
+        }
+
+        function attachSidebarTeacherEvents() {
+            document.querySelectorAll('#statsByTeacher .teacher-filter').forEach(row => {
+                row.style.cursor = 'pointer';
+                row.addEventListener('click', function() {
+                    const teacherId = this.dataset.teacher;
+                    if (!teacherId) return;
+                    if (activeTeacherFilter === teacherId) {
+                        activeTeacherFilter = null;
+                        showToast('Teacher filter cleared');
+                    } else {
+                        activeTeacherFilter = teacherId;
+                        showToast('Showing periods for ' + getTeacherName(teacherId));
+                    }
+                    render();
+                });
+            });
+
+            const clearRow = document.querySelector('#statsByTeacher .clear-filter-row');
+            if (clearRow) {
+                clearRow.style.cursor = 'pointer';
+                clearRow.addEventListener('click', function() {
+                    activeTeacherFilter = null;
+                    showToast('Teacher filter cleared');
+                    render();
+                });
             }
         }
 
