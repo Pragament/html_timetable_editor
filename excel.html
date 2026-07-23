@@ -275,7 +275,7 @@
             cursor: pointer;
             border-radius: 2px;
             padding: 1px 2px;
-            transition: background 0.08s;
+            transition: background 0.08s, opacity 0.15s;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -315,6 +315,14 @@
         #tableWrap .col-period .cell-content.selected-cell {
             background: #93c5fd !important;
             box-shadow: inset 0 0 0 1.5px #2563eb !important;
+        }
+        #tableWrap .col-period .cell-content.filtered-match {
+            background: #fef08a !important;
+            box-shadow: inset 0 0 0 1.5px #eab308 !important;
+            font-weight: bold;
+        }
+        #tableWrap .col-period .cell-content.filtered-dim {
+            opacity: 0.25;
         }
         #tableWrap .col-period .cell-content.conflict::after {
             content: "⚡";
@@ -386,8 +394,9 @@
             display: flex;
             justify-content: space-between;
             font-size: 9px;
-            padding: 1px 0;
+            padding: 1px 4px;
             border-bottom: 1px solid #f1f5f9;
+            border-radius: 3px;
         }
         #rightSidebar .sidebar-inner .stat-row .label {
             color: #475569;
@@ -402,15 +411,26 @@
         #rightSidebar .sidebar-inner .stat-row .value.highlight {
             color: #2563eb;
         }
-        #rightSidebar .sidebar-inner .stat-row.teacher-filter:hover {
-            background: #eef2ff;
+        #rightSidebar .sidebar-inner .stat-row.teacher-filter {
+            cursor: pointer;
+            transition: background 0.1s;
         }
-        #rightSidebar .sidebar-inner .stat-row.teacher-filter.active-filter {
-            background: #e0f2fe;
+        #rightSidebar .sidebar-inner .stat-row.teacher-filter:hover {
+            background: #eff6ff;
+        }
+        #rightSidebar .sidebar-inner .stat-row.active-filter {
+            background: #fef08a !important;
+            font-weight: bold;
         }
         #rightSidebar .sidebar-inner .stat-row.clear-filter-row {
             cursor: pointer;
-            color: #1d4ed8;
+            background: #fee2e2;
+            color: #dc2626;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+        #rightSidebar .sidebar-inner .stat-row.clear-filter-row:hover {
+            background: #fca5a5;
         }
 
         /* bottom bar */
@@ -526,21 +546,21 @@
         #modalOverlay .modal {
             background: #ffffff;
             border-radius: 12px;
-            padding: 20px 28px;
-            max-width: 560px;
-            width: 92%;
+            padding: 16px 20px;
+            max-width: 500px;
+            width: 90%;
             max-height: 85vh;
             overflow: auto;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
         }
         #modalOverlay .modal h3 {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             color: #0f172a;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         #modalOverlay .modal h3 .badge {
             font-size: 10px;
@@ -552,43 +572,43 @@
             font-size: 11px;
             font-weight: 500;
             color: #475569;
-            margin-top: 10px;
-            margin-bottom: 3px;
+            margin-top: 6px;
+            margin-bottom: 2px;
         }
         #modalOverlay .modal input,
         #modalOverlay .modal select {
             width: 100%;
-            padding: 6px 10px;
+            padding: 4px 8px;
             border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 12px;
+            border-radius: 5px;
+            font-size: 11px;
             background: #f8fafc;
         }
         #modalOverlay .modal input:focus,
         #modalOverlay .modal select:focus {
             outline: none;
             border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
         }
         #modalOverlay .modal .form-row {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
         #modalOverlay .modal .form-row>* {
             flex: 1;
-            min-width: 80px;
+            min-width: 70px;
         }
         #modalOverlay .modal .btn-row {
             display: flex;
-            gap: 8px;
-            margin-top: 16px;
+            gap: 6px;
+            margin-top: 12px;
             justify-content: flex-end;
             flex-wrap: wrap;
         }
         #modalOverlay .modal .btn-row button {
-            padding: 6px 18px;
-            border-radius: 6px;
+            padding: 4px 14px;
+            border-radius: 5px;
             border: none;
             font-size: 11px;
             font-weight: 500;
@@ -623,38 +643,49 @@
             background: #15803d;
         }
         #modalOverlay .modal .item-list {
-            max-height: 220px;
+            max-height: 200px;
             overflow: auto;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
             padding: 2px 0;
-            margin-top: 6px;
+            margin-top: 4px;
         }
         #modalOverlay .modal .item-list .item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 4px 12px;
+            padding: 3px 8px;
             font-size: 11px;
             border-bottom: 1px solid #f1f5f9;
+            background: #fff;
+            transition: background 0.15s, transform 0.1s;
         }
         #modalOverlay .modal .item-list .item:last-child {
             border-bottom: none;
         }
-        #modalOverlay .modal .item-list .item .actions button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 12px;
-            padding: 0 5px;
-            color: #94a3b8;
-            transition: color 0.1s;
+        #modalOverlay .modal .item-list .item .actions {
+            display: flex;
+            align-items: center;
+            gap: 2px;
         }
-        #modalOverlay .modal .item-list .item .actions button:hover {
-            color: #2563eb;
+        #modalOverlay .modal .item-list .item .actions button {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+            padding: 1px 5px;
+            color: #475569;
+            transition: all 0.1s;
+        }
+        #modalOverlay .modal .item-list .item .actions button:hover:not(:disabled) {
+            background: #e2e8f0;
+            color: #0f172a;
         }
         #modalOverlay .modal .item-list .item .actions button.del:hover {
+            background: #fee2e2;
             color: #dc2626;
+            border-color: #f87171;
         }
         #modalOverlay .modal .item-list .item .code {
             font-weight: 600;
@@ -671,17 +702,19 @@
         #modalOverlay .modal .item-list .item .info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
+
+        /* Compact Subject Check List */
         .subj-check-list {
-            max-height: 160px;
+            max-height: 180px;
             overflow-y: auto;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
-            padding: 6px 8px;
-            display: flex;
-            flex-direction: column;
+            padding: 4px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 4px;
             background: #f8fafc;
         }
@@ -689,42 +722,50 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 11px;
+            font-size: 10.5px;
             color: #334155;
             cursor: pointer;
-            padding: 3px 4px;
+            padding: 3px 6px;
             border-radius: 4px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            transition: background 0.1s, border-color 0.1s;
         }
         .subj-check-item:hover {
-            background: #eef2ff;
+            background: #eff6ff;
+            border-color: #93c5fd;
         }
         .subj-check-item input[type="checkbox"] {
+            width: 13px;
+            height: 13px;
             cursor: pointer;
+            flex-shrink: 0;
         }
+
         #modalOverlay .modal .empty-msg {
             color: #94a3b8;
             font-size: 11px;
-            padding: 12px;
+            padding: 10px;
             text-align: center;
         }
         #modalOverlay .modal .import-area {
-            margin-top: 10px;
-            padding: 10px;
+            margin-top: 8px;
+            padding: 6px;
             border: 1px dashed #e2e8f0;
             border-radius: 6px;
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
             flex-wrap: wrap;
         }
         #modalOverlay .modal .import-area input[type="file"] {
             flex: 1;
-            padding: 4px;
+            padding: 2px;
             font-size: 10px;
             min-width: 140px;
         }
         #modalOverlay .modal .import-area button {
-            padding: 4px 14px;
+            padding: 2px 10px;
             font-size: 10px;
         }
 
@@ -737,9 +778,9 @@
             display: flex;
             gap: 2px;
             align-items: center;
-            width: min(140px, calc(100vw - 20px)); /* Reduced width */
+            width: min(140px, calc(100vw - 20px));
             min-width: 90px;
-            max-width: 160px;                      /* Cut to half length */
+            max-width: 160px;
             height: auto;
             padding: 2px;
             box-sizing: border-box;
@@ -914,8 +955,8 @@
         .edit-form {
             background: #f8fafc;
             border-radius: 6px;
-            padding: 10px 12px;
-            margin-top: 8px;
+            padding: 8px 10px;
+            margin-top: 6px;
             border: 1px solid #e2e8f0;
         }
         .edit-form .form-row {
@@ -1078,9 +1119,9 @@
             }
         };
 
+        let activeTeacherFilter = null; // Filter state for filtering grid by teacher
         let clipboard = null;
         let contextTarget = null;
-        let activeTeacherFilter = null;
 
         // Multi-selection state (Multiple Days feature)
         let isSelectionMode = false;
@@ -1366,6 +1407,7 @@
             appData.timetable = {};
             appData.settings.periodsPerDay = 7;
             appData.settings.periodTimes = initDefaultTimes();
+            activeTeacherFilter = null;
             saveData();
             render();
             showToast('All data cleared');
@@ -1451,20 +1493,28 @@
                 periodKeys.forEach((p, pi) => {
                     DAYS.forEach((d, di) => {
                         const clsTd = (pi !== 0 && di === 0) ? 'col-period period-group-sep' : 'col-period';
-                                    const val = getCellValue(key, d, p);
+                        const val = getCellValue(key, d, p);
                         const subj = val.subject;
                         const tchr = val.teacher;
                         const subjMin = getSubjectMinimal(subj);
                         const tchrMin = getTeacherMinimal(tchr);
-                        const matchesFilter = !activeTeacherFilter || tchr === activeTeacherFilter;
-                        const filled = !!(subj && tchr && matchesFilter);
-                        const conflict = filled && isConflict(key, d, p);
+                        const filled = !!(subj && tchr);
+                        const conflict = isConflict(key, d, p);
                         const selected = isCellSelected(key, d, p);
+
+                        let filterClass = '';
+                        if (activeTeacherFilter) {
+                            if (tchr === activeTeacherFilter) {
+                                filterClass = ' filtered-match';
+                            } else {
+                                filterClass = ' filtered-dim';
+                            }
+                        }
+
                         const contentClass = 'cell-content' + (filled ? ' filled' : ' empty') + (conflict ?
-                            ' conflict' : '') + (selected ? ' selected-cell' : '') +
-                            (activeTeacherFilter && tchr === activeTeacherFilter ? ' filtered-match' : '');
+                            ' conflict' : '') + (selected ? ' selected-cell' : '') + filterClass;
                         const titleText = filled ? `${subj} / ${getSubjectName(subj)} — ${tchr} / ${getTeacherName(tchr)}` :
-                            (activeTeacherFilter && tchr ? 'hidden by filter' : 'empty');
+                            'empty';
                         bodyHtml += `<td class="${clsTd}" data-key="${key}" data-day="${d}" data-period="${p}">
                                     <div class="${contentClass}" title="${titleText}">
                                         ${filled ? `<span class="subj">${subjMin}</span><span class="tchr">${tchrMin}</span>` : '<span style="color:#cbd5e1;font-size:11px;">·</span>'}
@@ -1479,7 +1529,6 @@
 
             updateStats();
             updateSidebar();
-            attachSidebarTeacherEvents();
             updateBottomBar();
             document.getElementById('totalConflicts').textContent = conflicts.length;
 
@@ -1684,22 +1733,22 @@
 
             const html = `
                 <h3>⚡ Assign Multiple Cells <span class="badge">${selectedCells.length} Selected</span></h3>
-                <p style="font-size:11px;color:#64748b;margin-bottom:12px;">Choose a Teacher or Subject to fill all selected slots.</p>
+                <p style="font-size:10.5px;color:#64748b;margin-bottom:8px;">Choose a Teacher or Subject to fill all selected slots.</p>
 
-                <div style="background:#f8fafc;padding:12px;border:1px solid #e2e8f0;border-radius:6px;">
+                <div style="background:#f8fafc;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;">
                     <label style="font-weight:600;margin-top:0;">Option 1: Select Teacher (Auto-assigns Subject)</label>
                     <select id="batchTeacherSelect" onchange="handleBatchTeacherChange()">
                         ${teacherOpts}
                     </select>
 
-                    <div style="text-align:center;margin:8px 0;font-weight:bold;color:#94a3b8;">— OR —</div>
+                    <div style="text-align:center;margin:4px 0;font-weight:bold;color:#94a3b8;font-size:10px;">— OR —</div>
 
                     <label style="font-weight:600;">Option 2: Select Subject</label>
                     <select id="batchSubjectSelect" onchange="handleBatchSubjectChange()">
                         ${subjOpts}
                     </select>
 
-                    <div id="batchSubTeacherWrap" style="display:none;margin-top:8px;">
+                    <div id="batchSubTeacherWrap" style="display:none;margin-top:6px;">
                         <label style="font-weight:600;color:#2563eb;">Multiple teachers found for this subject! Choose one:</label>
                         <select id="batchSubTeacherSelect"></select>
                     </div>
@@ -1926,7 +1975,7 @@
             }
         }
 
-        // ───────────── UPDATE STATS ─────────────
+        // ───────────── UPDATE STATS & SIDEBAR FILTER ─────────────
         function updateStats() {
             const stats = computeStats();
             document.getElementById('totalPeriods').textContent = stats.totalPeriods;
@@ -1962,10 +2011,36 @@
                 tHtml +=
                     `<div class="stat-row teacher-filter${activeClass}" data-teacher="${t}"><span class="label">${min} ${name.slice(0,8)}${activeLabel}</span><span class="value highlight">${stats.byTeacher[t]}</span></div>`;
             });
+
             if (activeTeacherFilter) {
                 tHtml += `<div class="stat-row clear-filter-row"><span class="label">Clear teacher filter</span><span class="value">✕</span></div>`;
             }
+
             teacherContainer.innerHTML = tHtml || '<div class="empty-msg">No data</div>';
+
+            // Attach Teacher Filter Click Handlers
+            teacherContainer.querySelectorAll('.teacher-filter').forEach(el => {
+                el.addEventListener('click', function() {
+                    const tId = this.dataset.teacher;
+                    if (activeTeacherFilter === tId) {
+                        activeTeacherFilter = null;
+                        showToast('Teacher filter cleared');
+                    } else {
+                        activeTeacherFilter = tId;
+                        showToast('Filtering for ' + getTeacherName(tId));
+                    }
+                    render();
+                });
+            });
+
+            const clearBtn = teacherContainer.querySelector('.clear-filter-row');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function() {
+                    activeTeacherFilter = null;
+                    showToast('Teacher filter cleared');
+                    render();
+                });
+            }
 
             const subjectContainer = document.getElementById('statsBySubject');
             let sHtml = '';
@@ -1989,34 +2064,6 @@
             const p1 = appData.settings.periodTimes && appData.settings.periodTimes.P1;
             if (p1) {
                 document.getElementById('periodTimeDisplay').textContent = p1.start + '–' + p1.end;
-            }
-        }
-
-        function attachSidebarTeacherEvents() {
-            document.querySelectorAll('#statsByTeacher .teacher-filter').forEach(row => {
-                row.style.cursor = 'pointer';
-                row.addEventListener('click', function() {
-                    const teacherId = this.dataset.teacher;
-                    if (!teacherId) return;
-                    if (activeTeacherFilter === teacherId) {
-                        activeTeacherFilter = null;
-                        showToast('Teacher filter cleared');
-                    } else {
-                        activeTeacherFilter = teacherId;
-                        showToast('Showing periods for ' + getTeacherName(teacherId));
-                    }
-                    render();
-                });
-            });
-
-            const clearRow = document.querySelector('#statsByTeacher .clear-filter-row');
-            if (clearRow) {
-                clearRow.style.cursor = 'pointer';
-                clearRow.addEventListener('click', function() {
-                    activeTeacherFilter = null;
-                    showToast('Teacher filter cleared');
-                    render();
-                });
             }
         }
 
@@ -2245,8 +2292,8 @@
         function openSettings() {
             let html = `
                         <h3>⏱️ Period Times</h3>
-                        <p style="font-size:11px;color:#475569;margin-bottom:8px;">Set start and end time for each period.</p>
-                        <div style="max-height:260px;overflow:auto;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;margin-top:4px;">
+                        <p style="font-size:10.5px;color:#475569;margin-bottom:6px;">Set start and end time for each period.</p>
+                        <div style="max-height:220px;overflow:auto;border:1px solid #e2e8f0;border-radius:6px;padding:6px 8px;margin-top:4px;">
                     `;
             const periodKeys = [];
             for (let p = 1; p <= 10; p++) periodKeys.push('P' + p);
@@ -2255,11 +2302,11 @@
                 const start = t ? t.start : '08:00';
                 const end = t ? t.end : '08:45';
                 html += `
-                            <div style="display:flex;gap:6px;align-items:center;font-size:11px;margin:3px 0;">
-                                <span style="width:32px;font-weight:600;">${p}</span>
-                                <input type="time" id="timeStart_${p}" value="${start}" style="width:70px;padding:2px 4px;border:1px solid #e2e8f0;border-radius:3px;font-size:10px;" />
+                            <div style="display:flex;gap:6px;align-items:center;font-size:10.5px;margin:2px 0;">
+                                <span style="width:28px;font-weight:600;">${p}</span>
+                                <input type="time" id="timeStart_${p}" value="${start}" style="width:70px;padding:1px 3px;border:1px solid #e2e8f0;border-radius:3px;font-size:10px;" />
                                 <span>–</span>
-                                <input type="time" id="timeEnd_${p}" value="${end}" style="width:70px;padding:2px 4px;border:1px solid #e2e8f0;border-radius:3px;font-size:10px;" />
+                                <input type="time" id="timeEnd_${p}" value="${end}" style="width:70px;padding:1px 3px;border:1px solid #e2e8f0;border-radius:3px;font-size:10px;" />
                             </div>
                         `;
             });
@@ -2304,7 +2351,7 @@
             const classList = getClassList();
             let html = `
                         <h3>📋 Manage Classes <span class="badge">${classList.length}</span></h3>
-                        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+                        <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
                             <input type="text" id="newClass" placeholder="Class (e.g. I)" style="flex:1;min-width:60px;" />
                             <input type="text" id="newSection" placeholder="Section (e.g. A)" style="flex:1;min-width:60px;" />
                             <button class="btn-primary" onclick="addClassFromModal()">Add</button>
@@ -2315,24 +2362,26 @@
                             <button class="btn-success" onclick="importClassesFromModal()">Import</button>
                             <button class="btn-secondary" onclick="clearClassesFromModal()" style="color:#dc2626;">Clear All</button>
                         </div>
-                        <div class="item-list">
+                        <div class="item-list" id="classItemList">
                     `;
 
             if (classList.length === 0) {
                 html += `<div class="empty-msg">No classes added yet.</div>`;
             } else {
-                classList.forEach(c => {
+                classList.forEach((c, idx) => {
                     const key = getClassKey(c.class, c.section);
                     const teacherId = getClassTeacher(key);
                     const teacherName = teacherId ? getTeacherName(teacherId) : '—';
                     html += `
-                                <div class="item">
+                                <div class="item" data-class="${c.class}" data-section="${c.section}" data-idx="${idx}">
                                     <div class="info">
                                         <span class="code">${c.class}</span>
                                         <span class="name">${c.section}</span>
                                         <span class="meta">👨‍🏫 ${teacherName}</span>
                                     </div>
                                     <div class="actions">
+                                        <button onclick="moveClassFromModal(${idx}, -1)" title="Move Up" ${idx === 0 ? 'disabled style="opacity:0.3;cursor:default;"' : ''}>▲</button>
+                                        <button onclick="moveClassFromModal(${idx}, 1)" title="Move Down" ${idx === classList.length - 1 ? 'disabled style="opacity:0.3;cursor:default;"' : ''}>▼</button>
                                         <button onclick="editClassFromModal('${c.class}','${c.section}')" title="Edit">✏️</button>
                                         <button class="del" onclick="deleteClassFromModal('${c.class}','${c.section}')" title="Delete">✕</button>
                                     </div>
@@ -2343,11 +2392,26 @@
 
             html += `
                         </div>
+                        ${classList.length > 1 ? '<div style="font-size:10px;color:#94a3b8;margin-top:4px;">Use ▲/▼ buttons to reorder classes</div>' : ''}
                         <div class="btn-row">
                             <button class="btn-secondary" onclick="closeModal()">Close</button>
                         </div>
                     `;
             openModal(html);
+        }
+
+        function moveClassFromModal(idx, dir) {
+            const classList = appData.classes;
+            const targetIdx = idx + dir;
+            if (targetIdx < 0 || targetIdx >= classList.length) return;
+            
+            const temp = classList[idx];
+            classList[idx] = classList[targetIdx];
+            classList[targetIdx] = temp;
+
+            render();
+            saveData();
+            manageClasses();
         }
 
         function addClassFromModal() {
@@ -2383,7 +2447,7 @@
                                 <div><label>Class</label><input type="text" id="editClass" value="${cls}" /></div>
                                 <div><label>Section</label><input type="text" id="editSection" value="${sec}" /></div>
                             </div>
-                            <div style="margin-top:6px;font-size:10px;color:#94a3b8;">
+                            <div style="margin-top:4px;font-size:10px;color:#94a3b8;">
                                 Current teacher: ${teacherId ? getTeacherName(teacherId) : '—'}
                                 (change via main table)
                             </div>
@@ -2451,7 +2515,7 @@
             const subjKeys = Object.keys(appData.subjects).sort();
             let html = `
                         <h3>📖 Manage Subjects <span class="badge">${subjKeys.length}</span></h3>
-                        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+                        <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
                             <input type="text" id="newSubjCode" placeholder="Code (e.g. MAT)" style="flex:0.8;min-width:70px;" />
                             <input type="text" id="newSubjName" placeholder="Name" style="flex:1.2;min-width:80px;" />
                             <input type="text" id="newSubjMin" placeholder="Minimal (e.g. M)" style="flex:0.6;min-width:50px;" />
@@ -2604,7 +2668,7 @@
             const tchKeys = Object.keys(appData.teachers).sort();
             let html = `
                         <h3>👨‍🏫 Manage Teachers <span class="badge">${tchKeys.length}</span></h3>
-                        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+                        <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
                             <input type="text" id="newTchrId" placeholder="ID (e.g. JOH)" style="flex:0.8;min-width:60px;" />
                             <input type="text" id="newTchrName" placeholder="Name" style="flex:1.2;min-width:80px;" />
                             <input type="text" id="newTchrMin" placeholder="Minimal (e.g. JO)" style="flex:0.6;min-width:50px;" />
@@ -2667,6 +2731,7 @@
 
         function deleteTeacherFromModal(id) {
             if (!confirm('Delete teacher ' + id + '?')) return;
+            if (activeTeacherFilter === id) activeTeacherFilter = null;
             delete appData.teachers[id];
             getClassKeys().forEach(c => {
                 DAYS.forEach(d => {
@@ -2704,7 +2769,7 @@
                     subjCheckboxes += `
                                 <label class="subj-check-item">
                                     <input type="checkbox" value="${code}" ${checked} />
-                                    <span>${code} - ${appData.subjects[code].name}</span>
+                                    <span><strong>${code}</strong> - ${appData.subjects[code].name}</span>
                                 </label>
                             `;
                 });
@@ -2717,8 +2782,8 @@
                                 <div><label>Name</label><input type="text" id="editTchrName" value="${t.name}" /></div>
                                 <div><label>Minimal</label><input type="text" id="editTchrMin" value="${t.minimalId}" /></div>
                             </div>
-                            <div style="margin-top:10px;">
-                                <label style="display:block;margin-bottom:4px;font-weight:600;color:#334155;">Subjects (select one or more)</label>
+                            <div style="margin-top:6px;">
+                                <label style="display:block;margin-bottom:3px;font-weight:600;color:#334155;">Subjects (select one or more)</label>
                                 <div class="subj-check-list" id="editTchrSubjList">
                                     ${subjCheckboxes}
                                 </div>
@@ -2767,6 +2832,7 @@
             if (!confirm('Remove ALL teachers?')) return;
             appData.teachers = {};
             appData.classTeachers = {};
+            activeTeacherFilter = null;
             getClassKeys().forEach(c => {
                 DAYS.forEach(d => {
                     const pCount = getPeriodsPerDay();
@@ -2881,6 +2947,7 @@
         window.openModal = openModal;
         window.showToast = showToast;
         window.manageClasses = manageClasses;
+        window.moveClassFromModal = moveClassFromModal;
         window.manageSubjects = manageSubjects;
         window.manageTeachers = manageTeachers;
         window.openSettings = openSettings;
