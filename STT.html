@@ -1,0 +1,2817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>School Timetable Manager</title>
+    <style>
+        /* ───────────── RESET & BASE ───────────── */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #f4f7fc;
+            color: #1e293b;
+            font-size: 12px;
+            user-select: none;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e9eef3;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* ───────────── LAYOUT ───────────── */
+        #app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background: #f8fafc;
+        }
+
+        /* top bar */
+        #topBar {
+            flex-shrink: 0;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s;
+            overflow: hidden;
+            position: relative;
+            z-index: 20;
+        }
+        #topBar.collapsed {
+            height: 32px !important;
+        }
+        #topBar .bar-inner {
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 20px;
+        }
+        #topBar .bar-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #64748b;
+            padding: 0 4px;
+        }
+        #topBar .bar-toggle:hover {
+            color: #0f172a;
+        }
+        #topBar .stat-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            background: #f1f5f9;
+            padding: 2px 10px;
+            border-radius: 12px;
+            color: #334155;
+            white-space: nowrap;
+        }
+        #topBar .stat-item .num {
+            font-weight: 700;
+            color: #2563eb;
+            margin: 0 2px;
+        }
+        #topBar .stat-item .num.danger {
+            color: #dc2626;
+        }
+
+        /* toolbar */
+        #toolbar {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 6px;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+            font-size: 10px;
+        }
+        #toolbar button {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 2px 10px;
+            font-size: 9.5px;
+            font-weight: 500;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.1s;
+            white-space: nowrap;
+        }
+        #toolbar button:hover {
+            background: #e2e8f0;
+            border-color: #94a3b8;
+        }
+        #toolbar button.primary {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #fff;
+        }
+        #toolbar button.primary:hover {
+            background: #1d4ed8;
+        }
+        #toolbar button.success {
+            background: #16a34a;
+            border-color: #16a34a;
+            color: #fff;
+        }
+        #toolbar button.success:hover {
+            background: #15803d;
+        }
+        #toolbar button.danger {
+            background: #dc2626;
+            border-color: #dc2626;
+            color: #fff;
+        }
+        #toolbar button.danger:hover {
+            background: #b91c1c;
+        }
+        #toolbar .sep {
+            width: 1px;
+            height: 20px;
+            background: #e2e8f0;
+            margin: 0 2px;
+        }
+        #toolbar label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #475569;
+        }
+        #toolbar select,
+        #toolbar input {
+            border: 1px solid #e2e8f0;
+            border-radius: 3px;
+            padding: 1px 6px;
+            font-size: 10px;
+            background: #fff;
+            height: 22px;
+        }
+        #toolbar input[type="number"] {
+            width: 42px;
+        }
+        #toolbar input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+
+        /* main area */
+        #mainArea {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #tableWrap {
+            flex: 1;
+            overflow: auto;
+            padding: 4px 6px 6px 6px;
+            background: #f8fafc;
+        }
+        #tableWrap table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 1000px;
+            table-layout: fixed;
+            font-size: 10px;
+            border: 1px solid #dbe0e7;
+            background: #ffffff;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+        }
+        #tableWrap th,
+        #tableWrap td {
+            border: 1px solid #e2e8f0;
+            padding: 2px 3px;
+            text-align: center;
+            vertical-align: middle;
+            height: 28px;
+            min-height: 28px;
+            max-height: 28px;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+        #tableWrap th {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        #tableWrap th .period-time {
+            font-weight: 400;
+            font-size: 7px;
+            color: #64748b;
+            display: block;
+            margin-top: 1px;
+        }
+        #tableWrap .col-class {
+            width: 40px;
+            min-width: 40px;
+            max-width: 40px;
+            font-weight: 600;
+            background: #f8fafc;
+            font-size: 10px;
+        }
+        #tableWrap .col-section {
+            width: 30px;
+            min-width: 30px;
+            max-width: 30px;
+            font-weight: 600;
+            background: #f8fafc;
+            font-size: 10px;
+        }
+        #tableWrap .col-teacher {
+            width: 40px;
+            min-width: 40px;
+            max-width: 40px;
+            background: #f8fafc;
+            font-size: 8.5px;
+            cursor: pointer;
+        }
+        #tableWrap .col-teacher:hover {
+            background: #eef2ff;
+        }
+        #tableWrap .col-period {
+            width: 28px;
+            min-width: 26px;
+            max-width: 30px;
+        }
+        #tableWrap .col-period .cell-content {
+            font-size: 8px;
+            line-height: 1.15;
+            cursor: pointer;
+            border-radius: 2px;
+            padding: 1px 2px;
+            transition: background 0.08s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 22px;
+        }
+        #tableWrap .col-period .cell-content .subj {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 8.5px;
+        }
+        #tableWrap .col-period .cell-content .tchr {
+            font-weight: 400;
+            color: #475569;
+            font-size: 7px;
+            opacity: 0.8;
+        }
+        #tableWrap .col-period .cell-content.empty {
+            color: #cbd5e1;
+            font-size: 12px;
+            font-weight: 300;
+        }
+        #tableWrap .col-period .cell-content:hover {
+            background: #eef2ff;
+        }
+        #tableWrap .col-period .cell-content.filled {
+            background: #f0f4ff;
+        }
+        #tableWrap .col-period .cell-content.filled:hover {
+            background: #dbeafe;
+        }
+        #tableWrap .col-period .cell-content.conflict {
+            background: #fee2e2 !important;
+            box-shadow: inset 0 0 0 1px #f87171;
+        }
+        #tableWrap .col-period .cell-content.selected-cell {
+            background: #93c5fd !important;
+            box-shadow: inset 0 0 0 1.5px #2563eb !important;
+        }
+        #tableWrap .col-period .cell-content.conflict::after {
+            content: "⚡";
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            font-size: 8px;
+            color: #dc2626;
+        }
+
+        /* period group separator */
+        .period-group-sep {
+            border-left: 2.5px solid #94a3b8 !important;
+        }
+
+        #tableWrap tbody tr:hover td {
+            background: #f8fafc;
+        }
+        #tableWrap tbody tr:hover td.col-class,
+        #tableWrap tbody tr:hover td.col-section,
+        #tableWrap tbody tr:hover td.col-teacher {
+            background: #f1f5f9;
+        }
+
+        /* right sidebar */
+        #rightSidebar {
+            flex-shrink: 0;
+            width: 200px;
+            background: #ffffff;
+            border-left: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: width 0.2s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 15;
+        }
+        #rightSidebar.collapsed {
+            width: 28px !important;
+        }
+        #rightSidebar .sidebar-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #64748b;
+            padding: 4px 6px;
+            width: 28px;
+            text-align: center;
+        }
+        #rightSidebar .sidebar-toggle:hover {
+            color: #0f172a;
+        }
+        #rightSidebar .sidebar-inner {
+            flex: 1;
+            overflow: auto;
+            padding: 6px 8px;
+        }
+        #rightSidebar .sidebar-inner h4 {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin: 6px 0 4px 0;
+            border-bottom: 1px solid #e9eef3;
+            padding-bottom: 3px;
+        }
+        #rightSidebar .sidebar-inner .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            padding: 1px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        #rightSidebar .sidebar-inner .stat-row .label {
+            color: #475569;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        #rightSidebar .sidebar-inner .stat-row .value {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        #rightSidebar .sidebar-inner .stat-row .value.highlight {
+            color: #2563eb;
+        }
+
+        /* bottom bar */
+        #bottomBar {
+            flex-shrink: 0;
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            transition: all 0.2s;
+            overflow: hidden;
+            position: relative;
+            z-index: 20;
+        }
+        #bottomBar.collapsed {
+            height: 28px !important;
+        }
+        #bottomBar .bar-inner {
+            padding: 4px 14px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px 18px;
+        }
+        #bottomBar .bar-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #64748b;
+            padding: 0 4px;
+        }
+        #bottomBar .bar-toggle:hover {
+            color: #0f172a;
+        }
+        #bottomBar .stat-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            background: #f1f5f9;
+            padding: 1px 10px;
+            border-radius: 12px;
+            color: #334155;
+            white-space: nowrap;
+        }
+        #bottomBar .stat-item .num {
+            font-weight: 700;
+            color: #2563eb;
+            margin: 0 2px;
+        }
+
+        /* Selection mode indicator banner */
+        #selectionBanner {
+            display: none;
+            background: #eff6ff;
+            border-bottom: 1px solid #3b82f6;
+            color: #1d4ed8;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* context menu */
+        #contextMenu {
+            display: none;
+            position: fixed;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            padding: 4px 0;
+            min-width: 130px;
+            z-index: 999;
+        }
+        #contextMenu .menu-item {
+            padding: 5px 18px;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1e293b;
+        }
+        #contextMenu .menu-item:hover {
+            background: #f1f5f9;
+        }
+        #contextMenu .menu-item.danger {
+            color: #dc2626;
+        }
+        #contextMenu .menu-item.danger:hover {
+            background: #fee2e2;
+        }
+        #contextMenu .menu-sep {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 3px 8px;
+        }
+
+        /* modal overlay */
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+        }
+        #modalOverlay.open {
+            display: flex;
+        }
+        #modalOverlay .modal {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px 28px;
+            max-width: 560px;
+            width: 92%;
+            max-height: 85vh;
+            overflow: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+        #modalOverlay .modal h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #modalOverlay .modal h3 .badge {
+            font-size: 10px;
+            font-weight: 400;
+            color: #64748b;
+        }
+        #modalOverlay .modal label {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            color: #475569;
+            margin-top: 10px;
+            margin-bottom: 3px;
+        }
+        #modalOverlay .modal input,
+        #modalOverlay .modal select {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 12px;
+            background: #f8fafc;
+        }
+        #modalOverlay .modal input:focus,
+        #modalOverlay .modal select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+        #modalOverlay .modal .form-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        #modalOverlay .modal .form-row>* {
+            flex: 1;
+            min-width: 80px;
+        }
+        #modalOverlay .modal .btn-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+        #modalOverlay .modal .btn-row button {
+            padding: 6px 18px;
+            border-radius: 6px;
+            border: none;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        #modalOverlay .modal .btn-row .btn-primary {
+            background: #2563eb;
+            color: #fff;
+        }
+        #modalOverlay .modal .btn-row .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        #modalOverlay .modal .btn-row .btn-secondary {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+        #modalOverlay .modal .btn-row .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+        #modalOverlay .modal .btn-row .btn-danger {
+            background: #dc2626;
+            color: #fff;
+        }
+        #modalOverlay .modal .btn-row .btn-danger:hover {
+            background: #b91c1c;
+        }
+        #modalOverlay .modal .btn-row .btn-success {
+            background: #16a34a;
+            color: #fff;
+        }
+        #modalOverlay .modal .btn-row .btn-success:hover {
+            background: #15803d;
+        }
+        #modalOverlay .modal .item-list {
+            max-height: 220px;
+            overflow: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 2px 0;
+            margin-top: 6px;
+        }
+        #modalOverlay .modal .item-list .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 12px;
+            font-size: 11px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        #modalOverlay .modal .item-list .item:last-child {
+            border-bottom: none;
+        }
+        #modalOverlay .modal .item-list .item .actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0 5px;
+            color: #94a3b8;
+            transition: color 0.1s;
+        }
+        #modalOverlay .modal .item-list .item .actions button:hover {
+            color: #2563eb;
+        }
+        #modalOverlay .modal .item-list .item .actions button.del:hover {
+            color: #dc2626;
+        }
+        #modalOverlay .modal .item-list .item .code {
+            font-weight: 600;
+            color: #0f172a;
+            margin-right: 6px;
+        }
+        #modalOverlay .modal .item-list .item .name {
+            color: #475569;
+        }
+        #modalOverlay .modal .item-list .item .meta {
+            color: #94a3b8;
+            font-size: 9px;
+        }
+        #modalOverlay .modal .item-list .item .info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        #modalOverlay .modal .empty-msg {
+            color: #94a3b8;
+            font-size: 11px;
+            padding: 12px;
+            text-align: center;
+        }
+        #modalOverlay .modal .import-area {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px dashed #e2e8f0;
+            border-radius: 6px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        #modalOverlay .modal .import-area input[type="file"] {
+            flex: 1;
+            padding: 4px;
+            font-size: 10px;
+            min-width: 140px;
+        }
+        #modalOverlay .modal .import-area button {
+            padding: 4px 14px;
+            font-size: 10px;
+        }
+
+        /* cell editor */
+        .cell-editor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
+            display: flex;
+            gap: 2px;
+            align-items: center;
+            width: min(140px, calc(100vw - 20px)); /* Reduced width */
+            min-width: 90px;
+            max-width: 160px;                      /* Cut to half length */
+            height: auto;
+            padding: 2px;
+            box-sizing: border-box;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            box-shadow: 0 5px 16px rgba(15, 23, 42, 0.14);
+        }
+        .cell-editor input,
+        .cell-editor select {
+            border: 1px solid #2563eb;
+            border-radius: 2px;
+            padding: 1px 3px;
+            font-size: 8px;
+            width: 100%;
+            height: 20px;
+            min-width: 0;
+            background: #fff;
+            outline: none;
+            font-family: inherit;
+        }
+        .cell-editor input:focus,
+        .cell-editor select:focus {
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+        .cell-editor .tchr-input {
+            flex: 1.3;
+            min-width: 60px;
+        }
+        .cell-editor .subj-opt-select {
+            flex: 1;
+            min-width: 60px;
+        }
+        .cell-editor .editor-actions {
+            display: flex;
+            gap: 1px;
+        }
+        .cell-editor .editor-actions button {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 2px;
+            padding: 0 4px;
+            font-size: 8px;
+            cursor: pointer;
+            height: 18px;
+            line-height: 18px;
+        }
+        .cell-editor .editor-actions button:hover {
+            background: #e2e8f0;
+        }
+
+        /* toast */
+        #toast {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: #f8fafc;
+            padding: 8px 22px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.25s;
+            pointer-events: none;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+        #toast.show {
+            opacity: 1;
+        }
+        #toast.success {
+            background: #16a34a;
+        }
+        #toast.error {
+            background: #dc2626;
+        }
+
+        /* responsive */
+        @media (max-width: 1200px) {
+            #rightSidebar {
+                width: 160px;
+            }
+            #rightSidebar.collapsed {
+                width: 24px !important;
+            }
+            #tableWrap table {
+                font-size: 9px;
+                min-width: 1000px;
+            }
+            #tableWrap .col-period {
+                width: 24px;
+                min-width: 22px;
+                max-width: 26px;
+            }
+        }
+        @media (max-width: 900px) {
+            #rightSidebar {
+                width: 130px;
+            }
+            #rightSidebar.collapsed {
+                width: 20px !important;
+            }
+            #tableWrap table {
+                font-size: 8px;
+                min-width: 800px;
+            }
+            #tableWrap .col-period {
+                width: 20px;
+                min-width: 18px;
+                max-width: 22px;
+            }
+            #tableWrap .col-class {
+                width: 36px;
+                min-width: 36px;
+                max-width: 36px;
+            }
+            #tableWrap .col-section {
+                width: 28px;
+                min-width: 28px;
+                max-width: 28px;
+            }
+            #tableWrap .col-teacher {
+                width: 38px;
+                min-width: 38px;
+                max-width: 38px;
+            }
+            #topBar .stat-item {
+                font-size: 9px;
+                padding: 1px 6px;
+            }
+            #bottomBar .stat-item {
+                font-size: 9px;
+                padding: 1px 6px;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 8px;
+            padding: 0 6px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .text-muted {
+            color: #94a3b8;
+        }
+        .flex {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .w-full {
+            width: 100%;
+        }
+        .mt-1 {
+            margin-top: 6px;
+        }
+        .mb-1 {
+            margin-bottom: 6px;
+        }
+        .gap-1 {
+            gap: 4px;
+        }
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .edit-form {
+            background: #f8fafc;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-top: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .edit-form .form-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .edit-form .form-row>* {
+            flex: 1;
+            min-width: 70px;
+        }
+        .edit-form .btn-row {
+            margin-top: 8px;
+            display: flex;
+            gap: 6px;
+            justify-content: flex-end;
+        }
+        .edit-form .btn-row button {
+            padding: 3px 12px;
+            font-size: 10px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+        .edit-form .btn-row .btn-save {
+            background: #2563eb;
+            color: #fff;
+        }
+        .edit-form .btn-row .btn-save:hover {
+            background: #1d4ed8;
+        }
+        .edit-form .btn-row .btn-cancel {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+        .edit-form .btn-row .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+        .edit-form .btn-row .btn-danger {
+            background: #dc2626;
+            color: #fff;
+        }
+        .edit-form .btn-row .btn-danger:hover {
+            background: #b91c1c;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <!-- TOP BAR -->
+        <div id="topBar">
+            <div class="bar-inner">
+                <button class="bar-toggle" id="topBarToggle" title="Toggle top stats">▾</button>
+                <span class="stat-item">📚 Total: <span class="num" id="totalPeriods">0</span></span>
+                <span class="stat-item">📋 Classes: <span class="num" id="totalClasses">0</span></span>
+                <span class="stat-item">👨‍🏫 Teachers: <span class="num" id="totalTeachers">0</span></span>
+                <span class="stat-item">📖 Subjects: <span class="num" id="totalSubjects">0</span></span>
+                <span class="stat-item">⚠️ Conflicts: <span class="num danger" id="totalConflicts">0</span></span>
+                <span style="flex:1;"></span>
+                <span style="font-size:9px;color:#94a3b8;" id="lastSaved">ready</span>
+            </div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <div id="toolbar">
+            <button class="primary" id="btnImport">📥 Import CSV</button>
+            <button class="success" id="btnExport">📤 Export CSV</button>
+            <div class="sep"></div>
+            <button id="btnSettings">⚙️ Times</button>
+            <button id="btnManageClasses">📋 Classes</button>
+            <button id="btnManageSubjects">📖 Subjects</button>
+            <button id="btnManageTeachers">👨‍🏫 Teachers</button>
+            <div class="sep"></div>
+            <button id="btnClearAll" class="danger">🗑️ Clear Data</button>
+            <div class="sep"></div>
+            <label>Periods/day: <input type="number" id="periodsPerDay" value="7" min="4" max="10" /></label>
+            <label>Apply all days: <input type="checkbox" id="applyAllDays" /></label>
+            <div class="sep"></div>
+            <button id="btnMultipleDays" class="primary" onclick="handleMultipleDaysBtnClick()">📅 Multiple Days</button>
+        </div>
+
+        <!-- SELECTION BANNER -->
+        <div id="selectionBanner">
+            <span>✨ <strong>Selection Mode Active:</strong> Click on cells in the timetable to select multiple slots, then click <strong>OK</strong> on the toolbar.</span>
+            <button style="background:none;border:none;color:#dc2626;cursor:pointer;font-weight:bold;" onclick="toggleSelectionMode(false)">Cancel Selection</button>
+        </div>
+
+        <!-- MAIN -->
+        <div id="mainArea">
+            <div id="tableWrap">
+                <table id="timetable">
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+            <div id="rightSidebar">
+                <button class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">◀</button>
+                <div class="sidebar-inner" id="sidebarInner">
+                    <h4>📊 By Class</h4>
+                    <div id="statsByClass"></div>
+                    <h4>👨‍🏫 By Teacher</h4>
+                    <div id="statsByTeacher"></div>
+                    <h4>📖 By Subject</h4>
+                    <div id="statsBySubject"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM BAR -->
+        <div id="bottomBar">
+            <div class="bar-inner">
+                <button class="bar-toggle" id="bottomBarToggle" title="Toggle bottom stats">▾</button>
+                <span class="stat-item">📅 Mon: <span class="num" id="dayMon">0</span></span>
+                <span class="stat-item">📅 Tue: <span class="num" id="dayTue">0</span></span>
+                <span class="stat-item">📅 Wed: <span class="num" id="dayWed">0</span></span>
+                <span class="stat-item">📅 Thu: <span class="num" id="dayThu">0</span></span>
+                <span class="stat-item">📅 Fri: <span class="num" id="dayFri">0</span></span>
+                <span style="flex:1;"></span>
+                <span class="stat-item">⏱️ <span id="periodTimeDisplay">08:00–08:45</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTEXT MENU -->
+    <div id="contextMenu">
+        <div class="menu-item" data-action="copy">📋 Copy</div>
+        <div class="menu-item" data-action="paste">📋 Paste</div>
+        <div class="menu-item" data-action="clear">🗑️ Clear</div>
+        <div class="menu-sep"></div>
+        <div class="menu-item" data-action="applyAll">📌 Apply to all days</div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="modalOverlay">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast"></div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════
+        // DATA LAYER
+        // ═══════════════════════════════════════════════════════════════
+
+        const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        const DAY_SHORT = { Monday: 'M', Tuesday: 'T', Wednesday: 'W', Thursday: 'Th', Friday: 'F' };
+        const DAY_ABBR = { Monday: 'M', Tuesday: 'T', Wednesday: 'W', Thursday: 'Th', Friday: 'F' };
+
+        let appData = {
+            classes: [], // [{ class: "I", section: "A" }, ...]
+            classTeachers: {}, // "I-A" -> teacherId
+            subjects: {}, // code -> { name, minimalCode }
+            teachers: {}, // id -> { name, minimalId, subjects: [...] }
+            timetable: {}, // "I-A" -> day -> period -> { subject, teacher }
+            settings: {
+                periodsPerDay: 7,
+                periodTimes: {}
+            }
+        };
+
+        let clipboard = null;
+        let contextTarget = null;
+
+        // Multi-selection state (Multiple Days feature)
+        let isSelectionMode = false;
+        let selectedCells = []; // [{ key, day, period }, ...]
+        let editingCell = null;
+
+        // ───────────── HELPERS ─────────────
+        function getClassKey(cls, sec) { return cls + '-' + sec; }
+
+        function getClassFromKey(key) { const p = key.split('-'); return { class: p[0] || '', section: p[1] || '' }; }
+
+        function getSubjectMinimal(code) {
+            if (!code) return '';
+            if (appData.subjects[code] && appData.subjects[code].minimalCode) {
+                return appData.subjects[code].minimalCode;
+            }
+            const lower = code.toLowerCase();
+            const foundKey = Object.keys(appData.subjects).find(k =>
+                k.toLowerCase() === lower ||
+                (appData.subjects[k].name && appData.subjects[k].name.toLowerCase() === lower)
+            );
+            if (foundKey && appData.subjects[foundKey].minimalCode) {
+                return appData.subjects[foundKey].minimalCode;
+            }
+            return code.length > 3 ? code.slice(0, 2).toUpperCase() : code;
+        }
+
+        function getTeacherMinimal(id) { const t = appData.teachers[id]; return t ? t.minimalId : (id || ''); }
+
+        function getSubjectName(code) {
+            if (!code) return '';
+            if (appData.subjects[code]) return appData.subjects[code].name;
+            const lower = code.toLowerCase();
+            const foundKey = Object.keys(appData.subjects).find(k =>
+                k.toLowerCase() === lower ||
+                (appData.subjects[k].name && appData.subjects[k].name.toLowerCase() === lower)
+            );
+            return foundKey ? appData.subjects[foundKey].name : code;
+        }
+
+        function getTeacherName(id) { const t = appData.teachers[id]; return t ? t.name : id; }
+
+        function getPeriodsPerDay() { return appData.settings.periodsPerDay || 7; }
+
+        function getPeriodKey(p) { return 'P' + p; }
+
+        function getAllPeriodKeys() {
+            const n = getPeriodsPerDay();
+            const keys = [];
+            for (let i = 1; i <= n; i++) keys.push('P' + i);
+            return keys;
+        }
+
+        function getCellValue(classKey, day, period) {
+            const c = appData.timetable[classKey];
+            if (!c) return { subject: null, teacher: null };
+            const d = c[day];
+            if (!d) return { subject: null, teacher: null };
+            const pv = d[period];
+            if (!pv) return { subject: null, teacher: null };
+            return pv;
+        }
+
+        function setCellValue(classKey, day, period, subject, teacher) {
+            if (!appData.timetable[classKey]) appData.timetable[classKey] = {};
+            if (!appData.timetable[classKey][day]) appData.timetable[classKey][day] = {};
+            appData.timetable[classKey][day][period] = { subject: subject || null, teacher: teacher || null };
+        }
+
+        function clearCell(classKey, day, period) {
+            if (appData.timetable[classKey] && appData.timetable[classKey][day]) {
+                appData.timetable[classKey][day][period] = { subject: null, teacher: null };
+            }
+        }
+
+        function getPeriodDisplay(p) {
+            const t = appData.settings.periodTimes && appData.settings.periodTimes[p];
+            if (t) return t.start + '–' + t.end;
+            return '';
+        }
+
+        function getClassTeacher(classKey) {
+            return appData.classTeachers[classKey] || null;
+        }
+
+        function setClassTeacher(classKey, teacherId) {
+            if (teacherId && appData.teachers[teacherId]) {
+                appData.classTeachers[classKey] = teacherId;
+            } else {
+                delete appData.classTeachers[classKey];
+            }
+        }
+
+        function getClassList() {
+            return appData.classes || [];
+        }
+
+        function getClassKeys() {
+            return getClassList().map(c => getClassKey(c.class, c.section));
+        }
+
+        function classExists(cls, sec) {
+            return getClassList().some(c => c.class === cls && c.section === sec);
+        }
+
+        function addClass(cls, sec) {
+            if (!cls || !sec) return false;
+            if (classExists(cls, sec)) return false;
+            appData.classes.push({ class: cls, section: sec });
+            const key = getClassKey(cls, sec);
+            appData.timetable[key] = {};
+            DAYS.forEach(d => {
+                appData.timetable[key][d] = {};
+                const pCount = getPeriodsPerDay();
+                for (let p = 1; p <= pCount; p++) {
+                    appData.timetable[key][d]['P' + p] = { subject: null, teacher: null };
+                }
+            });
+            return true;
+        }
+
+        function removeClass(cls, sec) {
+            const key = getClassKey(cls, sec);
+            appData.classes = appData.classes.filter(c => c.class !== cls || c.section !== sec);
+            delete appData.classTeachers[key];
+            delete appData.timetable[key];
+        }
+
+        function updateClass(oldCls, oldSec, newCls, newSec) {
+            if (oldCls === newCls && oldSec === newSec) return true;
+            if (classExists(newCls, newSec)) return false;
+            const oldKey = getClassKey(oldCls, oldSec);
+            const newKey = getClassKey(newCls, newSec);
+            if (appData.timetable[oldKey]) {
+                appData.timetable[newKey] = appData.timetable[oldKey];
+                delete appData.timetable[oldKey];
+            } else {
+                appData.timetable[newKey] = {};
+                DAYS.forEach(d => {
+                    appData.timetable[newKey][d] = {};
+                    const pCount = getPeriodsPerDay();
+                    for (let p = 1; p <= pCount; p++) {
+                        appData.timetable[newKey][d]['P' + p] = { subject: null, teacher: null };
+                    }
+                });
+            }
+            if (appData.classTeachers[oldKey]) {
+                appData.classTeachers[newKey] = appData.classTeachers[oldKey];
+                delete appData.classTeachers[oldKey];
+            }
+            const idx = appData.classes.findIndex(c => c.class === oldCls && c.section === oldSec);
+            if (idx !== -1) {
+                appData.classes[idx] = { class: newCls, section: newSec };
+            }
+            return true;
+        }
+
+        // ───────────── CONFLICT DETECTION ─────────────
+        function findConflicts() {
+            const conflicts = [];
+            const pCount = getPeriodsPerDay();
+            const teacherSlots = {};
+            getClassKeys().forEach(c => {
+                DAYS.forEach(d => {
+                    for (let p = 1; p <= pCount; p++) {
+                        const key = 'P' + p;
+                        const val = getCellValue(c, d, key);
+                        if (val.subject && val.teacher) {
+                            const tKey = val.teacher + '|' + d + '|' + key;
+                            if (!teacherSlots[tKey]) teacherSlots[tKey] = [];
+                            teacherSlots[tKey].push(c);
+                        }
+                    }
+                });
+            });
+            Object.keys(teacherSlots).forEach(k => {
+                if (teacherSlots[k].length > 1) {
+                    const parts = k.split('|');
+                    conflicts.push({ type: 'teacher', teacher: parts[0], day: parts[1], period: parts[2],
+                        classes: teacherSlots[k] });
+                }
+            });
+            return conflicts;
+        }
+
+        function isConflict(classKey, day, period) {
+            const conflicts = findConflicts();
+            return conflicts.some(c =>
+                c.classes.includes(classKey) && c.day === day && c.period === period
+            );
+        }
+
+        // ───────────── STATS ─────────────
+        function computeStats() {
+            const pCount = getPeriodsPerDay();
+            const stats = {
+                totalPeriods: 0,
+                filledPeriods: 0,
+                byClass: {},
+                byTeacher: {},
+                bySubject: {},
+                byDay: { Monday: 0, Tuesday: 0, Wednesday: 0, Thursday: 0, Friday: 0 }
+            };
+            getClassKeys().forEach(c => {
+                stats.byClass[c] = 0;
+                DAYS.forEach(d => {
+                    for (let p = 1; p <= pCount; p++) {
+                        const key = 'P' + p;
+                        const val = getCellValue(c, d, key);
+                        stats.totalPeriods++;
+                        if (val.subject && val.teacher) {
+                            stats.filledPeriods++;
+                            stats.byClass[c]++;
+                            stats.byDay[d]++;
+                            if (!stats.byTeacher[val.teacher]) stats.byTeacher[val.teacher] = 0;
+                            stats.byTeacher[val.teacher]++;
+                            if (!stats.bySubject[val.subject]) stats.bySubject[val.subject] = 0;
+                            stats.bySubject[val.subject]++;
+                        }
+                    }
+                });
+            });
+            return stats;
+        }
+
+        // ───────────── STORAGE ─────────────
+        function saveData() {
+            try {
+                localStorage.setItem('timetableAppData_v2', JSON.stringify(appData));
+                document.getElementById('lastSaved').textContent = 'saved ' + new Date().toLocaleTimeString();
+            } catch (e) { console.warn('Save error', e); }
+        }
+
+        function loadData() {
+            try {
+                const raw = localStorage.getItem('timetableAppData_v2');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    appData.classes = parsed.classes || [];
+                    appData.classTeachers = parsed.classTeachers || {};
+                    appData.subjects = parsed.subjects || {};
+                    appData.teachers = parsed.teachers || {};
+                    appData.timetable = parsed.timetable || {};
+                    appData.settings = parsed.settings || { periodsPerDay: 7, periodTimes: {} };
+                    if (!appData.settings.periodTimes || Object.keys(appData.settings.periodTimes).length === 0) {
+                        appData.settings.periodTimes = initDefaultTimes();
+                    }
+                    if (!appData.settings.periodsPerDay) appData.settings.periodsPerDay = 7;
+                    getClassKeys().forEach(c => {
+                        if (!appData.timetable[c]) {
+                            appData.timetable[c] = {};
+                            DAYS.forEach(d => {
+                                appData.timetable[c][d] = {};
+                                for (let p = 1; p <= appData.settings.periodsPerDay; p++) {
+                                    appData.timetable[c][d]['P' + p] = { subject: null, teacher: null };
+                                }
+                            });
+                        } else {
+                            DAYS.forEach(d => {
+                                if (!appData.timetable[c][d]) {
+                                    appData.timetable[c][d] = {};
+                                }
+                                for (let p = 1; p <= appData.settings.periodsPerDay; p++) {
+                                    const key = 'P' + p;
+                                    if (!appData.timetable[c][d][key]) {
+                                        appData.timetable[c][d][key] = { subject: null, teacher: null };
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    return true;
+                }
+            } catch (e) { console.warn('Load error', e); }
+            return false;
+        }
+
+        function clearAllData() {
+            appData.classes = [];
+            appData.classTeachers = {};
+            appData.subjects = {};
+            appData.teachers = {};
+            appData.timetable = {};
+            appData.settings.periodsPerDay = 7;
+            appData.settings.periodTimes = initDefaultTimes();
+            saveData();
+            render();
+            showToast('All data cleared');
+        }
+
+        function initDefaultTimes() {
+            const times = {};
+            const slots = [
+                ['08:00', '08:45'],
+                ['08:45', '09:30'],
+                ['09:30', '10:15'],
+                ['10:30', '11:15'],
+                ['11:15', '12:00'],
+                ['12:00', '12:45'],
+                ['13:30', '14:15']
+            ];
+            for (let i = 1; i <= 7; i++) {
+                times['P' + i] = { start: slots[i - 1][0], end: slots[i - 1][1] };
+            }
+            return times;
+        }
+
+        // ───────────── RENDER ─────────────
+        function render() {
+            const pCount = getPeriodsPerDay();
+            const periodKeys = getAllPeriodKeys();
+            const classList = getClassList();
+            const conflicts = findConflicts();
+
+            const thead = document.getElementById('tableHead');
+            let headerHtml = '<tr>';
+            headerHtml += '<th class="col-class" rowspan="2">Class</th>';
+            headerHtml += '<th class="col-section" rowspan="2">Sec</th>';
+            headerHtml += '<th class="col-teacher" rowspan="2">Teacher</th>';
+
+            periodKeys.forEach((p, pi) => {
+                const timeStr = getPeriodDisplay(p);
+                const cls = pi === 0 ? 'col-period' : 'col-period period-group-sep';
+                headerHtml += `<th class="${cls}" colspan="5">${p}${timeStr ? '<span class="period-time">'+timeStr+'</span>' : ''}</th>`;
+            });
+            headerHtml += '</tr><tr>';
+
+            periodKeys.forEach((p, pi) => {
+                const groupSep = pi !== 0;
+                const days = ['M', 'T', 'W', 'Th', 'F'];
+                days.forEach((label, di) => {
+                    const cls = di === 0 && groupSep ? 'col-period period-group-sep' : 'col-period';
+                    headerHtml += `<th class="${cls}">${label}</th>`;
+                });
+            });
+            headerHtml += '</tr>';
+            thead.innerHTML = headerHtml;
+
+            const tbody = document.getElementById('tableBody');
+            let bodyHtml = '';
+
+            if (classList.length === 0) {
+                bodyHtml =
+                    `<tr><td colspan="${3 + periodKeys.length * 5}" style="text-align:center;padding:30px 0;color:#94a3b8;font-size:13px;">No classes yet. Add classes via the 📋 Classes button.</td></tr>`;
+                tbody.innerHTML = bodyHtml;
+                updateStats();
+                updateSidebar();
+                updateBottomBar();
+                document.getElementById('totalConflicts').textContent = 0;
+                saveData();
+                return;
+            }
+
+            classList.forEach((clsObj) => {
+                const cls = clsObj.class;
+                const sec = clsObj.section;
+                const key = getClassKey(cls, sec);
+                const teacherId = getClassTeacher(key);
+                const teacherMin = teacherId ? getTeacherMinimal(teacherId) : '—';
+                const teacherName = teacherId ? getTeacherName(teacherId) : '';
+
+                bodyHtml += `<tr data-key="${key}">`;
+                bodyHtml += `<td class="col-class">${cls}</td>`;
+                bodyHtml += `<td class="col-section">${sec}</td>`;
+                bodyHtml +=
+                    `<td class="col-teacher" data-key="${key}" title="${teacherName}" style="cursor:pointer;">${teacherMin}</td>`;
+
+                periodKeys.forEach((p, pi) => {
+                    DAYS.forEach((d, di) => {
+                        const clsTd = (pi !== 0 && di === 0) ? 'col-period period-group-sep' : 'col-period';
+                        const val = getCellValue(key, d, p);
+                        const subj = val.subject;
+                        const tchr = val.teacher;
+                        const subjMin = getSubjectMinimal(subj);
+                        const tchrMin = getTeacherMinimal(tchr);
+                        const filled = !!(subj && tchr);
+                        const conflict = isConflict(key, d, p);
+                        const selected = isCellSelected(key, d, p);
+                        const contentClass = 'cell-content' + (filled ? ' filled' : ' empty') + (conflict ?
+                            ' conflict' : '') + (selected ? ' selected-cell' : '');
+                        const titleText = filled ? `${subj} / ${getSubjectName(subj)} — ${tchr} / ${getTeacherName(tchr)}` :
+                            'empty';
+                        bodyHtml += `<td class="${clsTd}" data-key="${key}" data-day="${d}" data-period="${p}">
+                                    <div class="${contentClass}" title="${titleText}">
+                                        ${filled ? `<span class="subj">${subjMin}</span><span class="tchr">${tchrMin}</span>` : '<span style="color:#cbd5e1;font-size:11px;">·</span>'}
+                                    </div>
+                                </td>`;
+                    });
+                });
+                bodyHtml += '</tr>';
+            });
+
+            tbody.innerHTML = bodyHtml;
+
+            updateStats();
+            updateSidebar();
+            updateBottomBar();
+            document.getElementById('totalConflicts').textContent = conflicts.length;
+
+            attachCellEvents();
+            attachTeacherClickEvents();
+
+            saveData();
+        }
+
+        // ───────────── ATTACH EVENTS ─────────────
+        function attachCellEvents() {
+            document.querySelectorAll('#tableBody td.col-period').forEach(td => {
+                td.addEventListener('click', function(e) {
+                    if (e.target.closest('.cell-editor')) return;
+                    const key = this.dataset.key;
+                    const day = this.dataset.day;
+                    const period = this.dataset.period;
+                    if (!key || !day || !period) return;
+                    if (isSelectionMode) {
+                        toggleCellSelection(key, day, period);
+                        return;
+                    }
+                    startEditing(key, day, period, this);
+                });
+                td.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    if (isSelectionMode) return;
+                    const key = this.dataset.key;
+                    const day = this.dataset.day;
+                    const period = this.dataset.period;
+                    if (!key || !day || !period) return;
+                    contextTarget = { key, day, period };
+                    const menu = document.getElementById('contextMenu');
+                    const val = getCellValue(key, day, period);
+                    const filled = !!(val.subject && val.teacher);
+                    document.querySelector('#contextMenu [data-action="copy"]').style.display = filled ? 'flex' :
+                        'none';
+                    document.querySelector('#contextMenu [data-action="paste"]').style.display = clipboard ?
+                        'flex' : 'none';
+                    document.querySelector('#contextMenu [data-action="clear"]').style.display = filled ? 'flex' :
+                        'none';
+                    document.querySelector('#contextMenu [data-action="applyAll"]').style.display = filled ?
+                        'flex' : 'none';
+                    menu.style.display = 'block';
+                    menu.style.left = Math.min(e.clientX, window.innerWidth - 160) + 'px';
+                    menu.style.top = Math.min(e.clientY, window.innerHeight - 140) + 'px';
+                });
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('#contextMenu')) {
+                    document.getElementById('contextMenu').style.display = 'none';
+                }
+            });
+
+            document.querySelectorAll('#contextMenu .menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const action = this.dataset.action;
+                    if (!contextTarget) return;
+                    const { key, day, period } = contextTarget;
+                    const val = getCellValue(key, day, period);
+                    if (action === 'copy') {
+                        clipboard = { subject: val.subject, teacher: val.teacher };
+                        showToast('Copied: ' + getSubjectMinimal(val.subject) + '-' + getTeacherMinimal(val
+                            .teacher));
+                    } else if (action === 'paste') {
+                        if (clipboard) {
+                            setCellValue(key, day, period, clipboard.subject, clipboard.teacher);
+                            render();
+                            showToast('Pasted');
+                        }
+                    } else if (action === 'clear') {
+                        clearCell(key, day, period);
+                        render();
+                        showToast('Cleared');
+                    } else if (action === 'applyAll') {
+                        DAYS.forEach(d => {
+                            if (d !== day) {
+                                setCellValue(key, d, period, val.subject, val.teacher);
+                            }
+                        });
+                        render();
+                        showToast('Applied to all days');
+                    }
+                    document.getElementById('contextMenu').style.display = 'none';
+                });
+            });
+        }
+
+        function attachTeacherClickEvents() {
+            document.querySelectorAll('#tableBody td.col-teacher').forEach(td => {
+                td.addEventListener('click', function(e) {
+                    const key = this.dataset.key;
+                    if (!key) return;
+                    const current = getClassTeacher(key);
+                    const teacherIds = Object.keys(appData.teachers);
+                    if (teacherIds.length === 0) {
+                        showToast('No teachers available. Add teachers first.', 'error');
+                        return;
+                    }
+                    let options = teacherIds.map(id =>
+                        `<option value="${id}" ${id === current ? 'selected' : ''}>${id} — ${getTeacherName(id)}</option>`
+                        ).join('');
+                    const html = `
+                                <h3>Assign Class Teacher</h3>
+                                <p style="font-size:11px;color:#475569;margin-bottom:8px;">${key}</p>
+                                <label>Teacher</label>
+                                <select id="teacherSelect">${options}</select>
+                                <div class="btn-row">
+                                    <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                                    <button class="btn-primary" onclick="assignTeacherFromModal('${key}')">Assign</button>
+                                </div>
+                            `;
+                    openModal(html);
+                });
+            });
+        }
+
+        function assignTeacherFromModal(key) {
+            const sel = document.getElementById('teacherSelect');
+            if (!sel) return;
+            const val = sel.value;
+            if (val) {
+                setClassTeacher(key, val);
+                render();
+                showToast('Assigned teacher to ' + key);
+            } else {
+                setClassTeacher(key, null);
+                render();
+                showToast('Removed teacher assignment');
+            }
+            closeModal();
+            saveData();
+        }
+
+        // ───────────── MULTIPLE DAYS SELECTION LOGIC ─────────────
+        function handleMultipleDaysBtnClick() {
+            if (!isSelectionMode) {
+                toggleSelectionMode(true);
+            } else {
+                openBatchAssignModal();
+            }
+        }
+
+        function toggleSelectionMode(forceState) {
+            isSelectionMode = (typeof forceState === 'boolean') ? forceState : !isSelectionMode;
+
+            const btn = document.getElementById('btnMultipleDays');
+            const banner = document.getElementById('selectionBanner');
+
+            if (isSelectionMode) {
+                btn.className = 'success';
+                btn.textContent = `✅ OK (${selectedCells.length})`;
+                banner.style.display = 'flex';
+                showToast('Batch selection mode active. Click cells to select.');
+            } else {
+                btn.className = 'primary';
+                btn.textContent = '📅 Multiple Days';
+                banner.style.display = 'none';
+                selectedCells = [];
+                render();
+            }
+        }
+
+        function isCellSelected(key, day, period) {
+            return selectedCells.some(item => item.key === key && item.day === day && item.period === period);
+        }
+
+        function toggleCellSelection(key, day, period) {
+            const idx = selectedCells.findIndex(item => item.key === key && item.day === day && item.period === period);
+            if (idx > -1) {
+                selectedCells.splice(idx, 1);
+            } else {
+                selectedCells.push({ key, day, period });
+            }
+
+            const btn = document.getElementById('btnMultipleDays');
+            btn.textContent = `✅ OK (${selectedCells.length})`;
+            render();
+        }
+
+        function openBatchAssignModal() {
+            if (selectedCells.length === 0) {
+                showToast('Please select at least one cell first!', 'error');
+                return;
+            }
+
+            const teachers = appData.teachers;
+            const subjects = appData.subjects;
+
+            let teacherOpts = '<option value="">-- Select Teacher --</option>';
+            Object.keys(teachers).sort().forEach(id => {
+                const t = teachers[id];
+                const subStr = (t.subjects && t.subjects.length > 0) ? ` (${t.subjects.map(s=>getSubjectName(s)).join(', ')})` : '';
+                teacherOpts += `<option value="${id}">${t.name} [ID: ${id}]${subStr}</option>`;
+            });
+
+            let subjOpts = '<option value="">-- Select Subject --</option>';
+            Object.keys(subjects).sort().forEach(code => {
+                subjOpts += `<option value="${code}">${code} - ${subjects[code].name}</option>`;
+            });
+
+            const html = `
+                <h3>⚡ Assign Multiple Cells <span class="badge">${selectedCells.length} Selected</span></h3>
+                <p style="font-size:11px;color:#64748b;margin-bottom:12px;">Choose a Teacher or Subject to fill all selected slots.</p>
+
+                <div style="background:#f8fafc;padding:12px;border:1px solid #e2e8f0;border-radius:6px;">
+                    <label style="font-weight:600;margin-top:0;">Option 1: Select Teacher (Auto-assigns Subject)</label>
+                    <select id="batchTeacherSelect" onchange="handleBatchTeacherChange()">
+                        ${teacherOpts}
+                    </select>
+
+                    <div style="text-align:center;margin:8px 0;font-weight:bold;color:#94a3b8;">— OR —</div>
+
+                    <label style="font-weight:600;">Option 2: Select Subject</label>
+                    <select id="batchSubjectSelect" onchange="handleBatchSubjectChange()">
+                        ${subjOpts}
+                    </select>
+
+                    <div id="batchSubTeacherWrap" style="display:none;margin-top:8px;">
+                        <label style="font-weight:600;color:#2563eb;">Multiple teachers found for this subject! Choose one:</label>
+                        <select id="batchSubTeacherSelect"></select>
+                    </div>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button class="btn-primary" onclick="applyBatchAssignment()">OK (Assign)</button>
+                </div>
+            `;
+            openModal(html);
+        }
+
+        function handleBatchTeacherChange() {
+            const teacherVal = document.getElementById('batchTeacherSelect').value;
+            if (teacherVal) {
+                document.getElementById('batchSubjectSelect').value = '';
+                document.getElementById('batchSubTeacherWrap').style.display = 'none';
+            }
+        }
+
+        function handleBatchSubjectChange() {
+            const subjVal = document.getElementById('batchSubjectSelect').value;
+            if (!subjVal) {
+                document.getElementById('batchSubTeacherWrap').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('batchTeacherSelect').value = '';
+
+            const matchingTeachers = Object.keys(appData.teachers).filter(id => {
+                const t = appData.teachers[id];
+                return Array.isArray(t.subjects) && t.subjects.includes(subjVal);
+            });
+
+            const wrap = document.getElementById('batchSubTeacherWrap');
+            const select = document.getElementById('batchSubTeacherSelect');
+
+            if (matchingTeachers.length > 0) {
+                select.innerHTML = matchingTeachers.map(id =>
+                    `<option value="${id}">${appData.teachers[id].name} (${id})</option>`
+                ).join('');
+                wrap.style.display = 'block';
+            } else {
+                select.innerHTML = '<option value="">No teacher assigned to this subject</option>';
+                wrap.style.display = 'block';
+            }
+        }
+
+        function applyBatchAssignment() {
+            const teacherSelect = document.getElementById('batchTeacherSelect');
+            const subjSelect = document.getElementById('batchSubjectSelect');
+            const subTeacherSelect = document.getElementById('batchSubTeacherSelect');
+
+            let finalTeacher = '';
+            let finalSubject = '';
+
+            if (teacherSelect.value) {
+                finalTeacher = teacherSelect.value;
+                const t = appData.teachers[finalTeacher];
+                if (t && t.subjects && t.subjects.length > 0) {
+                    finalSubject = t.subjects[0];
+                } else {
+                    showToast('Teacher has no assigned subject!', 'error');
+                    return;
+                }
+            } else if (subjSelect.value) {
+                finalSubject = subjSelect.value;
+                finalTeacher = subTeacherSelect.value;
+                if (!finalTeacher) {
+                    showToast('Please select a teacher for this subject!', 'error');
+                    return;
+                }
+            } else {
+                showToast('Please select a teacher or a subject!', 'error');
+                return;
+            }
+
+            selectedCells.forEach(cell => {
+                setCellValue(cell.key, cell.day, cell.period, finalSubject, finalTeacher);
+            });
+
+            showToast(`Assigned ${getTeacherName(finalTeacher)} to ${selectedCells.length} cells`, 'success');
+
+            closeModal();
+            toggleSelectionMode(false);
+            render();
+            saveData();
+        }
+
+        // ───────────── CELL EDITING ─────────────
+        function startEditing(key, day, period, td) {
+            stopEditing();
+            const val = getCellValue(key, day, period);
+            const tchrId = val.teacher || '';
+            const subjCode = val.subject || '';
+
+            const editor = document.createElement('div');
+            editor.className = 'cell-editor';
+
+            // Displays ONLY: Teacher Name (Subject Codes)
+            const tchrOptions = Object.keys(appData.teachers).map(k => {
+                const t = appData.teachers[k];
+                const subStr = (t && Array.isArray(t.subjects) && t.subjects.length > 0)
+                    ? t.subjects.map(s => getSubjectMinimal(s)).join(', ')
+                    : 'No Subj';
+                return `<option value="${k}">${t.name} (${subStr})</option>`;
+            }).join('');
+
+            editor.innerHTML = `
+                        <input class="tchr-input" type="text" placeholder="Teacher" value="${tchrId}" list="tchrDatalist_${key}" autocomplete="off" maxlength="6" />
+                        <select class="subj-opt-select" style="display:none;"></select>
+                        <div class="editor-actions">
+                            <button class="save-btn" title="Save">✓</button>
+                            <button class="cancel-btn" title="Clear cell">✕</button>
+                        </div>
+                        <datalist id="tchrDatalist_${key}">
+                            ${tchrOptions}
+                        </datalist>
+                    `;
+            const contentDiv = td.querySelector('.cell-content');
+            if (contentDiv) contentDiv.style.display = 'none';
+            td.classList.add('editing');
+            td.style.overflow = 'visible';
+            td.appendChild(editor);
+
+            const tchrInput = editor.querySelector('.tchr-input');
+            const subjSelect = editor.querySelector('.subj-opt-select');
+            const saveBtn = editor.querySelector('.save-btn');
+            const cancelBtn = editor.querySelector('.cancel-btn');
+
+            function updateSubjectDropdown() {
+                const id = tchrInput.value.trim();
+                const teacher = appData.teachers[id];
+                const subs = (teacher && Array.isArray(teacher.subjects)) ? teacher.subjects : [];
+
+                if (subs.length > 1) {
+                    subjSelect.innerHTML = subs.map(s =>
+                        `<option value="${s}" ${s === subjCode ? 'selected' : ''}>${getSubjectMinimal(s)} - ${getSubjectName(s)}</option>`
+                    ).join('');
+                    subjSelect.style.display = 'block';
+                } else {
+                    subjSelect.style.display = 'none';
+                }
+            }
+
+            tchrInput.addEventListener('input', updateSubjectDropdown);
+            updateSubjectDropdown();
+            tchrInput.focus();
+            tchrInput.select();
+
+            function saveEdit() {
+                const newTchr = tchrInput.value.trim();
+                const applyAll = document.getElementById('applyAllDays').checked;
+
+                if (newTchr && appData.teachers[newTchr]) {
+                    const teacher = appData.teachers[newTchr];
+                    const subs = Array.isArray(teacher.subjects) ? teacher.subjects : [];
+                    const assignedSubj = (subs.length > 1) ? (subjSelect.value || subs[0]) : subs[0];
+
+                    if (!assignedSubj) {
+                        showToast('This teacher has no assigned subject!', 'error');
+                        return;
+                    }
+
+                    if (applyAll) {
+                        DAYS.forEach(d => setCellValue(key, d, period, assignedSubj, newTchr));
+                    } else {
+                        setCellValue(key, day, period, assignedSubj, newTchr);
+                    }
+                    render();
+                    showToast(applyAll ? 'Applied to all days' : 'Updated');
+                } else if (newTchr) {
+                    showToast('Unknown teacher ID', 'error');
+                    return;
+                } else {
+                    if (applyAll) DAYS.forEach(d => clearCell(key, d, period));
+                    else clearCell(key, day, period);
+                    render();
+                    showToast('Cleared');
+                }
+                document.removeEventListener('click', closeOutside);
+                stopEditing();
+            }
+
+            function clearEdit() {
+                const applyAll = document.getElementById('applyAllDays').checked;
+                if (applyAll) DAYS.forEach(d => clearCell(key, d, period));
+                else clearCell(key, day, period);
+                document.removeEventListener('click', closeOutside);
+                stopEditing();
+                render();
+                showToast('Cleared');
+                saveData();
+            }
+
+            saveBtn.addEventListener('click', saveEdit);
+            cancelBtn.addEventListener('click', clearEdit);
+            tchrInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') saveEdit();
+                if (e.key === 'Escape') { document.removeEventListener('click', closeOutside); stopEditing(); }
+            });
+
+            const closeOutside = (e) => {
+                if (td.contains(e.target)) return;
+                const active = document.activeElement;
+                if (active === tchrInput || active === subjSelect) return;
+                saveEdit();
+                document.removeEventListener('click', closeOutside);
+            };
+            setTimeout(() => document.addEventListener('click', closeOutside), 50);
+
+            editingCell = { key, day, period, td, editor, contentDiv };
+        }
+
+        function stopEditing() {
+            if (editingCell) {
+                const { editor, contentDiv, td } = editingCell;
+                if (contentDiv) contentDiv.style.display = 'flex';
+                if (editor && editor.parentNode) editor.remove();
+                td.classList.remove('editing');
+                td.style.overflow = '';
+                editingCell = null;
+            }
+        }
+
+        // ───────────── UPDATE STATS ─────────────
+        function updateStats() {
+            const stats = computeStats();
+            document.getElementById('totalPeriods').textContent = stats.totalPeriods;
+            document.getElementById('totalClasses').textContent = getClassList().length;
+            document.getElementById('totalTeachers').textContent = Object.keys(appData.teachers).length;
+            document.getElementById('totalSubjects').textContent = Object.keys(appData.subjects).length;
+            document.getElementById('totalConflicts').textContent = findConflicts().length;
+            document.getElementById('totalConflicts').style.color = findConflicts().length > 0 ? '#dc2626' : '#2563eb';
+        }
+
+        function updateSidebar() {
+            const stats = computeStats();
+            const container = document.getElementById('statsByClass');
+            let html = '';
+            const classList = getClassList();
+            classList.forEach(c => {
+                const key = getClassKey(c.class, c.section);
+                const count = stats.byClass[key] || 0;
+                const total = getPeriodsPerDay() * 5;
+                html +=
+                    `<div class="stat-row"><span class="label">${c.class}-${c.section}</span><span class="value">${count}/${total}</span></div>`;
+            });
+            container.innerHTML = html || '<div class="empty-msg">No classes</div>';
+
+            const teacherContainer = document.getElementById('statsByTeacher');
+            let tHtml = '';
+            const sortedTeachers = Object.keys(stats.byTeacher).sort((a, b) => stats.byTeacher[b] - stats.byTeacher[a]);
+            sortedTeachers.forEach(t => {
+                const name = getTeacherName(t);
+                const min = getTeacherMinimal(t);
+                tHtml +=
+                    `<div class="stat-row"><span class="label">${min} ${name.slice(0,8)}</span><span class="value highlight">${stats.byTeacher[t]}</span></div>`;
+            });
+            teacherContainer.innerHTML = tHtml || '<div class="empty-msg">No data</div>';
+
+            const subjectContainer = document.getElementById('statsBySubject');
+            let sHtml = '';
+            const sortedSubjects = Object.keys(stats.bySubject).sort((a, b) => stats.bySubject[b] - stats.bySubject[a]);
+            sortedSubjects.forEach(s => {
+                const name = getSubjectName(s);
+                const min = getSubjectMinimal(s);
+                sHtml +=
+                    `<div class="stat-row"><span class="label">${min} ${name.slice(0,8)}</span><span class="value highlight">${stats.bySubject[s]}</span></div>`;
+            });
+            subjectContainer.innerHTML = sHtml || '<div class="empty-msg">No data</div>';
+        }
+
+        function updateBottomBar() {
+            const stats = computeStats();
+            document.getElementById('dayMon').textContent = stats.byDay.Monday || 0;
+            document.getElementById('dayTue').textContent = stats.byDay.Tuesday || 0;
+            document.getElementById('dayWed').textContent = stats.byDay.Wednesday || 0;
+            document.getElementById('dayThu').textContent = stats.byDay.Thursday || 0;
+            document.getElementById('dayFri').textContent = stats.byDay.Friday || 0;
+            const p1 = appData.settings.periodTimes && appData.settings.periodTimes.P1;
+            if (p1) {
+                document.getElementById('periodTimeDisplay').textContent = p1.start + '–' + p1.end;
+            }
+        }
+
+        // ───────────── TOAST ─────────────
+        function showToast(msg, type) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.className = 'show' + (type === 'error' ? ' error' : type === 'success' ? ' success' : '');
+            clearTimeout(el._hide);
+            el._hide = setTimeout(() => { el.className = ''; }, 2200);
+        }
+
+        // ───────────── MODAL HELPERS ─────────────
+        function openModal(html) {
+            const overlay = document.getElementById('modalOverlay');
+            document.getElementById('modalContent').innerHTML = html;
+            overlay.classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('open');
+        }
+
+        // ───────────── IMPORT CSV ─────────────
+        function importCSV(file, type) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const lines = text.split('\n').filter(l => l.trim());
+                if (lines.length < 2) { showToast('Empty or invalid CSV', 'error'); return; }
+                const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+                const data = lines.slice(1).map(line => {
+                    const vals = [];
+                    let current = '',
+                        inQuotes = false;
+                    for (let ch of line) {
+                        if (ch === '"') { inQuotes = !inQuotes; } else if (ch === ',' && !inQuotes) { vals.push(
+                            current.trim());
+                            current = ''; } else { current += ch; }
+                    }
+                    vals.push(current.trim());
+                    return vals.map(v => v.replace(/^"|"$/g, '').trim());
+                });
+
+                if (type === 'classes') {
+                    let count = 0;
+                    data.forEach(row => {
+                        if (row.length >= 2 && row[0] && row[1]) {
+                            const cls = row[0];
+                            const sec = row[1];
+                            if (!classExists(cls, sec)) {
+                                if (addClass(cls, sec)) count++;
+                            }
+                        }
+                    });
+                    showToast('Imported ' + count + ' classes');
+                    render();
+                } else if (type === 'subjects') {
+                    let count = 0;
+                    data.forEach(row => {
+                        if (row.length >= 3 && row[0]) {
+                            const code = row[0].toUpperCase();
+                            if (!appData.subjects[code]) {
+                                appData.subjects[code] = {
+                                    name: row[1] || code,
+                                    minimalCode: row[2] || code.slice(0, 2)
+                                };
+                                count++;
+                            }
+                        }
+                    });
+                    showToast('Imported ' + count + ' subjects');
+                    render();
+                } else if (type === 'teachers') {
+                    let count = 0;
+                    data.forEach(row => {
+                        if (row.length >= 2 && row[0]) {
+                            const id = row[0].toUpperCase();
+                            const name = row[1] || id;
+                            const minimalId = row[2] || id.slice(0, 2);
+
+                            const rawSubjects = row[3] ? row[3].split(',').map(s => s.trim()) : [];
+                            const rawMinCodes = row[4] ? row[4].split(',').map(m => m.trim()) : [];
+
+                            const assignedSubjects = [];
+
+                            rawSubjects.forEach((subjName, idx) => {
+                                if (!subjName) return;
+
+                                const codeKey = subjName.toUpperCase();
+                                const minCode = rawMinCodes[idx] || codeKey.slice(0, 2);
+
+                                if (!appData.subjects[codeKey]) {
+                                    appData.subjects[codeKey] = {
+                                        name: subjName,
+                                        minimalCode: minCode
+                                    };
+                                }
+
+                                assignedSubjects.push(codeKey);
+                            });
+
+                            appData.teachers[id] = {
+                                name: name,
+                                minimalId: minimalId,
+                                subjects: assignedSubjects
+                            };
+                            count++;
+                        }
+                    });
+                    showToast('Imported ' + count + ' teachers');
+                    render();
+                } else if (type === 'timetable') {
+                    const expectedHeader = ['Class-Section', 'Day'];
+                    if (headers.length < 3 || headers[0] !== expectedHeader[0] || headers[1] !== expectedHeader[1]) {
+                        showToast('Invalid timetable CSV header', 'error');
+                    } else {
+                        let importedRows = 0;
+                        const periodsInFile = headers.slice(2).map(h => h.trim()).filter(h => /^P\d+$/.test(h));
+                        if (periodsInFile.length > 0) {
+                            const targetPeriods = Math.min(Math.max(periodsInFile.length, 4), 10);
+                            if (targetPeriods !== getPeriodsPerDay()) {
+                                appData.settings.periodsPerDay = targetPeriods;
+                                getClassKeys().forEach(c => {
+                                    if (!appData.timetable[c]) appData.timetable[c] = {};
+                                    DAYS.forEach(d => {
+                                        if (!appData.timetable[c][d]) appData.timetable[c][d] = {};
+                                        for (let p = 1; p <= targetPeriods; p++) {
+                                            const key = 'P' + p;
+                                            if (!appData.timetable[c][d][key]) {
+                                                appData.timetable[c][d][key] = { subject: null, teacher: null };
+                                            }
+                                        }
+                                    });
+                                });
+                            }
+                        }
+                        data.forEach(row => {
+                            if (row.length < 3) return;
+                            const classSection = row[0].trim();
+                            const day = row[1].trim();
+                            if (!classSection || !day) return;
+                            const parts = classSection.split('-');
+                            if (parts.length < 2) return;
+                            const cls = parts[0].trim();
+                            const sec = parts.slice(1).join('-').trim();
+                            if (!cls || !sec) return;
+                            if (!classExists(cls, sec)) {
+                                addClass(cls, sec);
+                            }
+                            const key = getClassKey(cls, sec);
+                            if (!appData.timetable[key]) {
+                                addClass(cls, sec);
+                            }
+                            row.slice(2).forEach((cell, index) => {
+                                const periodKey = 'P' + (index + 1);
+                                if (!cell || !cell.trim()) {
+                                    clearCell(key, day, periodKey);
+                                    return;
+                                }
+                                const parts = cell.split(':');
+                                const teacherId = parts[0] ? parts[0].trim().toUpperCase() : '';
+                                const teacherName = parts[1] ? parts[1].trim() : teacherId;
+                                const subjectCode = parts[2] ? parts[2].trim().toUpperCase() : '';
+                                if (!teacherId || !subjectCode) return;
+                                if (!appData.teachers[teacherId]) {
+                                    appData.teachers[teacherId] = {
+                                        name: teacherName || teacherId,
+                                        minimalId: teacherId.slice(0, 2),
+                                        subjects: [subjectCode]
+                                    };
+                                }
+                                if (!appData.subjects[subjectCode]) {
+                                    appData.subjects[subjectCode] = {
+                                        name: subjectCode,
+                                        minimalCode: subjectCode.slice(0, 2)
+                                    };
+                                }
+                                setCellValue(key, day, periodKey, subjectCode, teacherId);
+                            });
+                            importedRows++;
+                        });
+                        showToast('Imported ' + importedRows + ' timetable rows');
+                        render();
+                    }
+                }
+                saveData();
+            };
+            reader.readAsText(file);
+        }
+
+        // ───────────── EXPORT CSV ─────────────
+        function exportCSV() {
+            const pCount = getPeriodsPerDay();
+            const periodKeys = [];
+            for (let p = 1; p <= pCount; p++) periodKeys.push('P' + p);
+            const rows = [];
+            rows.push(['Class-Section', 'Day', ...periodKeys].join(','));
+            getClassKeys().forEach(c => {
+                DAYS.forEach(d => {
+                    const row = [c, d];
+                    periodKeys.forEach(p => {
+                        const val = getCellValue(c, d, p);
+                        if (val.subject && val.teacher) {
+                            const tName = getTeacherName(val.teacher);
+                            const sCode = val.subject;
+                            row.push(val.teacher + ':' + tName + ':' + sCode);
+                        } else {
+                            row.push('');
+                        }
+                    });
+                    rows.push(row.join(','));
+                });
+            });
+            const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'timetable_export.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Exported successfully');
+        }
+
+        // ───────────── SETTINGS (period times) ─────────────
+        function openSettings() {
+            let html = `
+                        <h3>⏱️ Period Times</h3>
+                        <p style="font-size:11px;color:#475569;margin-bottom:8px;">Set start and end time for each period.</p>
+                        <div style="max-height:260px;overflow:auto;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;margin-top:4px;">
+                    `;
+            const periodKeys = [];
+            for (let p = 1; p <= 10; p++) periodKeys.push('P' + p);
+            periodKeys.forEach(p => {
+                const t = appData.settings.periodTimes && appData.settings.periodTimes[p];
+                const start = t ? t.start : '08:00';
+                const end = t ? t.end : '08:45';
+                html += `
+                            <div style="display:flex;gap:6px;align-items:center;font-size:11px;margin:3px 0;">
+                                <span style="width:32px;font-weight:600;">${p}</span>
+                                <input type="time" id="timeStart_${p}" value="${start}" style="width:70px;padding:2px 4px;border:1px solid #e2e8f0;border-radius:3px;font-size:10px;" />
+                                <span>–</span>
+                                <input type="time" id="timeEnd_${p}" value="${end}" style="width:70px;padding:2px 4px;border:1px solid #e2e8f0;border-radius:3px;font-size:10px;" />
+                            </div>
+                        `;
+            });
+            html += `
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                            <button class="btn-primary" onclick="saveSettings()">Save</button>
+                        </div>
+                    `;
+            openModal(html);
+        }
+
+        function saveSettings() {
+            const times = {};
+            for (let p = 1; p <= 10; p++) {
+                const start = document.getElementById('timeStart_P' + p)?.value || '08:00';
+                const end = document.getElementById('timeEnd_P' + p)?.value || '08:45';
+                times['P' + p] = { start, end };
+            }
+            appData.settings.periodTimes = times;
+            getClassKeys().forEach(c => {
+                if (!appData.timetable[c]) appData.timetable[c] = {};
+                DAYS.forEach(d => {
+                    if (!appData.timetable[c][d]) appData.timetable[c][d] = {};
+                    for (let p = 1; p <= appData.settings.periodsPerDay; p++) {
+                        const key = 'P' + p;
+                        if (!appData.timetable[c][d][key]) {
+                            appData.timetable[c][d][key] = { subject: null, teacher: null };
+                        }
+                    }
+                });
+            });
+            closeModal();
+            render();
+            showToast('Times saved');
+            saveData();
+        }
+
+        // ───────────── MANAGE CLASSES ─────────────
+        function manageClasses() {
+            const classList = getClassList();
+            let html = `
+                        <h3>📋 Manage Classes <span class="badge">${classList.length}</span></h3>
+                        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+                            <input type="text" id="newClass" placeholder="Class (e.g. I)" style="flex:1;min-width:60px;" />
+                            <input type="text" id="newSection" placeholder="Section (e.g. A)" style="flex:1;min-width:60px;" />
+                            <button class="btn-primary" onclick="addClassFromModal()">Add</button>
+                        </div>
+                        <div class="import-area">
+                            <span style="font-size:10px;color:#475569;">Import CSV:</span>
+                            <input type="file" id="importClassesFile" accept=".csv" />
+                            <button class="btn-success" onclick="importClassesFromModal()">Import</button>
+                            <button class="btn-secondary" onclick="clearClassesFromModal()" style="color:#dc2626;">Clear All</button>
+                        </div>
+                        <div class="item-list">
+                    `;
+
+            if (classList.length === 0) {
+                html += `<div class="empty-msg">No classes added yet.</div>`;
+            } else {
+                classList.forEach(c => {
+                    const key = getClassKey(c.class, c.section);
+                    const teacherId = getClassTeacher(key);
+                    const teacherName = teacherId ? getTeacherName(teacherId) : '—';
+                    html += `
+                                <div class="item">
+                                    <div class="info">
+                                        <span class="code">${c.class}</span>
+                                        <span class="name">${c.section}</span>
+                                        <span class="meta">👨‍🏫 ${teacherName}</span>
+                                    </div>
+                                    <div class="actions">
+                                        <button onclick="editClassFromModal('${c.class}','${c.section}')" title="Edit">✏️</button>
+                                        <button class="del" onclick="deleteClassFromModal('${c.class}','${c.section}')" title="Delete">✕</button>
+                                    </div>
+                                </div>
+                            `;
+                });
+            }
+
+            html += `
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn-secondary" onclick="closeModal()">Close</button>
+                        </div>
+                    `;
+            openModal(html);
+        }
+
+        function addClassFromModal() {
+            const cls = document.getElementById('newClass').value.trim();
+            const sec = document.getElementById('newSection').value.trim();
+            if (!cls || !sec) { showToast('Enter class and section', 'error'); return; }
+            if (classExists(cls, sec)) { showToast('Class already exists', 'error'); return; }
+            addClass(cls, sec);
+            closeModal();
+            render();
+            showToast('Added ' + cls + '-' + sec);
+            saveData();
+            manageClasses();
+        }
+
+        function deleteClassFromModal(cls, sec) {
+            if (!confirm('Delete class ' + cls + '-' + sec + '? This will remove all timetable data for this class.')) return;
+            removeClass(cls, sec);
+            closeModal();
+            render();
+            showToast('Deleted ' + cls + '-' + sec);
+            saveData();
+            manageClasses();
+        }
+
+        function editClassFromModal(cls, sec) {
+            const key = getClassKey(cls, sec);
+            const teacherId = getClassTeacher(key);
+            const html = `
+                        <h3>✏️ Edit Class</h3>
+                        <div class="edit-form">
+                            <div class="form-row">
+                                <div><label>Class</label><input type="text" id="editClass" value="${cls}" /></div>
+                                <div><label>Section</label><input type="text" id="editSection" value="${sec}" /></div>
+                            </div>
+                            <div style="margin-top:6px;font-size:10px;color:#94a3b8;">
+                                Current teacher: ${teacherId ? getTeacherName(teacherId) : '—'}
+                                (change via main table)
+                            </div>
+                            <div class="btn-row">
+                                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                                <button class="btn-danger" onclick="deleteClassFromModal('${cls}','${sec}')">Delete</button>
+                                <button class="btn-save" onclick="saveClassEdit('${cls}','${sec}')">Save</button>
+                            </div>
+                        </div>
+                    `;
+            openModal(html);
+        }
+
+        function saveClassEdit(oldCls, oldSec) {
+            const newCls = document.getElementById('editClass').value.trim();
+            const newSec = document.getElementById('editSection').value.trim();
+            if (!newCls || !newSec) { showToast('Class and section required', 'error'); return; }
+            if (oldCls === newCls && oldSec === newSec) {
+                closeModal();
+                return;
+            }
+            if (classExists(newCls, newSec)) {
+                showToast('Class already exists', 'error');
+                return;
+            }
+            if (!confirm('Changing class from ' + oldCls + '-' + oldSec + ' to ' + newCls + '-' + newSec +
+                    '. Timetable data will be moved.')) return;
+            if (updateClass(oldCls, oldSec, newCls, newSec)) {
+                closeModal();
+                render();
+                showToast('Updated to ' + newCls + '-' + newSec);
+                saveData();
+                manageClasses();
+            } else {
+                showToast('Update failed', 'error');
+            }
+        }
+
+        function importClassesFromModal() {
+            const fileInput = document.getElementById('importClassesFile');
+            if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+                showToast('Select a CSV file first', 'error');
+                return;
+            }
+            importCSV(fileInput.files[0], 'classes');
+            setTimeout(() => { closeModal();
+                manageClasses(); }, 300);
+        }
+
+        function clearClassesFromModal() {
+            if (!confirm('Remove ALL classes? This will delete all timetable data.')) return;
+            if (!confirm('Are you sure?')) return;
+            appData.classes = [];
+            appData.classTeachers = {};
+            appData.timetable = {};
+            closeModal();
+            render();
+            showToast('All classes cleared');
+            saveData();
+            manageClasses();
+        }
+
+        // ───────────── MANAGE SUBJECTS ─────────────
+        function manageSubjects() {
+            const subjKeys = Object.keys(appData.subjects).sort();
+            let html = `
+                        <h3>📖 Manage Subjects <span class="badge">${subjKeys.length}</span></h3>
+                        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+                            <input type="text" id="newSubjCode" placeholder="Code (e.g. MAT)" style="flex:0.8;min-width:70px;" />
+                            <input type="text" id="newSubjName" placeholder="Name" style="flex:1.2;min-width:80px;" />
+                            <input type="text" id="newSubjMin" placeholder="Minimal (e.g. M)" style="flex:0.6;min-width:50px;" />
+                            <button class="btn-primary" onclick="addSubjectFromModal()">Add</button>
+                        </div>
+                        <div class="import-area">
+                            <span style="font-size:10px;color:#475569;">Import CSV:</span>
+                            <input type="file" id="importSubjectsFile" accept=".csv" />
+                            <button class="btn-success" onclick="importSubjectsFromModal()">Import</button>
+                            <button class="btn-secondary" onclick="clearSubjectsFromModal()" style="color:#dc2626;">Clear All</button>
+                        </div>
+                        <div class="item-list">
+                    `;
+
+            if (subjKeys.length === 0) {
+                html += `<div class="empty-msg">No subjects added yet.</div>`;
+            } else {
+                subjKeys.forEach(k => {
+                    const s = appData.subjects[k];
+                    html += `
+                                <div class="item">
+                                    <div class="info">
+                                        <span class="code">${k}</span>
+                                        <span class="name">${s.name}</span>
+                                        <span class="meta">min: ${s.minimalCode}</span>
+                                    </div>
+                                    <div class="actions">
+                                        <button onclick="editSubjectFromModal('${k}')" title="Edit">✏️</button>
+                                        <button class="del" onclick="deleteSubjectFromModal('${k}')" title="Delete">✕</button>
+                                    </div>
+                                </div>
+                            `;
+                });
+            }
+
+            html += `
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn-secondary" onclick="closeModal()">Close</button>
+                        </div>
+                    `;
+            openModal(html);
+        }
+
+        function addSubjectFromModal() {
+            const code = document.getElementById('newSubjCode').value.trim().toUpperCase();
+            const name = document.getElementById('newSubjName').value.trim();
+            const min = document.getElementById('newSubjMin').value.trim().toUpperCase() || code.slice(0, 2);
+            if (!code) { showToast('Enter subject code', 'error'); return; }
+            if (!name) { showToast('Enter subject name', 'error'); return; }
+            if (appData.subjects[code]) { showToast('Subject already exists', 'error'); return; }
+            appData.subjects[code] = { name, minimalCode: min };
+            closeModal();
+            render();
+            showToast('Added ' + code);
+            saveData();
+            manageSubjects();
+        }
+
+        function deleteSubjectFromModal(code) {
+            if (!confirm('Delete subject ' + code + '?')) return;
+            delete appData.subjects[code];
+            getClassKeys().forEach(c => {
+                DAYS.forEach(d => {
+                    const pCount = getPeriodsPerDay();
+                    for (let p = 1; p <= pCount; p++) {
+                        const key = 'P' + p;
+                        const val = getCellValue(c, d, key);
+                        if (val.subject === code) {
+                            clearCell(c, d, key);
+                        }
+                    }
+                });
+            });
+            closeModal();
+            render();
+            showToast('Deleted ' + code);
+            saveData();
+            manageSubjects();
+        }
+
+        function editSubjectFromModal(code) {
+            const s = appData.subjects[code];
+            if (!s) return;
+            const html = `
+                        <h3>✏️ Edit Subject</h3>
+                        <div class="edit-form">
+                            <div class="form-row">
+                                <div><label>Code</label><input type="text" id="editSubjCode" value="${code}" disabled style="background:#f1f5f9;" /></div>
+                                <div><label>Name</label><input type="text" id="editSubjName" value="${s.name}" /></div>
+                                <div><label>Minimal</label><input type="text" id="editSubjMin" value="${s.minimalCode}" /></div>
+                            </div>
+                            <div class="btn-row">
+                                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                                <button class="btn-danger" onclick="deleteSubjectFromModal('${code}')">Delete</button>
+                                <button class="btn-save" onclick="saveSubjectEdit('${code}')">Save</button>
+                            </div>
+                        </div>
+                    `;
+            openModal(html);
+        }
+
+        function saveSubjectEdit(code) {
+            const name = document.getElementById('editSubjName').value.trim();
+            const min = document.getElementById('editSubjMin').value.trim().toUpperCase();
+            if (!name) { showToast('Name is required', 'error'); return; }
+            if (appData.subjects[code]) {
+                appData.subjects[code].name = name;
+                if (min) appData.subjects[code].minimalCode = min;
+            }
+            closeModal();
+            render();
+            showToast('Updated ' + code);
+            saveData();
+            manageSubjects();
+        }
+
+        function importSubjectsFromModal() {
+            const fileInput = document.getElementById('importSubjectsFile');
+            if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+                showToast('Select a CSV file first', 'error');
+                return;
+            }
+            importCSV(fileInput.files[0], 'subjects');
+            setTimeout(() => { closeModal();
+                manageSubjects(); }, 300);
+        }
+
+        function clearSubjectsFromModal() {
+            if (!confirm('Remove ALL subjects?')) return;
+            appData.subjects = {};
+            getClassKeys().forEach(c => {
+                DAYS.forEach(d => {
+                    const pCount = getPeriodsPerDay();
+                    for (let p = 1; p <= pCount; p++) {
+                        const key = 'P' + p;
+                        clearCell(c, d, key);
+                    }
+                });
+            });
+            closeModal();
+            render();
+            showToast('All subjects cleared');
+            saveData();
+            manageSubjects();
+        }
+
+        // ───────────── MANAGE TEACHERS ─────────────
+        function manageTeachers() {
+            const tchKeys = Object.keys(appData.teachers).sort();
+            let html = `
+                        <h3>👨‍🏫 Manage Teachers <span class="badge">${tchKeys.length}</span></h3>
+                        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+                            <input type="text" id="newTchrId" placeholder="ID (e.g. JOH)" style="flex:0.8;min-width:60px;" />
+                            <input type="text" id="newTchrName" placeholder="Name" style="flex:1.2;min-width:80px;" />
+                            <input type="text" id="newTchrMin" placeholder="Minimal (e.g. JO)" style="flex:0.6;min-width:50px;" />
+                            <button class="btn-primary" onclick="addTeacherFromModal()">Add</button>
+                        </div>
+                        <div class="import-area">
+                            <span style="font-size:10px;color:#475569;">Import CSV:</span>
+                            <input type="file" id="importTeachersFile" accept=".csv" />
+                            <button class="btn-success" onclick="importTeachersFromModal()">Import</button>
+                            <button class="btn-secondary" onclick="clearTeachersFromModal()" style="color:#dc2626;">Clear All</button>
+                        </div>
+                        <div class="item-list">
+                    `;
+
+            if (tchKeys.length === 0) {
+                html += `<div class="empty-msg">No teachers added yet.</div>`;
+            } else {
+                tchKeys.forEach(k => {
+                    const t = appData.teachers[k];
+                    const subs = (t.subjects && t.subjects.length > 0) ? t.subjects.join(', ') : 'None';
+                    html += `
+                                <div class="item">
+                                    <div class="info">
+                                        <span class="code">${k}</span>
+                                        <span class="name">${t.name}</span>
+                                        <span class="meta">min: ${t.minimalId} | Subj: ${subs}</span>
+                                    </div>
+                                    <div class="actions">
+                                        <button onclick="editTeacherFromModal('${k}')" title="Edit">✏️</button>
+                                        <button class="del" onclick="deleteTeacherFromModal('${k}')" title="Delete">✕</button>
+                                    </div>
+                                </div>
+                            `;
+                });
+            }
+
+            html += `
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn-secondary" onclick="closeModal()">Close</button>
+                        </div>
+                    `;
+            openModal(html);
+        }
+
+        function addTeacherFromModal() {
+            const id = document.getElementById('newTchrId').value.trim().toUpperCase();
+            const name = document.getElementById('newTchrName').value.trim();
+            const min = document.getElementById('newTchrMin').value.trim().toUpperCase() || id.slice(0, 2);
+            if (!id) { showToast('Enter teacher ID', 'error'); return; }
+            if (!name) { showToast('Enter teacher name', 'error'); return; }
+            if (appData.teachers[id]) { showToast('Teacher already exists', 'error'); return; }
+            appData.teachers[id] = { name: name, minimalId: min, subjects: [] };
+            closeModal();
+            render();
+            showToast('Added ' + id);
+            saveData();
+            manageTeachers();
+        }
+
+        function deleteTeacherFromModal(id) {
+            if (!confirm('Delete teacher ' + id + '?')) return;
+            delete appData.teachers[id];
+            getClassKeys().forEach(c => {
+                DAYS.forEach(d => {
+                    const pCount = getPeriodsPerDay();
+                    for (let p = 1; p <= pCount; p++) {
+                        const key = 'P' + p;
+                        const val = getCellValue(c, d, key);
+                        if (val.teacher === id) {
+                            clearCell(c, d, key);
+                        }
+                    }
+                });
+                if (appData.classTeachers[c] === id) {
+                    delete appData.classTeachers[c];
+                }
+            });
+            closeModal();
+            render();
+            showToast('Deleted ' + id);
+            saveData();
+            manageTeachers();
+        }
+
+        function editTeacherFromModal(id) {
+            const t = appData.teachers[id];
+            if (!t) return;
+            const html = `
+                        <h3>✏️ Edit Teacher</h3>
+                        <div class="edit-form">
+                            <div class="form-row">
+                                <div><label>ID</label><input type="text" id="editTchrId" value="${id}" disabled style="background:#f1f5f9;" /></div>
+                                <div><label>Name</label><input type="text" id="editTchrName" value="${t.name}" /></div>
+                                <div><label>Minimal</label><input type="text" id="editTchrMin" value="${t.minimalId}" /></div>
+                            </div>
+                            <div class="btn-row">
+                                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                                <button class="btn-danger" onclick="deleteTeacherFromModal('${id}')">Delete</button>
+                                <button class="btn-save" onclick="saveTeacherEdit('${id}')">Save</button>
+                            </div>
+                        </div>
+                    `;
+            openModal(html);
+        }
+
+        function saveTeacherEdit(id) {
+            const name = document.getElementById('editTchrName').value.trim();
+            const min = document.getElementById('editTchrMin').value.trim().toUpperCase();
+            if (!name) { showToast('Name is required', 'error'); return; }
+            if (appData.teachers[id]) {
+                appData.teachers[id].name = name;
+                if (min) appData.teachers[id].minimalId = min;
+            }
+            closeModal();
+            render();
+            showToast('Updated ' + id);
+            saveData();
+            manageTeachers();
+        }
+
+        function importTeachersFromModal() {
+            const fileInput = document.getElementById('importTeachersFile');
+            if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+                showToast('Select a CSV file first', 'error');
+                return;
+            }
+            importCSV(fileInput.files[0], 'teachers');
+            setTimeout(() => { closeModal();
+                manageTeachers(); }, 300);
+        }
+
+        function clearTeachersFromModal() {
+            if (!confirm('Remove ALL teachers?')) return;
+            appData.teachers = {};
+            appData.classTeachers = {};
+            getClassKeys().forEach(c => {
+                DAYS.forEach(d => {
+                    const pCount = getPeriodsPerDay();
+                    for (let p = 1; p <= pCount; p++) {
+                        const key = 'P' + p;
+                        clearCell(c, d, key);
+                    }
+                });
+            });
+            closeModal();
+            render();
+            showToast('All teachers cleared');
+            saveData();
+            manageTeachers();
+        }
+
+        // ───────────── PERIODS PER DAY CHANGE ─────────────
+        document.getElementById('periodsPerDay').addEventListener('change', function() {
+            const val = parseInt(this.value) || 7;
+            const clamped = Math.min(10, Math.max(4, val));
+            this.value = clamped;
+            appData.settings.periodsPerDay = clamped;
+            getClassKeys().forEach(c => {
+                if (!appData.timetable[c]) appData.timetable[c] = {};
+                DAYS.forEach(d => {
+                    if (!appData.timetable[c][d]) appData.timetable[c][d] = {};
+                    for (let p = 1; p <= clamped; p++) {
+                        const key = 'P' + p;
+                        if (!appData.timetable[c][d][key]) {
+                            appData.timetable[c][d][key] = { subject: null, teacher: null };
+                        }
+                    }
+                });
+            });
+            render();
+            saveData();
+            showToast('Periods per day set to ' + clamped);
+        });
+
+        // ───────────── TOGGLE BARS ─────────────
+        document.getElementById('topBarToggle').addEventListener('click', function() {
+            const bar = document.getElementById('topBar');
+            bar.classList.toggle('collapsed');
+            this.textContent = bar.classList.contains('collapsed') ? '▸' : '▾';
+        });
+        document.getElementById('bottomBarToggle').addEventListener('click', function() {
+            const bar = document.getElementById('bottomBar');
+            bar.classList.toggle('collapsed');
+            this.textContent = bar.classList.contains('collapsed') ? '▸' : '▾';
+        });
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            const bar = document.getElementById('rightSidebar');
+            bar.classList.toggle('collapsed');
+            this.textContent = bar.classList.contains('collapsed') ? '▶' : '◀';
+        });
+
+        // ───────────── BUTTON BINDINGS ─────────────
+        document.getElementById('btnImport').addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv';
+            input.onchange = function(e) {
+                if (this.files && this.files[0]) {
+                    importCSV(this.files[0], 'timetable');
+                }
+            };
+            input.click();
+        });
+
+        document.getElementById('btnExport').addEventListener('click', exportCSV);
+        document.getElementById('btnSettings').addEventListener('click', openSettings);
+        document.getElementById('btnManageClasses').addEventListener('click', manageClasses);
+        document.getElementById('btnManageSubjects').addEventListener('click', manageSubjects);
+        document.getElementById('btnManageTeachers').addEventListener('click', manageTeachers);
+
+        document.getElementById('btnClearAll').addEventListener('click', function() {
+            if (!confirm('⚠️ Clear ALL data (classes, subjects, teachers, timetable) from local storage?')) return;
+            if (!confirm('This cannot be undone. Are you sure?')) return;
+            clearAllData();
+        });
+
+        // ───────────── INIT ─────────────
+        function init() {
+            const hasData = loadData();
+            if (!hasData || getClassList().length === 0) {
+                appData.settings.periodTimes = initDefaultTimes();
+                appData.settings.periodsPerDay = 7;
+                saveData();
+            }
+            document.getElementById('periodsPerDay').value = getPeriodsPerDay();
+            render();
+            saveData();
+            setInterval(() => { saveData(); }, 30000);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+                document.getElementById('contextMenu').style.display = 'none';
+                stopEditing();
+            }
+        });
+
+        // Expose functions to global scope
+        window.closeModal = closeModal;
+        window.openModal = openModal;
+        window.showToast = showToast;
+        window.manageClasses = manageClasses;
+        window.manageSubjects = manageSubjects;
+        window.manageTeachers = manageTeachers;
+        window.openSettings = openSettings;
+        window.saveSettings = saveSettings;
+        window.addClassFromModal = addClassFromModal;
+        window.deleteClassFromModal = deleteClassFromModal;
+        window.editClassFromModal = editClassFromModal;
+        window.saveClassEdit = saveClassEdit;
+        window.importClassesFromModal = importClassesFromModal;
+        window.clearClassesFromModal = clearClassesFromModal;
+        window.addSubjectFromModal = addSubjectFromModal;
+        window.deleteSubjectFromModal = deleteSubjectFromModal;
+        window.editSubjectFromModal = editSubjectFromModal;
+        window.saveSubjectEdit = saveSubjectEdit;
+        window.importSubjectsFromModal = importSubjectsFromModal;
+        window.clearSubjectsFromModal = clearSubjectsFromModal;
+        window.addTeacherFromModal = addTeacherFromModal;
+        window.deleteTeacherFromModal = deleteTeacherFromModal;
+        window.editTeacherFromModal = editTeacherFromModal;
+        window.saveTeacherEdit = saveTeacherEdit;
+        window.importTeachersFromModal = importTeachersFromModal;
+        window.clearTeachersFromModal = clearTeachersFromModal;
+        window.assignTeacherFromModal = assignTeacherFromModal;
+        window.toggleSelectionMode = toggleSelectionMode;
+        window.handleMultipleDaysBtnClick = handleMultipleDaysBtnClick;
+        window.handleBatchTeacherChange = handleBatchTeacherChange;
+        window.handleBatchSubjectChange = handleBatchSubjectChange;
+        window.applyBatchAssignment = applyBatchAssignment;
+        window.exportCSV = exportCSV;
+        window.clearAllData = clearAllData;
+        window.render = render;
+    </script>
+</body>
+</html>

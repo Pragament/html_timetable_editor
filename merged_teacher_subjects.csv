@@ -1,0 +1,25 @@
+Teacher ID,Teacher Name,Minimal ID,Subjects,Subject Minimal Codes
+AKH,Akhila,AK,Maths,M
+APA,Aparna,AP,English,E
+CHA,Chandrakala,C,"Telugu, Telugu (II Lang), Telugu (III Lang)","T, T2, T3"
+DEE,Deepika,DE,,
+DIV,Divya,DI,,
+MAN,Manjula,MA,Social,SO
+MOU,Mounika,MO,Telugu,T
+PRA,Pravalika,P,Computer,C
+ROJ,Roja,R,Maths,M
+SAI,Sai Priya,SP,EVS,EV
+SAM,Sameera,SAM,English,E
+SAR,Sandhya Rani,SAR,Maths,M
+SHA,Shakeer,SHA,"Hindi, Hindi (II Lang), Hindi (III Lang)","H, H2, H3"
+SHRA,Shravani,SHR,Maths (IIT),MI
+SRI,Srihitha,SRI,Social,SO
+SRP,Sripadha,SRP,"Science, Science (IIT), Biology","S, SI, B"
+SRU,Sruthilaya,SRU,"Maths (IIT), Physics/Chemistry","MI, PHY/CHEM"
+SUK,Sukurtha,SUK,"Telugu, Telugu (II Lang), Telugu (III Lang)","T, T2, T3"
+SUR,Suresh,SUR,Physical Training,P
+SUS,Sushmitha,SUS,Hindi,H
+,Smrithi,,Computer,C
+,Muskan,,English,E
+,Pooja,,Science,S
+,Uma,,"Hindi, Hindi (II Lang), Hindi (III Lang)","H, H2, H3"
