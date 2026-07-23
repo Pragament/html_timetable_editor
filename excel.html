@@ -664,6 +664,33 @@
             gap: 8px;
             flex-wrap: wrap;
         }
+        .subj-check-list {
+            max-height: 160px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 6px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            background: #f8fafc;
+        }
+        .subj-check-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #334155;
+            cursor: pointer;
+            padding: 3px 4px;
+            border-radius: 4px;
+        }
+        .subj-check-item:hover {
+            background: #eef2ff;
+        }
+        .subj-check-item input[type="checkbox"] {
+            cursor: pointer;
+        }
         #modalOverlay .modal .empty-msg {
             color: #94a3b8;
             font-size: 11px;
@@ -2619,6 +2646,22 @@
         function editTeacherFromModal(id) {
             const t = appData.teachers[id];
             if (!t) return;
+            const subjKeys = Object.keys(appData.subjects).sort();
+            const currentSubs = Array.isArray(t.subjects) ? t.subjects : [];
+            let subjCheckboxes = '';
+            if (subjKeys.length === 0) {
+                subjCheckboxes = '<div class="empty-msg">No subjects added yet. Add subjects first (Subjects button).</div>';
+            } else {
+                subjKeys.forEach(code => {
+                    const checked = currentSubs.includes(code) ? 'checked' : '';
+                    subjCheckboxes += `
+                                <label class="subj-check-item">
+                                    <input type="checkbox" value="${code}" ${checked} />
+                                    <span>${code} - ${appData.subjects[code].name}</span>
+                                </label>
+                            `;
+                });
+            }
             const html = `
                         <h3>✏️ Edit Teacher</h3>
                         <div class="edit-form">
@@ -2626,6 +2669,12 @@
                                 <div><label>ID</label><input type="text" id="editTchrId" value="${id}" disabled style="background:#f1f5f9;" /></div>
                                 <div><label>Name</label><input type="text" id="editTchrName" value="${t.name}" /></div>
                                 <div><label>Minimal</label><input type="text" id="editTchrMin" value="${t.minimalId}" /></div>
+                            </div>
+                            <div style="margin-top:10px;">
+                                <label style="display:block;margin-bottom:4px;font-weight:600;color:#334155;">Subjects (select one or more)</label>
+                                <div class="subj-check-list" id="editTchrSubjList">
+                                    ${subjCheckboxes}
+                                </div>
                             </div>
                             <div class="btn-row">
                                 <button class="btn-cancel" onclick="closeModal()">Cancel</button>
@@ -2641,9 +2690,13 @@
             const name = document.getElementById('editTchrName').value.trim();
             const min = document.getElementById('editTchrMin').value.trim().toUpperCase();
             if (!name) { showToast('Name is required', 'error'); return; }
+            const listEl = document.getElementById('editTchrSubjList');
+            const checkedBoxes = listEl ? listEl.querySelectorAll('input[type="checkbox"]:checked') : [];
+            const selectedSubjects = Array.from(checkedBoxes).map(cb => cb.value);
             if (appData.teachers[id]) {
                 appData.teachers[id].name = name;
                 if (min) appData.teachers[id].minimalId = min;
+                appData.teachers[id].subjects = selectedSubjects;
             }
             closeModal();
             render();
