@@ -312,6 +312,10 @@
             background: #fee2e2 !important;
             box-shadow: inset 0 0 0 1px #f87171;
         }
+        #tableWrap .col-period .cell-content.selected-cell {
+            background: #93c5fd !important;
+            box-shadow: inset 0 0 0 1.5px #2563eb !important;
+        }
         #tableWrap .col-period .cell-content.conflict::after {
             content: "⚡";
             position: absolute;
@@ -445,6 +449,19 @@
             font-weight: 700;
             color: #2563eb;
             margin: 0 2px;
+        }
+
+        /* Selection mode indicator banner */
+        #selectionBanner {
+            display: none;
+            background: #eff6ff;
+            border-bottom: 1px solid #3b82f6;
+            color: #1d4ed8;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            align-items: center;
+            justify-content: space-between;
         }
 
         /* context menu */
@@ -683,9 +700,9 @@
             display: flex;
             gap: 2px;
             align-items: center;
-            width: min(280px, calc(100vw - 40px));
-            min-width: 180px;
-            max-width: 320px;
+            width: min(140px, calc(100vw - 20px)); /* Reduced width */
+            min-width: 90px;
+            max-width: 160px;                      /* Cut to half length */
             height: auto;
             padding: 2px;
             box-sizing: border-box;
@@ -694,7 +711,8 @@
             border-radius: 4px;
             box-shadow: 0 5px 16px rgba(15, 23, 42, 0.14);
         }
-        .cell-editor input {
+        .cell-editor input,
+        .cell-editor select {
             border: 1px solid #2563eb;
             border-radius: 2px;
             padding: 1px 3px;
@@ -706,16 +724,17 @@
             outline: none;
             font-family: inherit;
         }
-        .cell-editor input:focus {
+        .cell-editor input:focus,
+        .cell-editor select:focus {
             box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
         }
-        .cell-editor .subj-input {
-            flex: 1.2;
-            min-width: 28px;
-        }
         .cell-editor .tchr-input {
+            flex: 1.3;
+            min-width: 60px;
+        }
+        .cell-editor .subj-opt-select {
             flex: 1;
-            min-width: 22px;
+            min-width: 60px;
         }
         .cell-editor .editor-actions {
             display: flex;
@@ -938,6 +957,14 @@
             <div class="sep"></div>
             <label>Periods/day: <input type="number" id="periodsPerDay" value="7" min="4" max="10" /></label>
             <label>Apply all days: <input type="checkbox" id="applyAllDays" /></label>
+            <div class="sep"></div>
+            <button id="btnMultipleDays" class="primary" onclick="handleMultipleDaysBtnClick()">📅 Multiple Days</button>
+        </div>
+
+        <!-- SELECTION BANNER -->
+        <div id="selectionBanner">
+            <span>✨ <strong>Selection Mode Active:</strong> Click on cells in the timetable to select multiple slots, then click <strong>OK</strong> on the toolbar.</span>
+            <button style="background:none;border:none;color:#dc2626;cursor:pointer;font-weight:bold;" onclick="toggleSelectionMode(false)">Cancel Selection</button>
         </div>
 
         <!-- MAIN -->
@@ -1006,7 +1033,7 @@
             classes: [], // [{ class: "I", section: "A" }, ...]
             classTeachers: {}, // "I-A" -> teacherId
             subjects: {}, // code -> { name, minimalCode }
-            teachers: {}, // id -> { name, minimalId }
+            teachers: {}, // id -> { name, minimalId, subjects: [...] }
             timetable: {}, // "I-A" -> day -> period -> { subject, teacher }
             settings: {
                 periodsPerDay: 7,
@@ -1016,6 +1043,10 @@
 
         let clipboard = null;
         let contextTarget = null;
+
+        // Multi-selection state (Multiple Days feature)
+        let isSelectionMode = false;
+        let selectedCells = []; // [{ key, day, period }, ...]
         let editingCell = null;
 
         // ───────────── HELPERS ─────────────
@@ -1023,11 +1054,34 @@
 
         function getClassFromKey(key) { const p = key.split('-'); return { class: p[0] || '', section: p[1] || '' }; }
 
-        function getSubjectMinimal(code) { const s = appData.subjects[code]; return s ? s.minimalCode : (code || ''); }
+        function getSubjectMinimal(code) {
+            if (!code) return '';
+            if (appData.subjects[code] && appData.subjects[code].minimalCode) {
+                return appData.subjects[code].minimalCode;
+            }
+            const lower = code.toLowerCase();
+            const foundKey = Object.keys(appData.subjects).find(k =>
+                k.toLowerCase() === lower ||
+                (appData.subjects[k].name && appData.subjects[k].name.toLowerCase() === lower)
+            );
+            if (foundKey && appData.subjects[foundKey].minimalCode) {
+                return appData.subjects[foundKey].minimalCode;
+            }
+            return code.length > 3 ? code.slice(0, 2).toUpperCase() : code;
+        }
 
         function getTeacherMinimal(id) { const t = appData.teachers[id]; return t ? t.minimalId : (id || ''); }
 
-        function getSubjectName(code) { const s = appData.subjects[code]; return s ? s.name : code; }
+        function getSubjectName(code) {
+            if (!code) return '';
+            if (appData.subjects[code]) return appData.subjects[code].name;
+            const lower = code.toLowerCase();
+            const foundKey = Object.keys(appData.subjects).find(k =>
+                k.toLowerCase() === lower ||
+                (appData.subjects[k].name && appData.subjects[k].name.toLowerCase() === lower)
+            );
+            return foundKey ? appData.subjects[foundKey].name : code;
+        }
 
         function getTeacherName(id) { const t = appData.teachers[id]; return t ? t.name : id; }
 
@@ -1122,7 +1176,6 @@
             if (classExists(newCls, newSec)) return false;
             const oldKey = getClassKey(oldCls, oldSec);
             const newKey = getClassKey(newCls, newSec);
-            // Move timetable
             if (appData.timetable[oldKey]) {
                 appData.timetable[newKey] = appData.timetable[oldKey];
                 delete appData.timetable[oldKey];
@@ -1136,12 +1189,10 @@
                     }
                 });
             }
-            // Move class teacher
             if (appData.classTeachers[oldKey]) {
                 appData.classTeachers[newKey] = appData.classTeachers[oldKey];
                 delete appData.classTeachers[oldKey];
             }
-            // Update class list
             const idx = appData.classes.findIndex(c => c.class === oldCls && c.section === oldSec);
             if (idx !== -1) {
                 appData.classes[idx] = { class: newCls, section: newSec };
@@ -1240,7 +1291,6 @@
                         appData.settings.periodTimes = initDefaultTimes();
                     }
                     if (!appData.settings.periodsPerDay) appData.settings.periodsPerDay = 7;
-                    // Ensure all classes have timetable entries
                     getClassKeys().forEach(c => {
                         if (!appData.timetable[c]) {
                             appData.timetable[c] = {};
@@ -1307,7 +1357,6 @@
             const classList = getClassList();
             const conflicts = findConflicts();
 
-            // ── header: two rows ──
             const thead = document.getElementById('tableHead');
             let headerHtml = '<tr>';
             headerHtml += '<th class="col-class" rowspan="2">Class</th>';
@@ -1332,7 +1381,6 @@
             headerHtml += '</tr>';
             thead.innerHTML = headerHtml;
 
-            // ── body ──
             const tbody = document.getElementById('tableBody');
             let bodyHtml = '';
 
@@ -1363,7 +1411,6 @@
                     `<td class="col-teacher" data-key="${key}" title="${teacherName}" style="cursor:pointer;">${teacherMin}</td>`;
 
                 periodKeys.forEach((p, pi) => {
-                    // first day cell of each new period group should get the separator
                     DAYS.forEach((d, di) => {
                         const clsTd = (pi !== 0 && di === 0) ? 'col-period period-group-sep' : 'col-period';
                         const val = getCellValue(key, d, p);
@@ -1373,11 +1420,11 @@
                         const tchrMin = getTeacherMinimal(tchr);
                         const filled = !!(subj && tchr);
                         const conflict = isConflict(key, d, p);
+                        const selected = isCellSelected(key, d, p);
                         const contentClass = 'cell-content' + (filled ? ' filled' : ' empty') + (conflict ?
-                            ' conflict' : '');
+                            ' conflict' : '') + (selected ? ' selected-cell' : '');
                         const titleText = filled ? `${subj} / ${getSubjectName(subj)} — ${tchr} / ${getTeacherName(tchr)}` :
                             'empty';
-                        const displayText = filled ? `${subjMin} ${tchrMin}` : '·';
                         bodyHtml += `<td class="${clsTd}" data-key="${key}" data-day="${d}" data-period="${p}">
                                     <div class="${contentClass}" title="${titleText}">
                                         ${filled ? `<span class="subj">${subjMin}</span><span class="tchr">${tchrMin}</span>` : '<span style="color:#cbd5e1;font-size:11px;">·</span>'}
@@ -1390,13 +1437,11 @@
 
             tbody.innerHTML = bodyHtml;
 
-            // ── update stats ──
             updateStats();
             updateSidebar();
             updateBottomBar();
             document.getElementById('totalConflicts').textContent = conflicts.length;
 
-            // ── attach events ──
             attachCellEvents();
             attachTeacherClickEvents();
 
@@ -1412,10 +1457,15 @@
                     const day = this.dataset.day;
                     const period = this.dataset.period;
                     if (!key || !day || !period) return;
+                    if (isSelectionMode) {
+                        toggleCellSelection(key, day, period);
+                        return;
+                    }
                     startEditing(key, day, period, this);
                 });
                 td.addEventListener('contextmenu', function(e) {
                     e.preventDefault();
+                    if (isSelectionMode) return;
                     const key = this.dataset.key;
                     const day = this.dataset.day;
                     const period = this.dataset.period;
@@ -1484,13 +1534,11 @@
                     const key = this.dataset.key;
                     if (!key) return;
                     const current = getClassTeacher(key);
-                    // Show a simple prompt to select a teacher
                     const teacherIds = Object.keys(appData.teachers);
                     if (teacherIds.length === 0) {
                         showToast('No teachers available. Add teachers first.', 'error');
                         return;
                     }
-                    // Build a quick select modal
                     let options = teacherIds.map(id =>
                         `<option value="${id}" ${id === current ? 'selected' : ''}>${id} — ${getTeacherName(id)}</option>`
                         ).join('');
@@ -1526,30 +1574,207 @@
             saveData();
         }
 
+        // ───────────── MULTIPLE DAYS SELECTION LOGIC ─────────────
+        function handleMultipleDaysBtnClick() {
+            if (!isSelectionMode) {
+                toggleSelectionMode(true);
+            } else {
+                openBatchAssignModal();
+            }
+        }
+
+        function toggleSelectionMode(forceState) {
+            isSelectionMode = (typeof forceState === 'boolean') ? forceState : !isSelectionMode;
+
+            const btn = document.getElementById('btnMultipleDays');
+            const banner = document.getElementById('selectionBanner');
+
+            if (isSelectionMode) {
+                btn.className = 'success';
+                btn.textContent = `✅ OK (${selectedCells.length})`;
+                banner.style.display = 'flex';
+                showToast('Batch selection mode active. Click cells to select.');
+            } else {
+                btn.className = 'primary';
+                btn.textContent = '📅 Multiple Days';
+                banner.style.display = 'none';
+                selectedCells = [];
+                render();
+            }
+        }
+
+        function isCellSelected(key, day, period) {
+            return selectedCells.some(item => item.key === key && item.day === day && item.period === period);
+        }
+
+        function toggleCellSelection(key, day, period) {
+            const idx = selectedCells.findIndex(item => item.key === key && item.day === day && item.period === period);
+            if (idx > -1) {
+                selectedCells.splice(idx, 1);
+            } else {
+                selectedCells.push({ key, day, period });
+            }
+
+            const btn = document.getElementById('btnMultipleDays');
+            btn.textContent = `✅ OK (${selectedCells.length})`;
+            render();
+        }
+
+        function openBatchAssignModal() {
+            if (selectedCells.length === 0) {
+                showToast('Please select at least one cell first!', 'error');
+                return;
+            }
+
+            const teachers = appData.teachers;
+            const subjects = appData.subjects;
+
+            let teacherOpts = '<option value="">-- Select Teacher --</option>';
+            Object.keys(teachers).sort().forEach(id => {
+                const t = teachers[id];
+                const subStr = (t.subjects && t.subjects.length > 0) ? ` (${t.subjects.map(s=>getSubjectName(s)).join(', ')})` : '';
+                teacherOpts += `<option value="${id}">${t.name} [ID: ${id}]${subStr}</option>`;
+            });
+
+            let subjOpts = '<option value="">-- Select Subject --</option>';
+            Object.keys(subjects).sort().forEach(code => {
+                subjOpts += `<option value="${code}">${code} - ${subjects[code].name}</option>`;
+            });
+
+            const html = `
+                <h3>⚡ Assign Multiple Cells <span class="badge">${selectedCells.length} Selected</span></h3>
+                <p style="font-size:11px;color:#64748b;margin-bottom:12px;">Choose a Teacher or Subject to fill all selected slots.</p>
+
+                <div style="background:#f8fafc;padding:12px;border:1px solid #e2e8f0;border-radius:6px;">
+                    <label style="font-weight:600;margin-top:0;">Option 1: Select Teacher (Auto-assigns Subject)</label>
+                    <select id="batchTeacherSelect" onchange="handleBatchTeacherChange()">
+                        ${teacherOpts}
+                    </select>
+
+                    <div style="text-align:center;margin:8px 0;font-weight:bold;color:#94a3b8;">— OR —</div>
+
+                    <label style="font-weight:600;">Option 2: Select Subject</label>
+                    <select id="batchSubjectSelect" onchange="handleBatchSubjectChange()">
+                        ${subjOpts}
+                    </select>
+
+                    <div id="batchSubTeacherWrap" style="display:none;margin-top:8px;">
+                        <label style="font-weight:600;color:#2563eb;">Multiple teachers found for this subject! Choose one:</label>
+                        <select id="batchSubTeacherSelect"></select>
+                    </div>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button class="btn-primary" onclick="applyBatchAssignment()">OK (Assign)</button>
+                </div>
+            `;
+            openModal(html);
+        }
+
+        function handleBatchTeacherChange() {
+            const teacherVal = document.getElementById('batchTeacherSelect').value;
+            if (teacherVal) {
+                document.getElementById('batchSubjectSelect').value = '';
+                document.getElementById('batchSubTeacherWrap').style.display = 'none';
+            }
+        }
+
+        function handleBatchSubjectChange() {
+            const subjVal = document.getElementById('batchSubjectSelect').value;
+            if (!subjVal) {
+                document.getElementById('batchSubTeacherWrap').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('batchTeacherSelect').value = '';
+
+            const matchingTeachers = Object.keys(appData.teachers).filter(id => {
+                const t = appData.teachers[id];
+                return Array.isArray(t.subjects) && t.subjects.includes(subjVal);
+            });
+
+            const wrap = document.getElementById('batchSubTeacherWrap');
+            const select = document.getElementById('batchSubTeacherSelect');
+
+            if (matchingTeachers.length > 0) {
+                select.innerHTML = matchingTeachers.map(id =>
+                    `<option value="${id}">${appData.teachers[id].name} (${id})</option>`
+                ).join('');
+                wrap.style.display = 'block';
+            } else {
+                select.innerHTML = '<option value="">No teacher assigned to this subject</option>';
+                wrap.style.display = 'block';
+            }
+        }
+
+        function applyBatchAssignment() {
+            const teacherSelect = document.getElementById('batchTeacherSelect');
+            const subjSelect = document.getElementById('batchSubjectSelect');
+            const subTeacherSelect = document.getElementById('batchSubTeacherSelect');
+
+            let finalTeacher = '';
+            let finalSubject = '';
+
+            if (teacherSelect.value) {
+                finalTeacher = teacherSelect.value;
+                const t = appData.teachers[finalTeacher];
+                if (t && t.subjects && t.subjects.length > 0) {
+                    finalSubject = t.subjects[0];
+                } else {
+                    showToast('Teacher has no assigned subject!', 'error');
+                    return;
+                }
+            } else if (subjSelect.value) {
+                finalSubject = subjSelect.value;
+                finalTeacher = subTeacherSelect.value;
+                if (!finalTeacher) {
+                    showToast('Please select a teacher for this subject!', 'error');
+                    return;
+                }
+            } else {
+                showToast('Please select a teacher or a subject!', 'error');
+                return;
+            }
+
+            selectedCells.forEach(cell => {
+                setCellValue(cell.key, cell.day, cell.period, finalSubject, finalTeacher);
+            });
+
+            showToast(`Assigned ${getTeacherName(finalTeacher)} to ${selectedCells.length} cells`, 'success');
+
+            closeModal();
+            toggleSelectionMode(false);
+            render();
+            saveData();
+        }
+
         // ───────────── CELL EDITING ─────────────
         function startEditing(key, day, period, td) {
             stopEditing();
             const val = getCellValue(key, day, period);
-            const subjCode = val.subject || '';
             const tchrId = val.teacher || '';
+            const subjCode = val.subject || '';
 
             const editor = document.createElement('div');
             editor.className = 'cell-editor';
-            const subjOptions = Object.keys(appData.subjects).map(k =>
-                `<option value="${k}">${k} — ${appData.subjects[k].name}</option>`).join('');
-            const tchrOptions = Object.keys(appData.teachers).map(k =>
-                `<option value="${k}">${k} — ${appData.teachers[k].name}</option>`).join('');
+
+            // Displays ONLY: Teacher Name (Subject Codes)
+            const tchrOptions = Object.keys(appData.teachers).map(k => {
+                const t = appData.teachers[k];
+                const subStr = (t && Array.isArray(t.subjects) && t.subjects.length > 0)
+                    ? t.subjects.map(s => getSubjectMinimal(s)).join(', ')
+                    : 'No Subj';
+                return `<option value="${k}">${t.name} (${subStr})</option>`;
+            }).join('');
 
             editor.innerHTML = `
-                        <input class="subj-input" type="text" placeholder="Subj" value="${subjCode}" list="subjDatalist_${key}" autocomplete="off" />
-                        <input class="tchr-input" type="text" placeholder="Tchr" value="${tchrId}" list="tchrDatalist_${key}" autocomplete="off" />
+                        <input class="tchr-input" type="text" placeholder="Teacher" value="${tchrId}" list="tchrDatalist_${key}" autocomplete="off" maxlength="6" />
+                        <select class="subj-opt-select" style="display:none;"></select>
                         <div class="editor-actions">
-                            <button class="save-btn">✓</button>
-                            <button class="cancel-btn">✕</button>
+                            <button class="save-btn" title="Save">✓</button>
+                            <button class="cancel-btn" title="Clear cell">✕</button>
                         </div>
-                        <datalist id="subjDatalist_${key}">
-                            ${subjOptions}
-                        </datalist>
                         <datalist id="tchrDatalist_${key}">
                             ${tchrOptions}
                         </datalist>
@@ -1560,70 +1785,87 @@
             td.style.overflow = 'visible';
             td.appendChild(editor);
 
-            const subjInput = editor.querySelector('.subj-input');
             const tchrInput = editor.querySelector('.tchr-input');
+            const subjSelect = editor.querySelector('.subj-opt-select');
             const saveBtn = editor.querySelector('.save-btn');
             const cancelBtn = editor.querySelector('.cancel-btn');
 
-            subjInput.focus();
-            subjInput.select();
+            function updateSubjectDropdown() {
+                const id = tchrInput.value.trim();
+                const teacher = appData.teachers[id];
+                const subs = (teacher && Array.isArray(teacher.subjects)) ? teacher.subjects : [];
+
+                if (subs.length > 1) {
+                    subjSelect.innerHTML = subs.map(s =>
+                        `<option value="${s}" ${s === subjCode ? 'selected' : ''}>${getSubjectMinimal(s)} - ${getSubjectName(s)}</option>`
+                    ).join('');
+                    subjSelect.style.display = 'block';
+                } else {
+                    subjSelect.style.display = 'none';
+                }
+            }
+
+            tchrInput.addEventListener('input', updateSubjectDropdown);
+            updateSubjectDropdown();
+            tchrInput.focus();
+            tchrInput.select();
 
             function saveEdit() {
-                const newSubj = subjInput.value.trim();
                 const newTchr = tchrInput.value.trim();
                 const applyAll = document.getElementById('applyAllDays').checked;
 
-                if (newSubj && newTchr) {
-                    if (appData.subjects[newSubj] && appData.teachers[newTchr]) {
-                        if (applyAll) {
-                            DAYS.forEach(d => {
-                                setCellValue(key, d, period, newSubj, newTchr);
-                            });
-                        } else {
-                            setCellValue(key, day, period, newSubj, newTchr);
-                        }
-                        render();
-                        showToast(applyAll ? 'Applied to all days' : 'Updated');
-                    } else {
-                        showToast('Invalid subject or teacher', 'error');
+                if (newTchr && appData.teachers[newTchr]) {
+                    const teacher = appData.teachers[newTchr];
+                    const subs = Array.isArray(teacher.subjects) ? teacher.subjects : [];
+                    const assignedSubj = (subs.length > 1) ? (subjSelect.value || subs[0]) : subs[0];
+
+                    if (!assignedSubj) {
+                        showToast('This teacher has no assigned subject!', 'error');
+                        return;
                     }
+
+                    if (applyAll) {
+                        DAYS.forEach(d => setCellValue(key, d, period, assignedSubj, newTchr));
+                    } else {
+                        setCellValue(key, day, period, assignedSubj, newTchr);
+                    }
+                    render();
+                    showToast(applyAll ? 'Applied to all days' : 'Updated');
+                } else if (newTchr) {
+                    showToast('Unknown teacher ID', 'error');
+                    return;
                 } else {
-                    if (newSubj || newTchr) {
-                        showToast('Both subject and teacher required', 'error');
-                    } else {
-                        if (applyAll) {
-                            DAYS.forEach(d => {
-                                clearCell(key, d, period);
-                            });
-                        } else {
-                            clearCell(key, day, period);
-                        }
-                        render();
-                        showToast('Cleared');
-                    }
+                    if (applyAll) DAYS.forEach(d => clearCell(key, d, period));
+                    else clearCell(key, day, period);
+                    render();
+                    showToast('Cleared');
                 }
                 document.removeEventListener('click', closeOutside);
                 stopEditing();
             }
 
-            function cancelEdit() {
+            function clearEdit() {
+                const applyAll = document.getElementById('applyAllDays').checked;
+                if (applyAll) DAYS.forEach(d => clearCell(key, d, period));
+                else clearCell(key, day, period);
                 document.removeEventListener('click', closeOutside);
-                if (contentDiv) contentDiv.style.display = 'flex';
-                if (editor.parentNode) editor.remove();
-                editingCell = null;
+                stopEditing();
+                render();
+                showToast('Cleared');
+                saveData();
             }
 
             saveBtn.addEventListener('click', saveEdit);
-            cancelBtn.addEventListener('click', cancelEdit);
-            subjInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') tchrInput.focus(); if (e.key ===
-                    'Escape') cancelEdit(); });
-            tchrInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') saveEdit(); if (e.key === 'Escape')
-                    cancelEdit(); });
+            cancelBtn.addEventListener('click', clearEdit);
+            tchrInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') saveEdit();
+                if (e.key === 'Escape') { document.removeEventListener('click', closeOutside); stopEditing(); }
+            });
 
             const closeOutside = (e) => {
                 if (td.contains(e.target)) return;
                 const active = document.activeElement;
-                if (active === subjInput || active === tchrInput) return;
+                if (active === tchrInput || active === subjSelect) return;
                 saveEdit();
                 document.removeEventListener('click', closeOutside);
             };
@@ -1777,15 +2019,38 @@
                 } else if (type === 'teachers') {
                     let count = 0;
                     data.forEach(row => {
-                        if (row.length >= 3 && row[0]) {
+                        if (row.length >= 2 && row[0]) {
                             const id = row[0].toUpperCase();
-                            if (!appData.teachers[id]) {
-                                appData.teachers[id] = {
-                                    name: row[1] || id,
-                                    minimalId: row[2] || id.slice(0, 2)
-                                };
-                                count++;
-                            }
+                            const name = row[1] || id;
+                            const minimalId = row[2] || id.slice(0, 2);
+
+                            const rawSubjects = row[3] ? row[3].split(',').map(s => s.trim()) : [];
+                            const rawMinCodes = row[4] ? row[4].split(',').map(m => m.trim()) : [];
+
+                            const assignedSubjects = [];
+
+                            rawSubjects.forEach((subjName, idx) => {
+                                if (!subjName) return;
+
+                                const codeKey = subjName.toUpperCase();
+                                const minCode = rawMinCodes[idx] || codeKey.slice(0, 2);
+
+                                if (!appData.subjects[codeKey]) {
+                                    appData.subjects[codeKey] = {
+                                        name: subjName,
+                                        minimalCode: minCode
+                                    };
+                                }
+
+                                assignedSubjects.push(codeKey);
+                            });
+
+                            appData.teachers[id] = {
+                                name: name,
+                                minimalId: minimalId,
+                                subjects: assignedSubjects
+                            };
+                            count++;
                         }
                     });
                     showToast('Imported ' + count + ' teachers');
@@ -1846,7 +2111,8 @@
                                 if (!appData.teachers[teacherId]) {
                                     appData.teachers[teacherId] = {
                                         name: teacherName || teacherId,
-                                        minimalId: teacherId.slice(0, 2)
+                                        minimalId: teacherId.slice(0, 2),
+                                        subjects: [subjectCode]
                                     };
                                 }
                                 if (!appData.subjects[subjectCode]) {
@@ -1903,7 +2169,6 @@
 
         // ───────────── SETTINGS (period times) ─────────────
         function openSettings() {
-            const pCount = getPeriodsPerDay();
             let html = `
                         <h3>⏱️ Period Times</h3>
                         <p style="font-size:11px;color:#475569;margin-bottom:8px;">Set start and end time for each period.</p>
@@ -1942,7 +2207,6 @@
                 times['P' + p] = { start, end };
             }
             appData.settings.periodTimes = times;
-            // Ensure all classes have the new periods
             getClassKeys().forEach(c => {
                 if (!appData.timetable[c]) appData.timetable[c] = {};
                 DAYS.forEach(d => {
@@ -2176,7 +2440,6 @@
         function deleteSubjectFromModal(code) {
             if (!confirm('Delete subject ' + code + '?')) return;
             delete appData.subjects[code];
-            // Clear from timetable
             getClassKeys().forEach(c => {
                 DAYS.forEach(d => {
                     const pCount = getPeriodsPerDay();
@@ -2246,7 +2509,6 @@
         function clearSubjectsFromModal() {
             if (!confirm('Remove ALL subjects?')) return;
             appData.subjects = {};
-            // Clear from timetable
             getClassKeys().forEach(c => {
                 DAYS.forEach(d => {
                     const pCount = getPeriodsPerDay();
@@ -2288,12 +2550,13 @@
             } else {
                 tchKeys.forEach(k => {
                     const t = appData.teachers[k];
+                    const subs = (t.subjects && t.subjects.length > 0) ? t.subjects.join(', ') : 'None';
                     html += `
                                 <div class="item">
                                     <div class="info">
                                         <span class="code">${k}</span>
                                         <span class="name">${t.name}</span>
-                                        <span class="meta">min: ${t.minimalId}</span>
+                                        <span class="meta">min: ${t.minimalId} | Subj: ${subs}</span>
                                     </div>
                                     <div class="actions">
                                         <button onclick="editTeacherFromModal('${k}')" title="Edit">✏️</button>
@@ -2320,7 +2583,7 @@
             if (!id) { showToast('Enter teacher ID', 'error'); return; }
             if (!name) { showToast('Enter teacher name', 'error'); return; }
             if (appData.teachers[id]) { showToast('Teacher already exists', 'error'); return; }
-            appData.teachers[id] = { name, minimalId: min };
+            appData.teachers[id] = { name: name, minimalId: min, subjects: [] };
             closeModal();
             render();
             showToast('Added ' + id);
@@ -2331,7 +2594,6 @@
         function deleteTeacherFromModal(id) {
             if (!confirm('Delete teacher ' + id + '?')) return;
             delete appData.teachers[id];
-            // Clear from timetable
             getClassKeys().forEach(c => {
                 DAYS.forEach(d => {
                     const pCount = getPeriodsPerDay();
@@ -2405,7 +2667,6 @@
             if (!confirm('Remove ALL teachers?')) return;
             appData.teachers = {};
             appData.classTeachers = {};
-            // Clear from timetable
             getClassKeys().forEach(c => {
                 DAYS.forEach(d => {
                     const pCount = getPeriodsPerDay();
@@ -2491,7 +2752,6 @@
         function init() {
             const hasData = loadData();
             if (!hasData || getClassList().length === 0) {
-                // No sample data - start empty
                 appData.settings.periodTimes = initDefaultTimes();
                 appData.settings.periodsPerDay = 7;
                 saveData();
@@ -2516,7 +2776,7 @@
             }
         });
 
-        // Expose functions to global scope for inline onclick
+        // Expose functions to global scope
         window.closeModal = closeModal;
         window.openModal = openModal;
         window.showToast = showToast;
@@ -2544,14 +2804,14 @@
         window.importTeachersFromModal = importTeachersFromModal;
         window.clearTeachersFromModal = clearTeachersFromModal;
         window.assignTeacherFromModal = assignTeacherFromModal;
+        window.toggleSelectionMode = toggleSelectionMode;
+        window.handleMultipleDaysBtnClick = handleMultipleDaysBtnClick;
+        window.handleBatchTeacherChange = handleBatchTeacherChange;
+        window.handleBatchSubjectChange = handleBatchSubjectChange;
+        window.applyBatchAssignment = applyBatchAssignment;
         window.exportCSV = exportCSV;
         window.clearAllData = clearAllData;
         window.render = render;
-
-        console.log('🏫 School Timetable Manager loaded.');
-        console.log('📚 Classes:', getClassList().length);
-        console.log('👨‍🏫 Teachers:', Object.keys(appData.teachers).length);
-        console.log('📖 Subjects:', Object.keys(appData.subjects).length);
     </script>
 </body>
 </html>
