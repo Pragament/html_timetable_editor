@@ -275,7 +275,7 @@
             cursor: pointer;
             border-radius: 2px;
             padding: 1px 2px;
-            transition: background 0.08s;
+            transition: background 0.08s, opacity 0.15s;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -315,6 +315,14 @@
         #tableWrap .col-period .cell-content.selected-cell {
             background: #93c5fd !important;
             box-shadow: inset 0 0 0 1.5px #2563eb !important;
+        }
+        #tableWrap .col-period .cell-content.filtered-match {
+            background: #fef08a !important;
+            box-shadow: inset 0 0 0 1.5px #eab308 !important;
+            font-weight: bold;
+        }
+        #tableWrap .col-period .cell-content.filtered-dim {
+            opacity: 0.25;
         }
         #tableWrap .col-period .cell-content.conflict::after {
             content: "⚡";
@@ -386,8 +394,9 @@
             display: flex;
             justify-content: space-between;
             font-size: 9px;
-            padding: 1px 0;
+            padding: 1px 4px;
             border-bottom: 1px solid #f1f5f9;
+            border-radius: 3px;
         }
         #rightSidebar .sidebar-inner .stat-row .label {
             color: #475569;
@@ -402,15 +411,26 @@
         #rightSidebar .sidebar-inner .stat-row .value.highlight {
             color: #2563eb;
         }
-        #rightSidebar .sidebar-inner .stat-row.teacher-filter:hover {
-            background: #eef2ff;
+        #rightSidebar .sidebar-inner .stat-row.teacher-filter {
+            cursor: pointer;
+            transition: background 0.1s;
         }
-        #rightSidebar .sidebar-inner .stat-row.teacher-filter.active-filter {
-            background: #e0f2fe;
+        #rightSidebar .sidebar-inner .stat-row.teacher-filter:hover {
+            background: #eff6ff;
+        }
+        #rightSidebar .sidebar-inner .stat-row.active-filter {
+            background: #fef08a !important;
+            font-weight: bold;
         }
         #rightSidebar .sidebar-inner .stat-row.clear-filter-row {
             cursor: pointer;
-            color: #1d4ed8;
+            background: #fee2e2;
+            color: #dc2626;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+        #rightSidebar .sidebar-inner .stat-row.clear-filter-row:hover {
+            background: #fca5a5;
         }
 
         /* bottom bar */
@@ -637,6 +657,7 @@
             padding: 4px 12px;
             font-size: 11px;
             border-bottom: 1px solid #f1f5f9;
+            background: #fff;
         }
         #modalOverlay .modal .item-list .item:last-child {
             border-bottom: none;
@@ -673,6 +694,27 @@
             align-items: center;
             gap: 8px;
             flex-wrap: wrap;
+        }
+        #modalOverlay .modal .item-list .item .drag-handle {
+            cursor: grab;
+            color: #94a3b8;
+            font-size: 15px;
+            line-height: 1;
+            padding: 4px 8px 4px 2px;
+            touch-action: none;
+            user-select: none;
+            flex-shrink: 0;
+        }
+        #modalOverlay .modal .item-list .item .drag-handle:hover {
+            color: #2563eb;
+        }
+        #modalOverlay .modal .item-list .item.dragging {
+            opacity: 0.65;
+            background: #eff6ff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.18);
+            position: relative;
+            z-index: 5;
+            border-radius: 6px;
         }
         .subj-check-list {
             max-height: 160px;
@@ -737,9 +779,9 @@
             display: flex;
             gap: 2px;
             align-items: center;
-            width: min(140px, calc(100vw - 20px)); /* Reduced width */
+            width: min(140px, calc(100vw - 20px));
             min-width: 90px;
-            max-width: 160px;                      /* Cut to half length */
+            max-width: 160px;
             height: auto;
             padding: 2px;
             box-sizing: border-box;
@@ -1078,9 +1120,9 @@
             }
         };
 
+        let activeTeacherFilter = null; // Filter state for filtering grid by teacher
         let clipboard = null;
         let contextTarget = null;
-        let activeTeacherFilter = null;
 
         // Multi-selection state (Multiple Days feature)
         let isSelectionMode = false;
@@ -1366,6 +1408,7 @@
             appData.timetable = {};
             appData.settings.periodsPerDay = 7;
             appData.settings.periodTimes = initDefaultTimes();
+            activeTeacherFilter = null;
             saveData();
             render();
             showToast('All data cleared');
@@ -1451,20 +1494,28 @@
                 periodKeys.forEach((p, pi) => {
                     DAYS.forEach((d, di) => {
                         const clsTd = (pi !== 0 && di === 0) ? 'col-period period-group-sep' : 'col-period';
-                                    const val = getCellValue(key, d, p);
+                        const val = getCellValue(key, d, p);
                         const subj = val.subject;
                         const tchr = val.teacher;
                         const subjMin = getSubjectMinimal(subj);
                         const tchrMin = getTeacherMinimal(tchr);
-                        const matchesFilter = !activeTeacherFilter || tchr === activeTeacherFilter;
-                        const filled = !!(subj && tchr && matchesFilter);
-                        const conflict = filled && isConflict(key, d, p);
+                        const filled = !!(subj && tchr);
+                        const conflict = isConflict(key, d, p);
                         const selected = isCellSelected(key, d, p);
+
+                        let filterClass = '';
+                        if (activeTeacherFilter) {
+                            if (tchr === activeTeacherFilter) {
+                                filterClass = ' filtered-match';
+                            } else {
+                                filterClass = ' filtered-dim';
+                            }
+                        }
+
                         const contentClass = 'cell-content' + (filled ? ' filled' : ' empty') + (conflict ?
-                            ' conflict' : '') + (selected ? ' selected-cell' : '') +
-                            (activeTeacherFilter && tchr === activeTeacherFilter ? ' filtered-match' : '');
+                            ' conflict' : '') + (selected ? ' selected-cell' : '') + filterClass;
                         const titleText = filled ? `${subj} / ${getSubjectName(subj)} — ${tchr} / ${getTeacherName(tchr)}` :
-                            (activeTeacherFilter && tchr ? 'hidden by filter' : 'empty');
+                            'empty';
                         bodyHtml += `<td class="${clsTd}" data-key="${key}" data-day="${d}" data-period="${p}">
                                     <div class="${contentClass}" title="${titleText}">
                                         ${filled ? `<span class="subj">${subjMin}</span><span class="tchr">${tchrMin}</span>` : '<span style="color:#cbd5e1;font-size:11px;">·</span>'}
@@ -1479,7 +1530,6 @@
 
             updateStats();
             updateSidebar();
-            attachSidebarTeacherEvents();
             updateBottomBar();
             document.getElementById('totalConflicts').textContent = conflicts.length;
 
@@ -1926,7 +1976,7 @@
             }
         }
 
-        // ───────────── UPDATE STATS ─────────────
+        // ───────────── UPDATE STATS & SIDEBAR FILTER ─────────────
         function updateStats() {
             const stats = computeStats();
             document.getElementById('totalPeriods').textContent = stats.totalPeriods;
@@ -1962,10 +2012,36 @@
                 tHtml +=
                     `<div class="stat-row teacher-filter${activeClass}" data-teacher="${t}"><span class="label">${min} ${name.slice(0,8)}${activeLabel}</span><span class="value highlight">${stats.byTeacher[t]}</span></div>`;
             });
+
             if (activeTeacherFilter) {
                 tHtml += `<div class="stat-row clear-filter-row"><span class="label">Clear teacher filter</span><span class="value">✕</span></div>`;
             }
+
             teacherContainer.innerHTML = tHtml || '<div class="empty-msg">No data</div>';
+
+            // Attach Teacher Filter Click Handlers
+            teacherContainer.querySelectorAll('.teacher-filter').forEach(el => {
+                el.addEventListener('click', function() {
+                    const tId = this.dataset.teacher;
+                    if (activeTeacherFilter === tId) {
+                        activeTeacherFilter = null;
+                        showToast('Teacher filter cleared');
+                    } else {
+                        activeTeacherFilter = tId;
+                        showToast('Filtering for ' + getTeacherName(tId));
+                    }
+                    render();
+                });
+            });
+
+            const clearBtn = teacherContainer.querySelector('.clear-filter-row');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function() {
+                    activeTeacherFilter = null;
+                    showToast('Teacher filter cleared');
+                    render();
+                });
+            }
 
             const subjectContainer = document.getElementById('statsBySubject');
             let sHtml = '';
@@ -1989,34 +2065,6 @@
             const p1 = appData.settings.periodTimes && appData.settings.periodTimes.P1;
             if (p1) {
                 document.getElementById('periodTimeDisplay').textContent = p1.start + '–' + p1.end;
-            }
-        }
-
-        function attachSidebarTeacherEvents() {
-            document.querySelectorAll('#statsByTeacher .teacher-filter').forEach(row => {
-                row.style.cursor = 'pointer';
-                row.addEventListener('click', function() {
-                    const teacherId = this.dataset.teacher;
-                    if (!teacherId) return;
-                    if (activeTeacherFilter === teacherId) {
-                        activeTeacherFilter = null;
-                        showToast('Teacher filter cleared');
-                    } else {
-                        activeTeacherFilter = teacherId;
-                        showToast('Showing periods for ' + getTeacherName(teacherId));
-                    }
-                    render();
-                });
-            });
-
-            const clearRow = document.querySelector('#statsByTeacher .clear-filter-row');
-            if (clearRow) {
-                clearRow.style.cursor = 'pointer';
-                clearRow.addEventListener('click', function() {
-                    activeTeacherFilter = null;
-                    showToast('Teacher filter cleared');
-                    render();
-                });
             }
         }
 
@@ -2315,18 +2363,19 @@
                             <button class="btn-success" onclick="importClassesFromModal()">Import</button>
                             <button class="btn-secondary" onclick="clearClassesFromModal()" style="color:#dc2626;">Clear All</button>
                         </div>
-                        <div class="item-list">
+                        <div class="item-list" id="classItemList">
                     `;
 
             if (classList.length === 0) {
                 html += `<div class="empty-msg">No classes added yet.</div>`;
             } else {
-                classList.forEach(c => {
+                classList.forEach((c, idx) => {
                     const key = getClassKey(c.class, c.section);
                     const teacherId = getClassTeacher(key);
                     const teacherName = teacherId ? getTeacherName(teacherId) : '—';
                     html += `
-                                <div class="item">
+                                <div class="item" data-class="${c.class}" data-section="${c.section}">
+                                    <span class="drag-handle" title="Drag to reorder">⠿</span>
                                     <div class="info">
                                         <span class="code">${c.class}</span>
                                         <span class="name">${c.section}</span>
@@ -2343,11 +2392,79 @@
 
             html += `
                         </div>
+                        ${classList.length > 1 ? '<div style="font-size:10px;color:#94a3b8;margin-top:4px;">⠿ Drag a row by its handle to reorder classes</div>' : ''}
                         <div class="btn-row">
                             <button class="btn-secondary" onclick="closeModal()">Close</button>
                         </div>
                     `;
             openModal(html);
+            enableClassDragReorder();
+        }
+
+        function enableClassDragReorder() {
+            const list = document.getElementById('classItemList');
+            if (!list) return;
+            let draggedEl = null;
+            let startClientY = 0;
+
+            function onPointerDown(e) {
+                const handle = e.target.closest('.drag-handle');
+                if (!handle || !list.contains(handle)) return;
+                const item = handle.closest('.item');
+                if (!item) return;
+                e.preventDefault();
+                draggedEl = item;
+                startClientY = e.clientY;
+                draggedEl.classList.add('dragging');
+                try { handle.setPointerCapture(e.pointerId); } catch (err) {}
+                document.addEventListener('pointermove', onPointerMove);
+                document.addEventListener('pointerup', onPointerUp);
+                document.addEventListener('pointercancel', onPointerUp);
+            }
+
+            function onPointerMove(e) {
+                if (!draggedEl) return;
+                const deltaY = e.clientY - startClientY;
+                draggedEl.style.transform = `translateY(${deltaY}px)`;
+
+                const x = draggedEl.getBoundingClientRect().left + 10;
+                const elUnder = document.elementFromPoint(x, e.clientY);
+                const overItem = elUnder ? elUnder.closest('.item') : null;
+                if (overItem && overItem !== draggedEl && list.contains(overItem)) {
+                    const rect = overItem.getBoundingClientRect();
+                    const midY = rect.top + rect.height / 2;
+                    draggedEl.style.transform = 'translateY(0px)';
+                    if (e.clientY < midY) {
+                        list.insertBefore(draggedEl, overItem);
+                    } else {
+                        list.insertBefore(draggedEl, overItem.nextElementSibling);
+                    }
+                    startClientY = e.clientY;
+                }
+            }
+
+            function onPointerUp() {
+                if (!draggedEl) return;
+                draggedEl.style.transform = '';
+                draggedEl.classList.remove('dragging');
+                document.removeEventListener('pointermove', onPointerMove);
+                document.removeEventListener('pointerup', onPointerUp);
+                document.removeEventListener('pointercancel', onPointerUp);
+
+                // Re-construct state directly from DOM elements in their new visual order
+                const items = Array.from(list.querySelectorAll(':scope > .item'));
+                const newClassesOrder = items.map(it => ({
+                    class: it.getAttribute('data-class'),
+                    section: it.getAttribute('data-section')
+                }));
+                
+                appData.classes = newClassesOrder;
+                draggedEl = null;
+                render();
+                saveData();
+            }
+
+            list.addEventListener('pointerdown', onPointerDown);
         }
 
         function addClassFromModal() {
@@ -2667,6 +2784,7 @@
 
         function deleteTeacherFromModal(id) {
             if (!confirm('Delete teacher ' + id + '?')) return;
+            if (activeTeacherFilter === id) activeTeacherFilter = null;
             delete appData.teachers[id];
             getClassKeys().forEach(c => {
                 DAYS.forEach(d => {
@@ -2767,6 +2885,7 @@
             if (!confirm('Remove ALL teachers?')) return;
             appData.teachers = {};
             appData.classTeachers = {};
+            activeTeacherFilter = null;
             getClassKeys().forEach(c => {
                 DAYS.forEach(d => {
                     const pCount = getPeriodsPerDay();
