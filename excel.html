@@ -1003,6 +1003,8 @@
             background: #b91c1c;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
@@ -1025,6 +1027,8 @@
         <div id="toolbar">
             <button class="primary" id="btnImport">📥 Import CSV</button>
             <button class="success" id="btnExport">📤 Export CSV</button>
+            <button class="primary" id="btnExportClassesPDF">📄 Classes PDF</button>
+            <button class="primary" id="btnExportTeachersPDF">📄 Teachers PDF</button>
             <div class="sep"></div>
             <button id="btnSettings">⚙️ Times</button>
             <button id="btnManageClasses">📋 Classes</button>
@@ -2288,6 +2292,114 @@
             showToast('Exported successfully');
         }
 
+        // ───────────── EXPORT PDF (Classes / Teachers) ─────────────
+        function formatClassCell(val) {
+            if (val.subject && val.teacher) return getSubjectName(val.subject) + '\n(' + getTeacherName(val.teacher) + ')';
+            if (val.teacher && !val.subject) return '(' + getTeacherName(val.teacher) + ')';
+            if (val.subject && !val.teacher) return getSubjectName(val.subject);
+            return '-';
+        }
+
+        function formatTeacherCell(matches) {
+            if (!matches || matches.length === 0) return '-';
+            return matches.map(m => m.subject ? (m.key + '\n' + getSubjectName(m.subject)) : m.key).join(' / ');
+        }
+
+        function buildPeriodHead() {
+            const periodKeys = getAllPeriodKeys();
+            return ['Days / Periods'].concat(periodKeys.map(p => {
+                const t = getPeriodDisplay(p);
+                return t ? (p + '\n' + t) : p;
+            }));
+        }
+
+        function exportClassesPDF() {
+            if (!window.jspdf) { showToast('PDF library failed to load — check your internet connection', 'error'); return; }
+            const classList = getClassList();
+            if (classList.length === 0) { showToast('No classes to export', 'error'); return; }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+            const periodKeys = getAllPeriodKeys();
+            const head = [buildPeriodHead()];
+
+            classList.forEach((c, idx) => {
+                const key = getClassKey(c.class, c.section);
+                const teacherId = getClassTeacher(key);
+                const teacherName = teacherId ? getTeacherName(teacherId) : '';
+                if (idx > 0) doc.addPage();
+                doc.setFontSize(13);
+                doc.setFont(undefined, 'bold');
+                doc.text(`Class: ${c.class} - ${c.section}` + (teacherName ? `   (Class Teacher: ${teacherName})` : ''), 14, 12);
+
+                const body = DAYS.map(d => {
+                    const row = [d];
+                    periodKeys.forEach(p => {
+                        row.push(formatClassCell(getCellValue(key, d, p)));
+                    });
+                    return row;
+                });
+
+                doc.autoTable({
+                    head,
+                    body,
+                    startY: 16,
+                    styles: { fontSize: 7.5, cellPadding: 1.5, halign: 'center', valign: 'middle', lineColor: [203, 213, 225], lineWidth: 0.1 },
+                    headStyles: { fillColor: [37, 99, 235], textColor: 255, fontStyle: 'bold', fontSize: 7.5 },
+                    columnStyles: { 0: { fontStyle: 'bold', fillColor: [241, 245, 249], cellWidth: 26 } },
+                    margin: { left: 10, right: 10 }
+                });
+            });
+
+            doc.save('all_classes_timetable.pdf');
+            showToast('Classes PDF downloaded');
+        }
+
+        function exportTeachersPDF() {
+            if (!window.jspdf) { showToast('PDF library failed to load — check your internet connection', 'error'); return; }
+            const teacherIds = Object.keys(appData.teachers).sort((a, b) =>
+                (appData.teachers[a].name || '').localeCompare(appData.teachers[b].name || ''));
+            if (teacherIds.length === 0) { showToast('No teachers to export', 'error'); return; }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+            const periodKeys = getAllPeriodKeys();
+            const classKeys = getClassKeys();
+            const head = [buildPeriodHead()];
+
+            teacherIds.forEach((tId, idx) => {
+                const t = appData.teachers[tId];
+                const homeroomClasses = classKeys.filter(k => getClassTeacher(k) === tId);
+                if (idx > 0) doc.addPage();
+                doc.setFontSize(13);
+                doc.setFont(undefined, 'bold');
+                doc.text(`Teacher: ${t.name}` + (homeroomClasses.length ? '   (Class Teacher: ' + homeroomClasses.join(', ') + ')' : ''), 14, 12);
+
+                const body = DAYS.map(d => {
+                    const row = [d];
+                    periodKeys.forEach(p => {
+                        const matches = classKeys
+                            .map(key => ({ key, val: getCellValue(key, d, p) }))
+                            .filter(({ val }) => val.teacher === tId)
+                            .map(({ key, val }) => ({ key, subject: val.subject }));
+                        row.push(formatTeacherCell(matches));
+                    });
+                    return row;
+                });
+
+                doc.autoTable({
+                    head,
+                    body,
+                    startY: 16,
+                    styles: { fontSize: 7.5, cellPadding: 1.5, halign: 'center', valign: 'middle', lineColor: [203, 213, 225], lineWidth: 0.1 },
+                    headStyles: { fillColor: [22, 163, 74], textColor: 255, fontStyle: 'bold', fontSize: 7.5 },
+                    columnStyles: { 0: { fontStyle: 'bold', fillColor: [241, 245, 249], cellWidth: 26 } },
+                    margin: { left: 10, right: 10 }
+                });
+            });
+
+            doc.save('all_teachers_timetable.pdf');
+            showToast('Teachers PDF downloaded');
+        }
+
         // ───────────── SETTINGS (period times) ─────────────
         function openSettings() {
             let html = `
@@ -2903,6 +3015,8 @@
         });
 
         document.getElementById('btnExport').addEventListener('click', exportCSV);
+        document.getElementById('btnExportClassesPDF').addEventListener('click', exportClassesPDF);
+        document.getElementById('btnExportTeachersPDF').addEventListener('click', exportTeachersPDF);
         document.getElementById('btnSettings').addEventListener('click', openSettings);
         document.getElementById('btnManageClasses').addEventListener('click', manageClasses);
         document.getElementById('btnManageSubjects').addEventListener('click', manageSubjects);
