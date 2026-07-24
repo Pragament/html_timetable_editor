@@ -269,6 +269,30 @@
             min-width: 26px;
             max-width: 30px;
         }
+        #tableWrap .col-break {
+            width: 34px;
+            min-width: 32px;
+            max-width: 40px;
+            background: #fef3c7 !important;
+            color: #92400e;
+            font-weight: 700;
+            font-size: 9px;
+            text-align: center;
+            vertical-align: middle;
+            border-left: 2px solid #fbbf24 !important;
+            border-right: 2px solid #fbbf24 !important;
+            padding: 4px 2px;
+        }
+        #tableWrap th.col-break {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+        #tableWrap th.col-break .period-time {
+            display: block;
+            font-size: 7px;
+            font-weight: 400;
+            color: #92400e;
+        }
         #tableWrap .col-period .cell-content {
             font-size: 8px;
             line-height: 1.15;
@@ -1003,6 +1027,8 @@
             background: #b91c1c;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
@@ -1025,6 +1051,8 @@
         <div id="toolbar">
             <button class="primary" id="btnImport">📥 Import CSV</button>
             <button class="success" id="btnExport">📤 Export CSV</button>
+            <button class="primary" id="btnExportClassesPDF">📄 Classes PDF</button>
+            <button class="primary" id="btnExportTeachersPDF">📄 Teachers PDF</button>
             <div class="sep"></div>
             <button id="btnSettings">⚙️ Times</button>
             <button id="btnManageClasses">📋 Classes</button>
@@ -1115,11 +1143,13 @@
             timetable: {}, // "I-A" -> day -> period -> { subject, teacher }
             settings: {
                 periodsPerDay: 7,
-                periodTimes: {}
+                periodTimes: {},
+                breaks: [] // [{ name, afterPeriod, start, end }, ...] e.g. Break, Lunch
             }
         };
 
         let activeTeacherFilter = null; // Filter state for filtering grid by teacher
+        let tempBreaks = []; // Working copy of breaks while Period Times modal is open
         let clipboard = null;
         let contextTarget = null;
 
@@ -1201,6 +1231,10 @@
             const t = appData.settings.periodTimes && appData.settings.periodTimes[p];
             if (t) return t.start + '–' + t.end;
             return '';
+        }
+
+        function getBreaksAfterPeriod(periodNum) {
+            return (appData.settings.breaks || []).filter(b => b.afterPeriod === periodNum);
         }
 
         function getClassTeacher(classKey) {
@@ -1365,11 +1399,12 @@
                     appData.subjects = parsed.subjects || {};
                     appData.teachers = parsed.teachers || {};
                     appData.timetable = parsed.timetable || {};
-                    appData.settings = parsed.settings || { periodsPerDay: 7, periodTimes: {} };
+                    appData.settings = parsed.settings || { periodsPerDay: 7, periodTimes: {}, breaks: [] };
                     if (!appData.settings.periodTimes || Object.keys(appData.settings.periodTimes).length === 0) {
                         appData.settings.periodTimes = initDefaultTimes();
                     }
                     if (!appData.settings.periodsPerDay) appData.settings.periodsPerDay = 7;
+                    if (!Array.isArray(appData.settings.breaks)) appData.settings.breaks = [];
                     getClassKeys().forEach(c => {
                         if (!appData.timetable[c]) {
                             appData.timetable[c] = {};
@@ -1407,6 +1442,7 @@
             appData.timetable = {};
             appData.settings.periodsPerDay = 7;
             appData.settings.periodTimes = initDefaultTimes();
+            appData.settings.breaks = [];
             activeTeacherFilter = null;
             saveData();
             render();
@@ -1447,6 +1483,10 @@
                 const timeStr = getPeriodDisplay(p);
                 const cls = pi === 0 ? 'col-period' : 'col-period period-group-sep';
                 headerHtml += `<th class="${cls}" colspan="5">${p}${timeStr ? '<span class="period-time">'+timeStr+'</span>' : ''}</th>`;
+                const pNum = parseInt(p.replace('P', ''), 10);
+                getBreaksAfterPeriod(pNum).forEach(b => {
+                    headerHtml += `<th class="col-break" rowspan="2">${b.name}${b.start ? '<span class="period-time">'+b.start+'–'+b.end+'</span>' : ''}</th>`;
+                });
             });
             headerHtml += '</tr><tr>';
 
@@ -1465,8 +1505,9 @@
             let bodyHtml = '';
 
             if (classList.length === 0) {
+                const breakColCount = (appData.settings.breaks || []).length;
                 bodyHtml =
-                    `<tr><td colspan="${3 + periodKeys.length * 5}" style="text-align:center;padding:30px 0;color:#94a3b8;font-size:13px;">No classes yet. Add classes via the 📋 Classes button.</td></tr>`;
+                    `<tr><td colspan="${3 + periodKeys.length * 5 + breakColCount}" style="text-align:center;padding:30px 0;color:#94a3b8;font-size:13px;">No classes yet. Add classes via the 📋 Classes button.</td></tr>`;
                 tbody.innerHTML = bodyHtml;
                 updateStats();
                 updateSidebar();
@@ -1520,6 +1561,10 @@
                                         ${filled ? `<span class="subj">${subjMin}</span><span class="tchr">${tchrMin}</span>` : '<span style="color:#cbd5e1;font-size:11px;">·</span>'}
                                     </div>
                                 </td>`;
+                    });
+                    const pNum = parseInt(p.replace('P', ''), 10);
+                    getBreaksAfterPeriod(pNum).forEach(b => {
+                        bodyHtml += `<td class="col-break">${b.name}</td>`;
                     });
                 });
                 bodyHtml += '</tr>';
@@ -2288,8 +2333,153 @@
             showToast('Exported successfully');
         }
 
+        // ───────────── EXPORT PDF (Classes / Teachers) ─────────────
+        function formatClassCell(val) {
+            if (val.subject && val.teacher) return getSubjectName(val.subject) + '\n(' + getTeacherName(val.teacher) + ')';
+            if (val.teacher && !val.subject) return '(' + getTeacherName(val.teacher) + ')';
+            if (val.subject && !val.teacher) return getSubjectName(val.subject);
+            return '-';
+        }
+
+        function formatTeacherCell(matches) {
+            if (!matches || matches.length === 0) return '-';
+            return matches.map(m => m.subject ? (m.key + '\n' + getSubjectName(m.subject)) : m.key).join(' / ');
+        }
+
+        function buildPeriodHead() {
+            const periodKeys = getAllPeriodKeys();
+            const head = ['Days / Periods'];
+            periodKeys.forEach(p => {
+                const t = getPeriodDisplay(p);
+                head.push(t ? (p + '\n' + t) : p);
+                const pNum = parseInt(p.replace('P', ''), 10);
+                getBreaksAfterPeriod(pNum).forEach(b => {
+                    head.push(b.name + (b.start ? ('\n' + b.start + '–' + b.end) : ''));
+                });
+            });
+            return head;
+        }
+
+        function isBreakCellText(text) {
+            const names = (appData.settings.breaks || []).map(b => b.name);
+            const firstLine = String(text).split('\n')[0];
+            return names.includes(firstLine);
+        }
+
+        function exportClassesPDF() {
+            if (!window.jspdf) { showToast('PDF library failed to load — check your internet connection', 'error'); return; }
+            const classList = getClassList();
+            if (classList.length === 0) { showToast('No classes to export', 'error'); return; }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+            const periodKeys = getAllPeriodKeys();
+            const head = [buildPeriodHead()];
+
+            classList.forEach((c, idx) => {
+                const key = getClassKey(c.class, c.section);
+                const teacherId = getClassTeacher(key);
+                const teacherName = teacherId ? getTeacherName(teacherId) : '';
+                if (idx > 0) doc.addPage();
+                doc.setFontSize(13);
+                doc.setFont(undefined, 'bold');
+                doc.text(`Class: ${c.class} - ${c.section}` + (teacherName ? `   (Class Teacher: ${teacherName})` : ''), 14, 12);
+
+                const body = DAYS.map(d => {
+                    const row = [d];
+                    periodKeys.forEach(p => {
+                        row.push(formatClassCell(getCellValue(key, d, p)));
+                        const pNum = parseInt(p.replace('P', ''), 10);
+                        getBreaksAfterPeriod(pNum).forEach(b => row.push(b.name));
+                    });
+                    return row;
+                });
+
+                doc.autoTable({
+                    head,
+                    body,
+                    startY: 16,
+                    styles: { fontSize: 7.5, cellPadding: 1.5, halign: 'center', valign: 'middle', lineColor: [203, 213, 225], lineWidth: 0.1 },
+                    headStyles: { fillColor: [37, 99, 235], textColor: 255, fontStyle: 'bold', fontSize: 7.5 },
+                    columnStyles: { 0: { fontStyle: 'bold', fillColor: [241, 245, 249], cellWidth: 26 } },
+                    margin: { left: 10, right: 10 },
+                    didParseCell: function(data) {
+                        if (data.section === 'body' && isBreakCellText(data.cell.raw)) {
+                            data.cell.styles.fillColor = [254, 243, 199];
+                            data.cell.styles.textColor = [146, 64, 14];
+                            data.cell.styles.fontStyle = 'bold';
+                        } else if (data.section === 'head' && isBreakCellText(data.cell.raw)) {
+                            data.cell.styles.fillColor = [251, 191, 36];
+                            data.cell.styles.textColor = [92, 40, 4];
+                        }
+                    }
+                });
+            });
+
+            doc.save('all_classes_timetable.pdf');
+            showToast('Classes PDF downloaded');
+        }
+
+        function exportTeachersPDF() {
+            if (!window.jspdf) { showToast('PDF library failed to load — check your internet connection', 'error'); return; }
+            const teacherIds = Object.keys(appData.teachers).sort((a, b) =>
+                (appData.teachers[a].name || '').localeCompare(appData.teachers[b].name || ''));
+            if (teacherIds.length === 0) { showToast('No teachers to export', 'error'); return; }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+            const periodKeys = getAllPeriodKeys();
+            const classKeys = getClassKeys();
+            const head = [buildPeriodHead()];
+
+            teacherIds.forEach((tId, idx) => {
+                const t = appData.teachers[tId];
+                const homeroomClasses = classKeys.filter(k => getClassTeacher(k) === tId);
+                if (idx > 0) doc.addPage();
+                doc.setFontSize(13);
+                doc.setFont(undefined, 'bold');
+                doc.text(`Teacher: ${t.name}` + (homeroomClasses.length ? '   (Class Teacher: ' + homeroomClasses.join(', ') + ')' : ''), 14, 12);
+
+                const body = DAYS.map(d => {
+                    const row = [d];
+                    periodKeys.forEach(p => {
+                        const matches = classKeys
+                            .map(key => ({ key, val: getCellValue(key, d, p) }))
+                            .filter(({ val }) => val.teacher === tId)
+                            .map(({ key, val }) => ({ key, subject: val.subject }));
+                        row.push(formatTeacherCell(matches));
+                        const pNum = parseInt(p.replace('P', ''), 10);
+                        getBreaksAfterPeriod(pNum).forEach(b => row.push(b.name));
+                    });
+                    return row;
+                });
+
+                doc.autoTable({
+                    head,
+                    body,
+                    startY: 16,
+                    styles: { fontSize: 7.5, cellPadding: 1.5, halign: 'center', valign: 'middle', lineColor: [203, 213, 225], lineWidth: 0.1 },
+                    headStyles: { fillColor: [22, 163, 74], textColor: 255, fontStyle: 'bold', fontSize: 7.5 },
+                    columnStyles: { 0: { fontStyle: 'bold', fillColor: [241, 245, 249], cellWidth: 26 } },
+                    margin: { left: 10, right: 10 },
+                    didParseCell: function(data) {
+                        if (data.section === 'body' && isBreakCellText(data.cell.raw)) {
+                            data.cell.styles.fillColor = [254, 243, 199];
+                            data.cell.styles.textColor = [146, 64, 14];
+                            data.cell.styles.fontStyle = 'bold';
+                        } else if (data.section === 'head' && isBreakCellText(data.cell.raw)) {
+                            data.cell.styles.fillColor = [251, 191, 36];
+                            data.cell.styles.textColor = [92, 40, 4];
+                        }
+                    }
+                });
+            });
+
+            doc.save('all_teachers_timetable.pdf');
+            showToast('Teachers PDF downloaded');
+        }
+
         // ───────────── SETTINGS (period times) ─────────────
         function openSettings() {
+            tempBreaks = JSON.parse(JSON.stringify(appData.settings.breaks || []));
             let html = `
                         <h3>⏱️ Period Times</h3>
                         <p style="font-size:10.5px;color:#475569;margin-bottom:6px;">Set start and end time for each period.</p>
@@ -2312,12 +2502,77 @@
             });
             html += `
                         </div>
+                        <div style="margin-top:12px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <h4 style="margin:0;font-size:12px;color:#334155;">🍽️ Breaks / Lunch <span style="font-weight:400;color:#94a3b8;">(shown as extra columns)</span></h4>
+                                <button type="button" class="btn-secondary" style="font-size:10px;padding:3px 8px;" onclick="addBreakRow()">+ Add Break</button>
+                            </div>
+                            <div id="breaksList" style="margin-top:6px;max-height:160px;overflow:auto;border:1px solid #e2e8f0;border-radius:6px;padding:6px 8px;"></div>
+                        </div>
                         <div class="btn-row">
                             <button class="btn-secondary" onclick="closeModal()">Cancel</button>
                             <button class="btn-primary" onclick="saveSettings()">Save</button>
                         </div>
                     `;
             openModal(html);
+            renderBreaksList();
+        }
+
+        function renderBreaksList() {
+            const container = document.getElementById('breaksList');
+            if (!container) return;
+            const periodsCount = getPeriodsPerDay();
+            if (tempBreaks.length === 0) {
+                container.innerHTML =
+                    '<div style="font-size:10.5px;color:#94a3b8;">No breaks added yet. Click "+ Add Break" to add one (e.g. Break, Lunch).</div>';
+                return;
+            }
+            container.innerHTML = tempBreaks.map((b, i) => `
+                        <div class="break-row" data-idx="${i}" style="display:flex;gap:5px;align-items:center;margin:4px 0;font-size:10.5px;flex-wrap:wrap;">
+                            <input type="text" class="brk-name" value="${b.name}" placeholder="Name" style="width:64px;padding:2px 4px;border:1px solid #e2e8f0;border-radius:3px;font-size:10px;" />
+                            <span style="color:#64748b;">after P</span>
+                            <select class="brk-after" style="padding:2px 3px;border:1px solid #e2e8f0;border-radius:3px;font-size:10px;">
+                                ${Array.from({ length: periodsCount }, (_, k) => k + 1).map(n =>
+                                    `<option value="${n}" ${n === b.afterPeriod ? 'selected' : ''}>${n}</option>`).join('')}
+                            </select>
+                            <input type="time" class="brk-start" value="${b.start}" style="width:76px;padding:1px 3px;border:1px solid #e2e8f0;border-radius:3px;font-size:10px;" />
+                            <span>–</span>
+                            <input type="time" class="brk-end" value="${b.end}" style="width:76px;padding:1px 3px;border:1px solid #e2e8f0;border-radius:3px;font-size:10px;" />
+                            <button type="button" onclick="removeBreakRow(${i})" title="Remove" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:13px;">✕</button>
+                        </div>
+                    `).join('');
+        }
+
+        function syncBreaksFromDOM() {
+            const rows = document.querySelectorAll('#breaksList .break-row');
+            const updated = [];
+            rows.forEach(row => {
+                updated.push({
+                    name: row.querySelector('.brk-name').value.trim() || 'Break',
+                    afterPeriod: parseInt(row.querySelector('.brk-after').value, 10) || 1,
+                    start: row.querySelector('.brk-start').value || '00:00',
+                    end: row.querySelector('.brk-end').value || '00:00'
+                });
+            });
+            tempBreaks = updated;
+        }
+
+        function addBreakRow() {
+            syncBreaksFromDOM();
+            const periodsCount = getPeriodsPerDay();
+            tempBreaks.push({
+                name: tempBreaks.length === 0 ? 'Break' : 'Lunch',
+                afterPeriod: Math.min(2, periodsCount),
+                start: '10:20',
+                end: '10:30'
+            });
+            renderBreaksList();
+        }
+
+        function removeBreakRow(idx) {
+            syncBreaksFromDOM();
+            tempBreaks.splice(idx, 1);
+            renderBreaksList();
         }
 
         function saveSettings() {
@@ -2328,6 +2583,8 @@
                 times['P' + p] = { start, end };
             }
             appData.settings.periodTimes = times;
+            syncBreaksFromDOM();
+            appData.settings.breaks = tempBreaks;
             getClassKeys().forEach(c => {
                 if (!appData.timetable[c]) appData.timetable[c] = {};
                 DAYS.forEach(d => {
@@ -2903,6 +3160,8 @@
         });
 
         document.getElementById('btnExport').addEventListener('click', exportCSV);
+        document.getElementById('btnExportClassesPDF').addEventListener('click', exportClassesPDF);
+        document.getElementById('btnExportTeachersPDF').addEventListener('click', exportTeachersPDF);
         document.getElementById('btnSettings').addEventListener('click', openSettings);
         document.getElementById('btnManageClasses').addEventListener('click', manageClasses);
         document.getElementById('btnManageSubjects').addEventListener('click', manageSubjects);
