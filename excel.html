@@ -2333,6 +2333,60 @@
             showToast('Exported successfully');
         }
 
+        function csvField(val) {
+            const s = String(val === undefined || val === null ? '' : val);
+            if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+                return '"' + s.replace(/"/g, '""') + '"';
+            }
+            return s;
+        }
+
+        function downloadCSV(filename, headerArr, rows) {
+            const lines = [headerArr.map(csvField).join(',')];
+            rows.forEach(r => lines.push(r.map(csvField).join(',')));
+            const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportClassesCSV() {
+            const classList = getClassList();
+            if (classList.length === 0) { showToast('No classes to export', 'error'); return; }
+            const rows = classList.map(c => {
+                const key = getClassKey(c.class, c.section);
+                const teacherId = getClassTeacher(key) || '';
+                return [c.class, c.section, teacherId];
+            });
+            downloadCSV('classes_export.csv', ['Class', 'Section', 'ClassTeacherID'], rows);
+            showToast('Classes exported');
+        }
+
+        function exportSubjectsCSV() {
+            const subjKeys = Object.keys(appData.subjects).sort();
+            if (subjKeys.length === 0) { showToast('No subjects to export', 'error'); return; }
+            const rows = subjKeys.map(k => [k, appData.subjects[k].name, appData.subjects[k].minimalCode]);
+            downloadCSV('subjects_export.csv', ['Code', 'Name', 'MinimalCode'], rows);
+            showToast('Subjects exported');
+        }
+
+        function exportTeachersCSV() {
+            const tchKeys = Object.keys(appData.teachers).sort();
+            if (tchKeys.length === 0) { showToast('No teachers to export', 'error'); return; }
+            const rows = tchKeys.map(k => {
+                const t = appData.teachers[k];
+                const subs = t.subjects || [];
+                const subNames = subs.join(',');
+                const minCodes = subs.map(s => (appData.subjects[s] ? appData.subjects[s].minimalCode : '')).join(',');
+                return [k, t.name, t.minimalId, subNames, minCodes];
+            });
+            downloadCSV('teachers_export.csv', ['ID', 'Name', 'MinimalID', 'Subjects', 'MinimalCodes'], rows);
+            showToast('Teachers exported');
+        }
+
         // ───────────── EXPORT PDF (Classes / Teachers) ─────────────
         function formatClassCell(val) {
             if (val.subject && val.teacher) return getSubjectName(val.subject) + '\n(' + getTeacherName(val.teacher) + ')';
@@ -2617,6 +2671,7 @@
                             <span style="font-size:10px;color:#475569;">Import CSV:</span>
                             <input type="file" id="importClassesFile" accept=".csv" />
                             <button class="btn-success" onclick="importClassesFromModal()">Import</button>
+                            <button class="btn-primary" onclick="exportClassesCSV()">📤 Export</button>
                             <button class="btn-secondary" onclick="clearClassesFromModal()" style="color:#dc2626;">Clear All</button>
                         </div>
                         <div class="item-list" id="classItemList">
@@ -2782,6 +2837,7 @@
                             <span style="font-size:10px;color:#475569;">Import CSV:</span>
                             <input type="file" id="importSubjectsFile" accept=".csv" />
                             <button class="btn-success" onclick="importSubjectsFromModal()">Import</button>
+                            <button class="btn-primary" onclick="exportSubjectsCSV()">📤 Export</button>
                             <button class="btn-secondary" onclick="clearSubjectsFromModal()" style="color:#dc2626;">Clear All</button>
                         </div>
                         <div class="item-list">
@@ -2935,6 +2991,7 @@
                             <span style="font-size:10px;color:#475569;">Import CSV:</span>
                             <input type="file" id="importTeachersFile" accept=".csv" />
                             <button class="btn-success" onclick="importTeachersFromModal()">Import</button>
+                            <button class="btn-primary" onclick="exportTeachersCSV()">📤 Export</button>
                             <button class="btn-secondary" onclick="clearTeachersFromModal()" style="color:#dc2626;">Clear All</button>
                         </div>
                         <div class="item-list">
