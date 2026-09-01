@@ -372,6 +372,23 @@
             min-width: 28px;
             max-width: 32px;
         }
+        /* Study Hour columns — a real, assignable period (unlike Break, which is
+           just a label), tinted violet so it's easy to spot at a glance. */
+        #tableWrap th.col-studyhour {
+            background: #ede9fe !important;
+        }
+        #tableWrap .cell-content.studyhour-cell {
+            box-shadow: inset 0 0 0 1px #c4b5fd;
+        }
+        #tableWrap .cell-content.studyhour-cell.empty {
+            color: #a78bfa;
+        }
+        #tableWrap .cell-content.studyhour-cell.filled {
+            background: #f5f3ff;
+        }
+        #tableWrap .cell-content.studyhour-cell.filled:hover {
+            background: #ede9fe;
+        }
         #tableWrap .col-break {
             width: 34px;
             min-width: 32px;
@@ -466,6 +483,24 @@
             right: -2px;
             font-size: 8px;
             color: #dc2626;
+        }
+        #tableWrap .col-period .cell-content.combined-cell {
+            background: #fef3c7 !important;
+            box-shadow: inset 0 0 0 1.5px #d97706 !important;
+        }
+        #tableWrap .col-period .cell-content.combined-cell:hover {
+            background: #fde68a !important;
+        }
+        #tableWrap .col-period .cell-content.combined-cell .subj,
+        #tableWrap .col-period .cell-content.combined-cell .tchr {
+            color: #92400e;
+        }
+        #tableWrap .col-period .cell-content.combined-cell::after {
+            content: "🔗";
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            font-size: 8px;
         }
         #tableWrap .col-period .cell-content.event-cell {
             background: #dcfce7 !important;
@@ -755,6 +790,17 @@
         table.elder-table td.detail-free-cell:hover {
             background: #f0fdf4 !important;
             box-shadow: inset 0 0 0 2px #86efac;
+        }
+        /* Batch-selection highlight in Detailed View — mirrors the compact grid's
+           .cell-content.selected-cell look, but applied straight to the <td>
+           since Detailed View cells don't wrap content in a .cell-content div. */
+        table.elder-table td.elder-cell-editable.selected-cell {
+            background: #93c5fd !important;
+            box-shadow: inset 0 0 0 2px #2563eb !important;
+        }
+        table.elder-table td.elder-cell-editable.selected-cell .elder-cell-subj,
+        table.elder-table td.elder-cell-editable.selected-cell .elder-cell-sub2 {
+            color: #1e3a8a;
         }
         .detail-view-hint {
             font-size: 10.5px;
@@ -2273,6 +2319,7 @@
 
         let activeTeacherFilter = null;
         let tempBreaks = [];
+        let tempStudyHours = [];
         let clipboard = null;
         let contextTarget = null;
 
@@ -2440,7 +2487,7 @@
             let rows = '';
             periodKeys.forEach(p => {
                 const timeStr = getPeriodDisplay(p);
-                rows += `<tr><th>${p}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
+                rows += `<tr><th>${getPeriodLabel(p)}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
                 DAYS.forEach(d => {
                     const val = getCellValue(classKey, d, p);
                     if (val.subject && val.teacher) {
@@ -2471,7 +2518,7 @@
             let rows = '';
             periodKeys.forEach(p => {
                 const timeStr = getPeriodDisplay(p);
-                rows += `<tr><th>${p}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
+                rows += `<tr><th>${getPeriodLabel(p)}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
                 DAYS.forEach(d => {
                     const matches = classKeys
                         .map(key => ({ key, val: getCellValue(key, d, p) }))
@@ -2599,13 +2646,17 @@
             let rows = '';
             periodKeys.forEach(p => {
                 const timeStr = getPeriodDisplay(p);
-                rows += `<tr><th>${p}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
+                rows += `<tr><th>${getPeriodLabel(p)}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
                 DAYS.forEach(d => {
                     const val = getCellValue(classKey, d, p);
+                    // When batch-selection mode is active, highlight cells that are already
+                    // in selectedCells — selections made on other class tabs stay in that
+                    // array and light back up here when their tab becomes active again.
+                    const selCls = (isSelectionMode && isCellSelected(classKey, d, p)) ? ' selected-cell' : '';
                     if (val.subject && val.teacher) {
-                        rows += `<td class="elder-cell-editable" data-key="${escAttr(classKey)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="Click to edit"><div class="cell-content"><span class="elder-cell-subj">${escHTML(getSubjectName(val.subject))}</span><span class="elder-cell-sub2">${escHTML(getTeacherName(val.teacher))}</span></div></td>`;
+                        rows += `<td class="elder-cell-editable${selCls}" data-key="${escAttr(classKey)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="${isSelectionMode ? 'Click to select' : 'Click to edit'}"><div class="cell-content"><span class="elder-cell-subj">${escHTML(getSubjectName(val.subject))}</span><span class="elder-cell-sub2">${escHTML(getTeacherName(val.teacher))}</span></div></td>`;
                     } else {
-                        rows += `<td class="elder-free elder-cell-editable" data-key="${escAttr(classKey)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="Click to assign"><div class="cell-content">Free</div></td>`;
+                        rows += `<td class="elder-free elder-cell-editable${selCls}" data-key="${escAttr(classKey)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="${isSelectionMode ? 'Click to select' : 'Click to assign'}"><div class="cell-content">Free</div></td>`;
                     }
                 });
                 rows += '</tr>';
@@ -2636,16 +2687,17 @@
             let rows = '';
             periodKeys.forEach(p => {
                 const timeStr = getPeriodDisplay(p);
-                rows += `<tr><th>${p}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
+                rows += `<tr><th>${getPeriodLabel(p)}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
                 DAYS.forEach(d => {
                     const matches = classKeys
                         .map(key => ({ key, val: getCellValue(key, d, p) }))
                         .filter(({ val }) => val.teacher === teacherId);
                     if (matches.length > 0) {
                         const m = matches[0];
-                        rows += `<td class="elder-cell-editable" data-key="${escAttr(m.key)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="Click to edit"><div class="cell-content"><span class="elder-cell-subj">${escHTML(getSubjectName(m.val.subject))}</span><span class="elder-cell-sub2">Class ${escHTML(m.key)}</span></div></td>`;
+                        const selCls = (isSelectionMode && isCellSelected(m.key, d, p)) ? ' selected-cell' : '';
+                        rows += `<td class="elder-cell-editable${selCls}" data-key="${escAttr(m.key)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="${isSelectionMode ? 'Click to select' : 'Click to edit'}"><div class="cell-content"><span class="elder-cell-subj">${escHTML(getSubjectName(m.val.subject))}</span><span class="elder-cell-sub2">Class ${escHTML(m.key)}</span></div></td>`;
                     } else {
-                        rows += `<td class="elder-free detail-free-cell" data-teacher="${escAttr(teacherId)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="Click to assign"><div class="cell-content">Free</div></td>`;
+                        rows += `<td class="elder-free detail-free-cell" data-teacher="${escAttr(teacherId)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="${isSelectionMode ? 'Switch to By Class mode to multi-select free slots' : 'Click to assign'}"><div class="cell-content">Free</div></td>`;
                     }
                 });
                 rows += '</tr>';
@@ -2671,12 +2723,24 @@
                     if (e.target.closest('.cell-editor')) return;
                     const key = this.dataset.key, day = this.dataset.day, period = this.dataset.period;
                     if (!key || !day || !period) return;
+                    // Batch-selection mode: toggle this cell into selectedCells instead of
+                    // opening the single-cell editor. Works the same in By Class and By
+                    // Teacher mode, and selections persist as the user switches tabs —
+                    // toggleCellSelection() just re-renders, which re-reads selectedCells.
+                    if (isSelectionMode) {
+                        toggleCellSelection(key, day, period);
+                        return;
+                    }
                     startEditing(key, day, period, this);
                 });
             });
             document.querySelectorAll('#detailedTeacherView td.detail-free-cell').forEach(td => {
                 td.addEventListener('click', function() {
                     if (viewMode === 'master') return;
+                    if (isSelectionMode) {
+                        showToast('Switch to "By Class" mode to multi-select free slots', 'error');
+                        return;
+                    }
                     const teacherId = this.dataset.teacher, day = this.dataset.day, period = this.dataset.period;
                     if (!teacherId || !day || !period) return;
                     openDetailedFreeSlotAssign(teacherId, day, period);
@@ -3021,8 +3085,46 @@
         function getAllPeriodKeys() {
             const n = getPeriodsPerDay();
             const keys = [];
-            for (let i = 1; i <= n; i++) keys.push('P' + i);
+            const visited = new Set(); // guards against an accidental anchor cycle (SH1 after SH2 after SH1)
+            function appendAnchoredTo(anchor) {
+                getStudyHoursAnchoredTo(anchor).forEach(sh => {
+                    if (visited.has(sh.id)) return;
+                    visited.add(sh.id);
+                    keys.push(sh.id);
+                    appendAnchoredTo(sh.id); // a Study Hour can itself anchor more Study Hours — lets them stack
+                });
+            }
+            for (let i = 1; i <= n; i++) {
+                keys.push('P' + i);
+                appendAnchoredTo(i);
+            }
             return keys;
+        }
+
+        // Study Hours are extra, teachable slots (unlike Breaks, which are just a
+        // label column) — inserted after a given period, same as Breaks, but they
+        // participate in getAllPeriodKeys() so every render/export path treats them
+        // as a real, assignable period automatically. Their start/end time lives in
+        // appData.settings.periodTimes[id], same as normal periods, so getPeriodDisplay()
+        // needs no special-casing.
+        // sh.afterPeriod holds the anchor it's inserted after — either a period
+        // number (e.g. 2, meaning "after P2") or another Study Hour's id (e.g.
+        // "SH1", meaning "stacked directly after that Study Hour").
+        function isStudyHourKey(p) {
+            return typeof p === 'string' && p.indexOf('SH') === 0;
+        }
+        function getStudyHourById(id) {
+            return (appData.settings.studyHours || []).find(sh => sh.id === id);
+        }
+        function getStudyHoursAnchoredTo(anchor) {
+            return (appData.settings.studyHours || []).filter(sh => sh.afterPeriod === anchor);
+        }
+        function getPeriodLabel(p) {
+            if (isStudyHourKey(p)) {
+                const sh = getStudyHourById(p);
+                return sh ? sh.name : 'Study Hr';
+            }
+            return p;
         }
 
         // ───────────── DATE SPECIFIC HELPERS ─────────────
@@ -3160,7 +3262,7 @@ END:VTIMEZONE`;
                             const teacherName = val.teacher === 'EVENT' ? 'Event' : getTeacherName(val.teacher);
                             events.push(_icsBuildEvent({
                                 summary: `${subjName} — ${cls}-${sec}`,
-                                description: `Teacher: ${teacherName}\\nPeriod: ${p}`,
+                                description: `Teacher: ${teacherName}\\nPeriod: ${getPeriodLabel(p)}`,
                                 day, startTime: t.start, endTime: t.end,
                                 untilDate, reminderMinutes,
                                 uidSeed: 'cls-' + classKey + '-' + day + '-' + p
@@ -3181,7 +3283,7 @@ END:VTIMEZONE`;
                                 const subjName = getSubjectName(val.subject);
                                 events.push(_icsBuildEvent({
                                     summary: `${subjName} — ${classKey}`,
-                                    description: `Class: ${classKey}\\nPeriod: ${p}`,
+                                    description: `Class: ${classKey}\\nPeriod: ${getPeriodLabel(p)}`,
                                     day, startTime: t.start, endTime: t.end,
                                     untilDate, reminderMinutes,
                                     uidSeed: 'tch-' + teacherId + '-' + classKey + '-' + day + '-' + p
@@ -3383,7 +3485,13 @@ END:VTIMEZONE`;
             return getCellValue(classKey, dayName, period);
         }
 
-        function setCellValue(classKey, day, period, subject, teacher) {
+        // combinedGroup: optional id string. When set, this cell is tagged as part of a
+        // "Combined Class" group — cells sharing the same non-null combinedGroup are
+        // exempted from teacher-double-booking conflict detection and rendered yellow
+        // instead of red (see findConflicts() and render()). Omitting it (as almost every
+        // existing call site does) clears the tag, which is what we want: a manual
+        // single-cell edit intentionally detaches that cell from its combined group.
+        function setCellValue(classKey, day, period, subject, teacher, combinedGroup) {
             if (viewMode === 'master') {
                 showToast('Switch to Working Space to edit timetable', 'error');
                 return;
@@ -3395,7 +3503,7 @@ END:VTIMEZONE`;
                 if (!appData.dateOverrides) appData.dateOverrides = {};
                 if (!appData.dateOverrides[day]) appData.dateOverrides[day] = {};
                 if (!appData.dateOverrides[day][classKey]) appData.dateOverrides[day][classKey] = {};
-                appData.dateOverrides[day][classKey][period] = { subject: subject || null, teacher: teacher || null };
+                appData.dateOverrides[day][classKey][period] = { subject: subject || null, teacher: teacher || null, combined: combinedGroup || null };
                 return;
             }
 
@@ -3403,7 +3511,25 @@ END:VTIMEZONE`;
             pushHistory();
             if (!appData.timetable[classKey]) appData.timetable[classKey] = {};
             if (!appData.timetable[classKey][day]) appData.timetable[classKey][day] = {};
-            appData.timetable[classKey][day][period] = { subject: subject || null, teacher: teacher || null };
+            appData.timetable[classKey][day][period] = { subject: subject || null, teacher: teacher || null, combined: combinedGroup || null };
+        }
+
+        // Writes one cell directly into BOTH the Working timetable and the Master
+        // timetable, bypassing the "Master is locked" guard that setCellValue/
+        // clearCell enforce for manual, on-screen edits. Bulk CSV import is a
+        // data-loading operation, not a manual edit — it's expected to produce the
+        // exact same result whether the user happened to be in Working Space or
+        // Master Schedule when they clicked "Import CSV", so it always writes both
+        // tables together regardless of the current viewMode.
+        function importSetCellBoth(classKey, day, period, subject, teacher) {
+            const val = { subject: subject || null, teacher: teacher || null, combined: null };
+            if (!appData.timetable[classKey]) appData.timetable[classKey] = {};
+            if (!appData.timetable[classKey][day]) appData.timetable[classKey][day] = {};
+            appData.timetable[classKey][day][period] = val;
+
+            if (!masterTimetable[classKey]) masterTimetable[classKey] = {};
+            if (!masterTimetable[classKey][day]) masterTimetable[classKey][day] = {};
+            masterTimetable[classKey][day][period] = { subject: val.subject, teacher: val.teacher, combined: null };
         }
 
         function clearCell(classKey, day, period) {
@@ -3532,16 +3658,24 @@ END:VTIMEZONE`;
                         if (val.subject && val.teacher) {
                             const tKey = val.teacher + '|' + d + '|' + key;
                             if (!teacherSlots[tKey]) teacherSlots[tKey] = [];
-                            teacherSlots[tKey].push(c);
+                            teacherSlots[tKey].push({ cls: c, combined: val.combined || null });
                         }
                     }
                 });
             });
             Object.keys(teacherSlots).forEach(k => {
-                if (teacherSlots[k].length > 1) {
+                const entries = teacherSlots[k];
+                if (entries.length > 1) {
+                    // If every class sharing this teacher/day/period was tagged with the
+                    // SAME combined-group id, this is an intentional Combined Class
+                    // assignment, not a scheduling conflict — skip it.
+                    const firstGroup = entries[0].combined;
+                    const allSameGroup = !!firstGroup && entries.every(e => e.combined === firstGroup);
+                    if (allSameGroup) return;
+
                     const parts = k.split('|');
                     conflicts.push({ type: 'teacher', teacher: parts[0], day: parts[1], period: parts[2],
-                        classes: teacherSlots[k] });
+                        classes: entries.map(e => e.cls) });
                 }
             });
             return conflicts;
@@ -3904,7 +4038,8 @@ END:VTIMEZONE`;
             periodKeys.forEach((p, pi) => {
                 const timeStr = getPeriodDisplay(p);
                 const sepCls = pi !== 0 ? ' period-group-sep' : '';
-                headerHtml += `<th class="col-period${sepCls}" colspan="${currentViewDays.length}">${p}${timeStr ? '<span class="period-time">'+timeStr+'</span>' : ''}</th>`;
+                const shCls = isStudyHourKey(p) ? ' col-studyhour' : '';
+                headerHtml += `<th class="col-period${sepCls}${shCls}" colspan="${currentViewDays.length}">${getPeriodLabel(p)}${timeStr ? '<span class="period-time">'+timeStr+'</span>' : ''}</th>`;
                 const pNum = parseInt(p.replace('P', ''), 10);
                 getBreaksAfterPeriod(pNum).forEach(b => {
                     headerHtml += `<th class="col-break" rowspan="2">${b.name}${b.start ? '<span class="period-time">'+b.start+'–'+b.end+'</span>' : ''}</th>`;
@@ -3915,7 +4050,8 @@ END:VTIMEZONE`;
             periodKeys.forEach((p, pi) => {
                 currentViewDays.forEach((d, di) => {
                     const sepCls = (pi !== 0 && di === 0) ? ' period-group-sep' : '';
-                    headerHtml += `<th class="col-period${sepCls}">${viewLabels[d]}</th>`;
+                    const shCls = isStudyHourKey(p) ? ' col-studyhour' : '';
+                    headerHtml += `<th class="col-period${sepCls}${shCls}">${viewLabels[d]}</th>`;
                 });
             });
             headerHtml += '</tr>';
@@ -3959,7 +4095,8 @@ END:VTIMEZONE`;
 
                     currentViewDays.forEach((d, di) => {
                         const needsSep = pi !== 0 && firstCell;
-                        const clsTd = needsSep ? 'col-period period-group-sep' : 'col-period';
+                        const shCls = isStudyHourKey(p) ? ' col-studyhour' : '';
+                        const clsTd = (needsSep ? 'col-period period-group-sep' : 'col-period') + shCls;
                         firstCell = false;
 
                         // USE THE OVERRIDABLE ACTIVE GETTER HERE
@@ -3971,6 +4108,7 @@ END:VTIMEZONE`;
                         const filled = !!(subj && tchr);
                         const isEvtCell = tchr === 'EVENT';
                         const conflict = !isEvtCell && conflictSet.has(key + '|' + d + '|' + p);
+                        const isCombined = !isEvtCell && !conflict && !!val.combined;
                         const selected = isCellSelected(key, d, p);
                         const substMarked = isSubstituted(key, d, p);
                         let filterClass = '';
@@ -3979,9 +4117,10 @@ END:VTIMEZONE`;
                             else filterClass = ' filtered-dim';
                         }
                         const contentClass = 'cell-content' + (filled ? ' filled' : ' empty') +
-                            (isEvtCell ? ' event-cell' : (conflict ? ' conflict' : '')) +
-                            (selected ? ' selected-cell' : '') + (substMarked ? ' subst-marked' : '') + filterClass;
-                        const titleText = filled ? `${subj} / ${getSubjectName(subj)} — ${tchr} / ${getTeacherName(tchr)}${substMarked ? ' (substituted)' : ''}` : 'empty';
+                            (isEvtCell ? ' event-cell' : (conflict ? ' conflict' : (isCombined ? ' combined-cell' : ''))) +
+                            (selected ? ' selected-cell' : '') + (substMarked ? ' subst-marked' : '') + filterClass +
+                            (isStudyHourKey(p) ? ' studyhour-cell' : '');
+                        const titleText = filled ? `${subj} / ${getSubjectName(subj)} — ${tchr} / ${getTeacherName(tchr)}${substMarked ? ' (substituted)' : ''}${isCombined ? ' (combined class)' : ''}` : 'empty';
                         bodyHtml += `<td class="${clsTd}" data-key="${escAttr(key)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}">
                                     <div class="${contentClass}" title="${escAttr(titleText)}">
                                         ${filled ? `<span class="subj">${escHTML(subjMin)}</span><span class="tchr">${escHTML(tchrMin)}</span>` : '<span style="color:#cbd5e1;font-size:11px;">·</span>'}
@@ -4171,6 +4310,9 @@ END:VTIMEZONE`;
                 btn.textContent = `✅ OK (${selectedCells.length})`;
                 banner.style.display = 'flex';
                 showToast('Batch selection mode active. Click cells to select.');
+                // Refresh so Detailed View cell tooltips/selection styling reflect
+                // selection mode immediately, without needing a first click.
+                render();
             } else {
                 btn.className = 'primary';
                 btn.textContent = '📅 Multiple Days';
@@ -4221,6 +4363,12 @@ END:VTIMEZONE`;
             const html = `
                 <h3>⚡ Assign Multiple Cells <span class="badge">${selectedCells.length} Selected</span></h3>
                 <p style="font-size:10.5px;color:#64748b;margin-bottom:8px;">Choose a Teacher or Subject to fill all selected slots.</p>
+
+                <label style="display:flex;align-items:center;gap:7px;padding:6px 9px;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;margin-bottom:8px;cursor:pointer;" title="Selected cells are treated as one joint session shared across different classes/sections — filled yellow, and the shared teacher won't be flagged as a conflict.">
+                    <input type="checkbox" id="batchCombinedClass" style="width:14px;height:14px;flex-shrink:0;margin:0;" />
+                    <span style="font-weight:600;color:#92400e;font-size:11.5px;">🔗 Combined Class</span>
+                    <span style="font-size:9.5px;color:#b45309;margin-left:auto;">shown in yellow · no conflict</span>
+                </label>
 
                 <div style="background:#f8fafc;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;">
                     <label style="font-weight:600;margin-top:0;">Option 1: Select Teacher (Auto-assigns Subject)</label>
@@ -4314,11 +4462,23 @@ END:VTIMEZONE`;
                 return;
             }
 
-            selectedCells.forEach(cell => {
-                setCellValue(cell.key, cell.day, cell.period, finalSubject, finalTeacher);
-            });
+            const isCombined = document.getElementById('batchCombinedClass').checked;
+            // Give this batch a unique group id so findConflicts() can recognize these
+            // specific cells as "combined together" and not flag the shared teacher as
+            // double-booked. Each batch assignment gets its own id, so combining classes
+            // A+B in one pass and C+D in another pass stays independent.
+            const combinedGroupId = isCombined ? ('combo_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8)) : null;
 
-            showToast(`Assigned ${getTeacherName(finalTeacher)} to ${selectedCells.length} cells`, 'success');
+            // Wrap every cell update in one transaction so the whole batch becomes a
+            // single undo step — one Ctrl+Z reverts all selected cells together, not
+            // one cell at a time.
+            beginTransaction();
+            selectedCells.forEach(cell => {
+                setCellValue(cell.key, cell.day, cell.period, finalSubject, finalTeacher, combinedGroupId);
+            });
+            endTransaction();
+
+            showToast(`Assigned ${getTeacherName(finalTeacher)} to ${selectedCells.length} cells${isCombined ? ' as a combined class' : ''}`, 'success');
 
             closeModal();
             toggleSelectionMode(false);
@@ -4724,11 +4884,35 @@ END:VTIMEZONE`;
                        <ul>
                         <li>Cells outlined in <b>red</b> mean a conflict — usually the same teacher assigned to two
                             classes at the same time.</li>
+                        <li>Cells outlined in <b>yellow 🔗</b> are a <b>Combined Class</b> — the same teacher was
+                            deliberately assigned across two or more classes/sections at once (e.g. joint assembly,
+                            games period). See "Combined Classes" below.</li>
                         <li><b>📅 Multiple Days</b> turns on selection mode so you can click several cells and edit
                             them all at once (e.g. assign the same subject to a class every Monday).</li>
                         <li>Right-click a cell for Copy / Paste / Clear / Apply to all days.</li>
                         <li>Clicking a class's <b>Teacher</b> column (left side) lets you set that class's homeroom/
                             class-teacher.</li>
+                       </ul>`
+            },
+            {
+                id: 'combined-classes',
+                icon: '🔗',
+                title: 'Combined Classes',
+                body: `Use this when several classes or sections genuinely share one teacher/subject for the same
+                       slot — e.g. a joint assembly, games period, or two small sections merged into one lesson.
+                       Normally the tool would flag that shared teacher as a <b>red</b> conflict; Combined Class
+                       tells it this is intentional.
+                       <ul>
+                        <li>Click <b>📅 Multiple Days</b> to enter selection mode, then click each cell that belongs
+                            to the combined session — these can be in different classes/sections, as long as they're
+                            the same day and period.</li>
+                        <li>Click <b>OK</b> on the toolbar to open the assign dialog, tick <b>🔗 Combined Class</b>,
+                            then choose the teacher (or subject).</li>
+                        <li>Those cells fill in <b>yellow</b> instead of red, and are excluded from conflict
+                            detection — as long as they're all part of the same combined batch.</li>
+                        <li>Editing one of those cells individually afterward (via the normal single-cell editor)
+                            detaches just that cell from the group — it goes back to being checked normally for
+                            conflicts.</li>
                        </ul>`
             },
             {
@@ -5081,6 +5265,9 @@ SUGGESTED QUESTIONS TO TRY ASKING
                     if (headers.length < 3 || headers[0] !== expectedHeader[0] || headers[1] !== expectedHeader[1]) {
                         showToast('Invalid timetable CSV header', 'error');
                     } else {
+                        // Single undo step for the whole import (mirrors the batch-assign
+                        // pattern) instead of one history snapshot per cell.
+                        beginTransaction();
                         let importedRows = 0;
                         const hasTeacherCol = headers[2] && headers[2].trim().toUpperCase() === 'CLASSTEACHERID';
                         const periodStartIdx = hasTeacherCol ? 3 : 2;
@@ -5091,12 +5278,17 @@ SUGGESTED QUESTIONS TO TRY ASKING
                                 appData.settings.periodsPerDay = targetPeriods;
                                 getClassKeys().forEach(c => {
                                     if (!appData.timetable[c]) appData.timetable[c] = {};
+                                    if (!masterTimetable[c]) masterTimetable[c] = {};
                                     DAYS.forEach(d => {
                                         if (!appData.timetable[c][d]) appData.timetable[c][d] = {};
+                                        if (!masterTimetable[c][d]) masterTimetable[c][d] = {};
                                         for (let p = 1; p <= targetPeriods; p++) {
                                             const key = 'P' + p;
                                             if (!appData.timetable[c][d][key]) {
                                                 appData.timetable[c][d][key] = { subject: null, teacher: null };
+                                            }
+                                            if (!masterTimetable[c][d][key]) {
+                                                masterTimetable[c][d][key] = { subject: null, teacher: null };
                                             }
                                         }
                                     });
@@ -5136,7 +5328,8 @@ SUGGESTED QUESTIONS TO TRY ASKING
                             row.slice(periodStartIdx).forEach((cell, index) => {
                                 const periodKey = 'P' + (index + 1);
                                 if (!cell || !cell.trim()) {
-                                    clearCell(key, day, periodKey);
+                                    // Bypasses the Master-locked guard — see importSetCellBoth.
+                                    importSetCellBoth(key, day, periodKey, null, null);
                                     return;
                                 }
                                 const parts = cell.split(':');
@@ -5157,14 +5350,17 @@ SUGGESTED QUESTIONS TO TRY ASKING
                                         minimalCode: subjectCode.slice(0, 2)
                                     };
                                 }
-                                setCellValue(key, day, periodKey, subjectCode, teacherId);
+                                // Writes into both Working and Master directly — an imported
+                                // CSV should produce an identical result in both spaces no
+                                // matter which one was active when Import was clicked.
+                                importSetCellBoth(key, day, periodKey, subjectCode, teacherId);
                             });
                             importedRows++;
                         });
 
-                        masterTimetable = JSON.parse(JSON.stringify(appData.timetable));
+                        endTransaction();
 
-                        showToast('Imported ' + importedRows + ' timetable rows as Master Timetable');
+                        showToast('Imported ' + importedRows + ' timetable rows into both Working and Master Schedule');
                         render();
                     }
                 }
@@ -5292,7 +5488,7 @@ SUGGESTED QUESTIONS TO TRY ASKING
             const head = ['Days / Periods'];
             periodKeys.forEach(p => {
                 const t = getPeriodDisplay(p);
-                head.push(t ? (p + '\n' + t) : p);
+                head.push(t ? (getPeriodLabel(p) + '\n' + t) : getPeriodLabel(p));
                 const pNum = parseInt(p.replace('P', ''), 10);
                 getBreaksAfterPeriod(pNum).forEach(b => {
                     head.push(b.name + (b.start ? ('\n' + b.start + '–' + b.end) : ''));
@@ -5528,20 +5724,21 @@ SUGGESTED QUESTIONS TO TRY ASKING
         // ───────────── SETTINGS (period times) ─────────────
         function openSettings() {
             tempBreaks = JSON.parse(JSON.stringify(appData.settings.breaks || []));
+            tempStudyHours = JSON.parse(JSON.stringify(appData.settings.studyHours || []));
             let html = `
-                        <div style="margin:0 0 12px;padding:8px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;">
-                            <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#334155;cursor:pointer;">
+                        <div style="margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid #e2e8f0;">
+                            <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#334155;cursor:pointer;white-space:nowrap;" title="Applies to the timetable grid, imports/exports, and PDFs.">
                                 <input type="checkbox" id="includeSaturday" ${appData.settings.includeSaturday !== false ? 'checked' : ''} />
-                                🗓️ 6-day week (include Saturday)
+                                🗓️ 6-day week
                             </label>
-                            <p style="font-size:9.5px;color:#94a3b8;margin:4px 0 0;">Uncheck for a 5-day week (Monday–Friday only). Applies to the timetable grid, imports/exports, and PDFs.</p>
+                            <span style="display:inline-block;margin-top:3px;font-size:9.5px;color:#94a3b8;">${getPeriodsPerDay()} periods/day</span>
                         </div>
                         <h3>⏱️ Period Times</h3>
                         <p style="font-size:10.5px;color:#475569;margin-bottom:6px;">Set start and end time for each period.</p>
                         <div style="max-height:220px;overflow:auto;border:1px solid #e2e8f0;border-radius:6px;padding:6px 8px;margin-top:4px;">
                     `;
             const periodKeys = [];
-            for (let p = 1; p <= 10; p++) periodKeys.push('P' + p);
+            for (let p = 1; p <= getPeriodsPerDay(); p++) periodKeys.push('P' + p);
             periodKeys.forEach(p => {
                 const t = appData.settings.periodTimes && appData.settings.periodTimes[p];
                 const start = t ? t.start : '08:00';
@@ -5559,6 +5756,13 @@ SUGGESTED QUESTIONS TO TRY ASKING
                         </div>
                         <div style="margin-top:12px;">
                             <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <h4 style="margin:0;font-size:12px;color:#5b21b6;">📚 Study Hours <span style="font-weight:400;color:#94a3b8;">(assignable, like a real period)</span></h4>
+                                <button type="button" class="btn-secondary" style="font-size:10px;padding:3px 8px;" onclick="addStudyHourRow()">+ Add Study Hour</button>
+                            </div>
+                            <div id="studyHoursList" style="margin-top:6px;max-height:160px;overflow:auto;border:1px solid #ddd6fe;border-radius:6px;padding:6px 8px;background:#faf9ff;"></div>
+                        </div>
+                        <div style="margin-top:12px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
                                 <h4 style="margin:0;font-size:12px;color:#334155;">🍽️ Breaks / Lunch <span style="font-weight:400;color:#94a3b8;">(shown as extra columns)</span></h4>
                                 <button type="button" class="btn-secondary" style="font-size:10px;padding:3px 8px;" onclick="addBreakRow()">+ Add Break</button>
                             </div>
@@ -5571,6 +5775,98 @@ SUGGESTED QUESTIONS TO TRY ASKING
                     `;
             openModal(html);
             renderBreaksList();
+            renderStudyHoursList();
+        }
+
+        function renderStudyHoursList() {
+            const container = document.getElementById('studyHoursList');
+            if (!container) return;
+            const periodsCount = getPeriodsPerDay();
+            if (tempStudyHours.length === 0) {
+                container.innerHTML =
+                    '<div style="font-size:10.5px;color:#a78bfa;">No study hours added yet. Click "+ Add Study Hour" to insert one as its own assignable period.</div>';
+                return;
+            }
+            container.innerHTML = tempStudyHours.map((sh, i) => {
+                const periodOptions = Array.from({ length: periodsCount }, (_, k) => k + 1).map(n =>
+                    `<option value="P${n}" ${sh.afterPeriod === n ? 'selected' : ''}>P${n}</option>`).join('');
+                // A Study Hour can also stack directly after another Study Hour (any
+                // row except itself) — that's what lets you pile several in a row
+                // in a controlled order, instead of only anchoring to a period.
+                const shOptions = tempStudyHours
+                    .filter((other, j) => j !== i)
+                    .map(other => `<option value="${other.id}" ${sh.afterPeriod === other.id ? 'selected' : ''}>${escHTML(other.name)}</option>`)
+                    .join('');
+                return `
+                        <div class="studyhour-row" data-idx="${i}" style="display:flex;gap:5px;align-items:center;margin:4px 0;font-size:10.5px;flex-wrap:wrap;">
+                            <input type="text" class="sh-name" value="${sh.name}" placeholder="Name" style="width:74px;padding:2px 4px;border:1px solid #ddd6fe;border-radius:3px;font-size:10px;" />
+                            <span style="color:#64748b;">after</span>
+                            <select class="sh-after" style="padding:2px 3px;border:1px solid #ddd6fe;border-radius:3px;font-size:10px;max-width:110px;">
+                                <optgroup label="Period">${periodOptions}</optgroup>
+                                ${shOptions ? `<optgroup label="Study Hour">${shOptions}</optgroup>` : ''}
+                            </select>
+                            <input type="time" class="sh-start" value="${sh.start}" style="width:76px;padding:1px 3px;border:1px solid #ddd6fe;border-radius:3px;font-size:10px;" />
+                            <span>–</span>
+                            <input type="time" class="sh-end" value="${sh.end}" style="width:76px;padding:1px 3px;border:1px solid #ddd6fe;border-radius:3px;font-size:10px;" />
+                            <button type="button" onclick="removeStudyHourRow(${i})" title="Remove" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:13px;">✕</button>
+                        </div>
+                    `;
+            }).join('');
+        }
+
+        function syncStudyHoursFromDOM() {
+            const rows = document.querySelectorAll('#studyHoursList .studyhour-row');
+            const updated = [];
+            rows.forEach((row, i) => {
+                const rawAfter = row.querySelector('.sh-after').value;
+                // "P2" -> anchor to period 2 (number); "SH3" -> anchor to that Study Hour (string, stacks after it)
+                const afterPeriod = rawAfter.indexOf('P') === 0 && !isStudyHourKey(rawAfter)
+                    ? parseInt(rawAfter.slice(1), 10) || 1
+                    : rawAfter;
+                updated.push({
+                    id: tempStudyHours[i] && tempStudyHours[i].id, // preserve existing id — assigned fresh only in addStudyHourRow
+                    name: row.querySelector('.sh-name').value.trim() || 'Study Hour',
+                    afterPeriod: afterPeriod,
+                    start: row.querySelector('.sh-start').value || '00:00',
+                    end: row.querySelector('.sh-end').value || '00:00'
+                });
+            });
+            tempStudyHours = updated;
+        }
+
+        function addStudyHourRow() {
+            syncStudyHoursFromDOM();
+            const periodsCount = getPeriodsPerDay();
+            appData.settings.studyHourSeq = (appData.settings.studyHourSeq || 0) + 1;
+            // Default: stack directly after the last Study Hour you added, so
+            // repeatedly clicking "+ Add Study Hour" piles them up in order.
+            // With none yet, anchor after period 1 instead.
+            const defaultAnchor = tempStudyHours.length > 0
+                ? tempStudyHours[tempStudyHours.length - 1].id
+                : Math.min(1, periodsCount);
+            tempStudyHours.push({
+                id: 'SH' + appData.settings.studyHourSeq,
+                name: tempStudyHours.length === 0 ? 'Study Hr' : 'Study Hr ' + (tempStudyHours.length + 1),
+                afterPeriod: defaultAnchor,
+                start: '11:00',
+                end: '11:45'
+            });
+            renderStudyHoursList();
+        }
+
+        function removeStudyHourRow(idx) {
+            syncStudyHoursFromDOM();
+            const removed = tempStudyHours[idx];
+            tempStudyHours.splice(idx, 1);
+            if (removed) {
+                // Anything stacked directly after the one being removed gets
+                // re-pointed to whatever IT was anchored to, so deleting a middle
+                // Study Hour in a stack doesn't silently drop the ones after it.
+                tempStudyHours.forEach(sh => {
+                    if (sh.afterPeriod === removed.id) sh.afterPeriod = removed.afterPeriod;
+                });
+            }
+            renderStudyHoursList();
         }
 
         function renderBreaksList() {
@@ -5631,8 +5927,11 @@ SUGGESTED QUESTIONS TO TRY ASKING
         }
 
         function saveSettings() {
-            const times = {};
-            for (let p = 1; p <= 10; p++) {
+            // Keep any existing saved times (e.g. for periods beyond the current
+            // periods/day count) and only overwrite the ones actually edited in
+            // this modal, so lowering periods/day temporarily doesn't lose data.
+            const times = Object.assign({}, appData.settings.periodTimes || {});
+            for (let p = 1; p <= getPeriodsPerDay(); p++) {
                 const start = document.getElementById('timeStart_P' + p)?.value || '08:00';
                 const end = document.getElementById('timeEnd_P' + p)?.value || '08:45';
                 times['P' + p] = { start, end };
@@ -5640,6 +5939,13 @@ SUGGESTED QUESTIONS TO TRY ASKING
             appData.settings.periodTimes = times;
             syncBreaksFromDOM();
             appData.settings.breaks = tempBreaks;
+            syncStudyHoursFromDOM();
+            appData.settings.studyHours = tempStudyHours;
+            // Study Hour times live in periodTimes too, keyed by their own id,
+            // so getPeriodDisplay()/getAllPeriodKeys() treat them like any period.
+            tempStudyHours.forEach(sh => {
+                appData.settings.periodTimes[sh.id] = { start: sh.start, end: sh.end };
+            });
             appData.settings.includeSaturday = document.getElementById('includeSaturday')?.checked !== false;
             recomputeDays();
             getClassKeys().forEach(c => {
@@ -6867,7 +7173,7 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
             const periodKeys = getAllPeriodKeys();
             let html = `<label style="display:block;font-weight:600;font-size:11px;color:#334155;margin-bottom:4px;">Draft Preview — ${day}</label>
                         <div class="subst-table-wrap"><table class="subst-table subst-preview">
-                        <thead><tr><th>Class</th>${periodKeys.map(p => `<th>${p}</th>`).join('')}</tr></thead><tbody>`;
+                        <thead><tr><th>Class</th>${periodKeys.map(p => `<th>${getPeriodLabel(p)}</th>`).join('')}</tr></thead><tbody>`;
             affectedClasses.forEach(key => {
                 html += `<tr><td>${key}</td>`;
                 periodKeys.forEach(p => {
@@ -7333,7 +7639,7 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
                                 ${periodKeys.map(p => `
                                     <label class="subst-check-item" style="width:auto;">
                                         <input type="checkbox" value="${p}" ${eventState.periods.includes(p) ? 'checked' : ''} onchange="onEventPeriodToggle('${p}', this.checked)" />
-                                        <span>${p}</span>
+                                        <span>${getPeriodLabel(p)}</span>
                                     </label>
                                 `).join('')}
                             </div>
