@@ -19,6 +19,74 @@
             padding: 0;
         }
 
+        /* ───────────── DESIGN TOKENS ─────────────
+           Central palette for the institutional / elder-friendly redesign.
+           Everything below (chrome, buttons, grid, modals) draws from these
+           custom properties instead of one-off hex values. */
+        :root {
+            /* app shell (row 1 top bar) */
+            --shell-bg: #1e293b;
+            --shell-bg-alt: #24334a;
+            --shell-text: #f8fafc;
+            --shell-text-muted: #cbd5e1;
+            --shell-border: #334155;
+
+            /* neutral surfaces */
+            --surface-bg: #f1f5f9;
+            --surface-bg-alt: #f8fafc;
+            --card-bg: #ffffff;
+            --card-border: #cbd5e1;
+            --card-border-soft: #e2e8f0;
+            --card-shadow: rgba(0, 0, 0, 0.04);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --pill-bg: #f1f5f9;
+            --divider-strong: #94a3b8;
+
+            /* primary / generic action */
+            --color-primary: #2563eb;
+            --color-primary-hover: #1d4ed8;
+
+            /* commit to master */
+            --color-commit: #059669;
+            --color-commit-hover: #047857;
+            --color-commit-text: #ffffff;
+
+            /* working space (draft) pill */
+            --color-draft-bg: rgba(59, 130, 246, 0.2);
+            --color-draft-text: #60a5fa;
+            --color-draft-border: #3b82f6;
+
+            /* master schedule (read-only) pill */
+            --color-master-bg: rgba(245, 158, 11, 0.2);
+            --color-master-text: #fbbf24;
+            --color-master-border: #f59e0b;
+
+            /* revert / reset (outlined) */
+            --color-revert-border: #ef4444;
+            --color-revert-text: #f87171;
+
+            /* conflicts */
+            --color-conflict-bg: #fef2f2;
+            --color-conflict-border: #ef4444;
+            --color-conflict-text: #b91c1c;
+
+            /* combined classes */
+            --color-combined-bg: #fffbeb;
+            --color-combined-border: #f59e0b;
+            --color-combined-text: #b45309;
+
+            /* breaks / lunch */
+            --color-break-bg: #fef3c7;
+            --color-break-border: #fbbf24;
+            --color-break-text: #92400e;
+
+            /* success (secondary, non-commit) */
+            --color-success: #16a34a;
+            --color-success-hover: #15803d;
+        }
+
         /* ───────────── GRID ZOOM / DENSITY VARIABLES ─────────────
            Controlled by a class on #tableWrap (zoom-compact / zoom-comfortable / zoom-large),
            set via the 🔍 size control in the top bar. "Comfortable" is the default —
@@ -28,11 +96,11 @@
             --w-period: 34px;
             --w-break: 38px;
             --w-event: 40px;
-            --row-h: 30px;
-            --grid-font: 11px;
-            --cell-font: 9px;
-            --subj-font: 9.5px;
-            --tchr-font: 7.5px;
+            --row-h: 40px;
+            --grid-font: 11.5px;
+            --cell-font: 10px;
+            --subj-font: 11px;
+            --tchr-font: 9.5px;
         }
         #tableWrap.zoom-compact {
             --w-period: 27px;
@@ -59,8 +127,8 @@
             height: 100%;
             overflow: hidden;
             font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-            background: #f4f7fc;
-            color: #1e293b;
+            background: var(--surface-bg-alt);
+            color: var(--text-primary);
             font-size: 12px;
             user-select: none;
         }
@@ -72,11 +140,11 @@
             background: #e9eef3;
         }
         ::-webkit-scrollbar-thumb {
-            background: #94a3b8;
+            background: var(--divider-strong);
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
+            background: var(--text-muted);
         }
 
         /* ───────────── LAYOUT ───────────── */
@@ -86,15 +154,15 @@
             height: 100vh;
             width: 100vw;
             overflow: hidden;
-            background: #f8fafc;
+            background: var(--surface-bg-alt);
         }
 
-        /* top bar */
+        /* top bar (Row 1 — App Header & System State): deep slate shell */
         #topBar {
             flex-shrink: 0;
-            background: #ffffff;
-            border-bottom: 1px solid #e2e8f0;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            background: var(--shell-bg);
+            border-bottom: 1px solid var(--shell-border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
             transition: all 0.2s;
             overflow: hidden;
             position: relative;
@@ -104,170 +172,253 @@
             height: 32px !important;
         }
         #topBar .bar-inner {
-            padding: 6px 14px;
+            padding: 8px 14px;
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: 8px 16px;
+            gap: 8px 14px;
+        }
+        #topBar .app-title {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--shell-text);
+            white-space: nowrap;
+            margin-right: 2px;
         }
         #topBar .bar-toggle {
             background: none;
             border: none;
             cursor: pointer;
             font-size: 14px;
-            color: #64748b;
+            color: var(--shell-text-muted);
             padding: 0 4px;
         }
         #topBar .bar-toggle:hover {
-            color: #0f172a;
+            color: var(--shell-text);
         }
         #topBar .stat-item {
             display: inline-flex;
             align-items: center;
             gap: 4px;
             font-size: 11px;
-            background: #f1f5f9;
-            padding: 2px 10px;
+            background: rgba(248, 250, 252, 0.08);
+            padding: 3px 10px;
             border-radius: 12px;
-            color: #334155;
+            color: var(--shell-text-muted);
             white-space: nowrap;
         }
         #topBar .stat-item .num {
             font-weight: 700;
-            color: #2563eb;
+            color: var(--shell-text);
             margin: 0 2px;
         }
         #topBar .stat-item .num.danger {
-            color: #dc2626;
+            color: #fca5a5;
+        }
+        #topBar #lastSaved {
+            color: var(--shell-text-muted) !important;
         }
 
-        /* toolbar */
+        /* Row 1 system-state controls: commit / revert / undo-redo, on the dark shell */
+        #topBar button#btnLockMaster.btn-commit {
+            background: var(--color-commit);
+            border: 1px solid var(--color-commit);
+            color: var(--color-commit-text);
+            font-weight: 700;
+            font-size: 11px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.12s;
+            white-space: nowrap;
+        }
+        #topBar button#btnLockMaster.btn-commit:hover {
+            background: var(--color-commit-hover);
+            border-color: var(--color-commit-hover);
+        }
+        #topBar button#btnResetToMaster.btn-revert {
+            background: transparent;
+            border: 1px solid var(--color-revert-border);
+            color: var(--color-revert-text);
+            font-weight: 600;
+            font-size: 11px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.12s;
+            white-space: nowrap;
+        }
+        #topBar button#btnResetToMaster.btn-revert:hover {
+            background: rgba(239, 68, 68, 0.12);
+        }
+        #topBar .shell-undo-redo {
+            display: flex;
+            gap: 4px;
+        }
+        #topBar .shell-undo-redo button {
+            background: rgba(248, 250, 252, 0.08);
+            border: 1px solid var(--shell-border);
+            color: var(--shell-text);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 11px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.12s;
+            white-space: nowrap;
+        }
+        #topBar .shell-undo-redo button:hover:not(:disabled) {
+            background: rgba(248, 250, 252, 0.16);
+        }
+        #topBar .shell-undo-redo button:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        /* toolbar (Row 2 — Task Toolbar): calm neutral surface with grouped dropdowns */
         #toolbar {
             flex-shrink: 0;
             display: flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 6px;
-            background: #ffffff;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 6px 10px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--card-border-soft);
             flex-wrap: wrap;
             font-size: 10px;
         }
         #toolbar button {
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            border-radius: 4px;
-            padding: 2px 10px;
-            font-size: 9.5px;
+            background: var(--pill-bg);
+            border: 1px solid var(--card-border-soft);
+            border-radius: 6px;
+            padding: 7px 12px;
+            font-size: 11px;
             font-weight: 500;
-            color: #1e293b;
+            color: var(--text-primary);
             cursor: pointer;
             transition: all 0.1s;
             white-space: nowrap;
+            min-height: 36px;
         }
         #toolbar button:hover {
-            background: #e2e8f0;
-            border-color: #94a3b8;
+            background: var(--card-border-soft);
+            border-color: var(--divider-strong);
         }
         #toolbar button.primary {
-            background: #2563eb;
-            border-color: #2563eb;
+            background: var(--color-primary);
+            border-color: var(--color-primary);
             color: #fff;
         }
         #toolbar button.primary:hover {
-            background: #1d4ed8;
+            background: var(--color-primary-hover);
         }
         #toolbar button.success {
-            background: #16a34a;
-            border-color: #16a34a;
+            background: var(--color-success);
+            border-color: var(--color-success);
             color: #fff;
         }
         #toolbar button.success:hover {
-            background: #15803d;
+            background: var(--color-success-hover);
         }
         #toolbar button.danger {
-            background: #dc2626;
-            border-color: #dc2626;
-            color: #fff;
+            background: #fff;
+            border: 1px solid var(--color-revert-border);
+            color: #dc2626;
         }
         #toolbar button.danger:hover {
-            background: #b91c1c;
+            background: var(--color-conflict-bg);
         }
         #toolbar button.calendar-export {
-            background: #7c3aed;
-            border-color: #7c3aed;
+            background: var(--color-primary);
+            border-color: var(--color-primary);
             color: #fff;
             font-weight: 700;
         }
         #toolbar button.calendar-export:hover {
-            background: #6d28d9;
+            background: var(--color-primary-hover);
         }
         #toolbar .sep {
             width: 1px;
-            height: 20px;
-            background: #e2e8f0;
+            height: 24px;
+            background: var(--card-border-soft);
             margin: 0 2px;
         }
         #toolbar label {
             display: flex;
             align-items: center;
             gap: 4px;
-            color: #475569;
+            color: var(--text-secondary);
         }
         #toolbar select,
         #toolbar input {
-            border: 1px solid #e2e8f0;
-            border-radius: 3px;
+            border: 1px solid var(--card-border-soft);
+            border-radius: 4px;
             padding: 1px 6px;
-            font-size: 10px;
+            font-size: 11px;
             background: #fff;
-            height: 22px;
+            height: 28px;
         }
         #toolbar input[type="number"] {
-            width: 42px;
+            width: 46px;
         }
         #toolbar input[type="checkbox"] {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
         }
 
-        /* Interactive Mode Toggle Button */
+        /* Grouped dropdown menus in the toolbar: Manage Data / Operations /
+           Import-Export / View Density all reuse the .subst-wrap / .subst-menu
+           open-toggle panel (see SUBST module below) — every row inside one is
+           a plain <button>, no separate "menu item" class needed. */
+        #toolbar .workload-btn {
+            background: #eef2ff;
+            border-color: #c7d2fe;
+            color: #3730a3;
+            font-weight: 600;
+        }
+        #toolbar .workload-btn:hover {
+            background: #e0e7ff;
+        }
+
+        /* Interactive Mode Indicator / Toggle Button (sits in Row 1) */
         .mode-toggle-btn {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 12px;
+            padding: 6px 14px;
             border-radius: 6px;
             font-weight: 700;
-            font-size: 10.5px;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border: 1px solid transparent;
             cursor: pointer;
             transition: all 0.15s ease-in-out;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
         .mode-toggle-btn.working {
-            background: #dbeafe;
-            color: #1e40af;
-            border-color: #93c5fd;
+            background: var(--color-draft-bg);
+            color: var(--color-draft-text);
+            border-color: var(--color-draft-border);
         }
         .mode-toggle-btn.working:hover {
-            background: #bfdbfe;
+            background: rgba(59, 130, 246, 0.32);
         }
         .mode-toggle-btn.master {
-            background: #fef3c7;
-            color: #92400e;
-            border-color: #fde68a;
+            background: var(--color-master-bg);
+            color: var(--color-master-text);
+            border-color: var(--color-master-border);
         }
         .mode-toggle-btn.master:hover {
-            background: #fde68a;
+            background: rgba(245, 158, 11, 0.32);
         }
         #toolbar button.date-mode-active {
-            background: #fef3c7 !important;
-            color: #92400e !important;
-            border-color: #fde68a !important;
+            background: var(--color-break-bg) !important;
+            color: var(--color-break-text) !important;
+            border-color: var(--color-break-border) !important;
             font-weight: 700;
         }
         #toolbar button.date-mode-active:hover {
@@ -295,7 +446,7 @@
             flex: 1;
             overflow: auto;
             padding: 4px 6px 6px 6px;
-            background: #f8fafc;
+            background: var(--surface-bg-alt);
         }
         #tableWrap table {
             border-collapse: collapse;
@@ -304,14 +455,14 @@
             table-layout: fixed;
             font-size: var(--grid-font);
             border: 1px solid #dbe0e7;
-            background: #ffffff;
+            background: var(--card-bg);
             border-radius: 6px;
             overflow: hidden;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
         }
         #tableWrap th,
         #tableWrap td {
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--card-border-soft);
             padding: 2px 3px;
             text-align: center;
             vertical-align: middle;
@@ -323,9 +474,9 @@
             position: relative;
         }
         #tableWrap th {
-            background: #f1f5f9;
+            background: var(--surface-bg);
             font-weight: 600;
-            color: #1e293b;
+            color: var(--text-primary);
             font-size: 9px;
             text-transform: uppercase;
             letter-spacing: 0.3px;
@@ -336,7 +487,7 @@
         #tableWrap th .period-time {
             font-weight: 400;
             font-size: 7px;
-            color: #64748b;
+            color: var(--text-muted);
             display: block;
             margin-top: 1px;
         }
@@ -345,7 +496,7 @@
             min-width: 40px;
             max-width: 40px;
             font-weight: 600;
-            background: #f8fafc;
+            background: var(--surface-bg-alt);
             font-size: 10px;
         }
         #tableWrap .col-section {
@@ -353,14 +504,14 @@
             min-width: 30px;
             max-width: 30px;
             font-weight: 600;
-            background: #f8fafc;
+            background: var(--surface-bg-alt);
             font-size: 10px;
         }
         #tableWrap .col-teacher {
             width: 40px;
             min-width: 40px;
             max-width: 40px;
-            background: #f8fafc;
+            background: var(--surface-bg-alt);
             font-size: 8.5px;
             cursor: pointer;
         }
@@ -368,22 +519,39 @@
             background: #eef2ff;
         }
         #tableWrap .col-period {
-            width: 30px;
-            min-width: 28px;
-            max-width: 32px;
+            width: 36px;
+            min-width: 34px;
+            max-width: 40px;
+        }
+        /* Study Hour columns — a real, assignable period (unlike Break, which is
+           just a label), tinted violet so it's easy to spot at a glance. */
+        #tableWrap th.col-studyhour {
+            background: #ede9fe !important;
+        }
+        #tableWrap .cell-content.studyhour-cell {
+            box-shadow: inset 0 0 0 1px #c4b5fd;
+        }
+        #tableWrap .cell-content.studyhour-cell.empty {
+            color: #a78bfa;
+        }
+        #tableWrap .cell-content.studyhour-cell.filled {
+            background: #f5f3ff;
+        }
+        #tableWrap .cell-content.studyhour-cell.filled:hover {
+            background: #ede9fe;
         }
         #tableWrap .col-break {
             width: 34px;
             min-width: 32px;
             max-width: 40px;
-            background: #fef3c7 !important;
-            color: #92400e;
+            background: var(--color-break-bg) !important;
+            color: var(--color-break-text);
             font-weight: 700;
             font-size: 9px;
             text-align: center;
             vertical-align: middle;
-            border-left: 2px solid #fbbf24 !important;
-            border-right: 2px solid #fbbf24 !important;
+            border-left: 2px solid var(--color-break-border) !important;
+            border-right: 2px solid var(--color-break-border) !important;
             padding: 4px 2px;
         }
         #tableWrap th.col-break {
@@ -394,36 +562,45 @@
             display: block;
             font-size: 7px;
             font-weight: 400;
-            color: #92400e;
+            color: var(--color-break-text);
         }
+        /* Base ("Compact" density) cell sizing — deliberately denser than the
+           Comfortable tier below, but never crushed: 38px is still a real hit
+           target, and the subject code stays bold and legible. */
         #tableWrap .col-period .cell-content {
-            font-size: 8.5px;
-            line-height: 1.2;
+            font-size: 10px;
+            line-height: 1.25;
             cursor: pointer;
-            border-radius: 2px;
-            padding: 1px 2px;
+            border-radius: 4px;
+            padding: 3px 3px;
             transition: background 0.08s, opacity 0.15s;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 1px;
             height: 100%;
-            min-height: 24px;
+            min-height: 38px;
         }
         #tableWrap .col-period .cell-content .subj {
             font-weight: 700;
-            color: #0f172a;
-            font-size: 9px;
+            color: var(--text-primary);
+            font-size: 11px;
         }
         #tableWrap .col-period .cell-content .tchr {
-            font-weight: 400;
-            color: #475569;
-            font-size: 7.5px;
-            opacity: 0.85;
+            display: inline-block;
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 9.5px;
+            opacity: 1;
+            background: var(--pill-bg);
+            border-radius: 999px;
+            padding: 0 5px;
+            line-height: 1.5;
         }
         #tableWrap .col-period .cell-content.empty {
-            color: #cbd5e1;
-            font-size: 12px;
+            color: var(--card-border);
+            font-size: 13px;
             font-weight: 300;
         }
         #tableWrap .col-period .cell-content:hover {
@@ -436,16 +613,16 @@
             background: #dbeafe;
         }
         #tableWrap .col-period .cell-content.conflict {
-            background: #fee2e2 !important;
-            box-shadow: inset 0 0 0 1px #f87171;
+            background: var(--color-conflict-bg) !important;
+            box-shadow: inset 0 0 0 1px var(--color-conflict-border);
         }
         #tableWrap .col-period .cell-content.selected-cell {
             background: #93c5fd !important;
-            box-shadow: inset 0 0 0 1.5px #2563eb !important;
+            box-shadow: inset 0 0 0 1.5px var(--color-primary) !important;
         }
         #tableWrap .col-period .cell-content.subst-marked {
             background: #bfdbfe !important;
-            box-shadow: inset 0 0 0 1.5px #1d4ed8 !important;
+            box-shadow: inset 0 0 0 1.5px var(--color-primary-hover) !important;
         }
         #tableWrap .col-period .cell-content.subst-marked .subj,
         #tableWrap .col-period .cell-content.subst-marked .tchr {
@@ -465,7 +642,28 @@
             top: -2px;
             right: -2px;
             font-size: 8px;
-            color: #dc2626;
+            color: var(--color-conflict-border);
+        }
+        #tableWrap .col-period .cell-content.combined-cell {
+            background: var(--color-combined-bg) !important;
+            box-shadow: inset 0 0 0 1.5px var(--color-combined-border) !important;
+        }
+        #tableWrap .col-period .cell-content.combined-cell:hover {
+            background: #fde68a !important;
+        }
+        #tableWrap .col-period .cell-content.combined-cell .subj,
+        #tableWrap .col-period .cell-content.combined-cell .tchr {
+            color: var(--color-combined-text);
+        }
+        #tableWrap .col-period .cell-content.combined-cell .tchr {
+            background: rgba(245, 158, 11, 0.15);
+        }
+        #tableWrap .col-period .cell-content.combined-cell::after {
+            content: "🔗";
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            font-size: 8px;
         }
         #tableWrap .col-period .cell-content.event-cell {
             background: #dcfce7 !important;
@@ -477,45 +675,168 @@
         }
 
         /* ───────────── COMFORTABLE VIEW (zoom toggle) ─────────────
-           Toggled via the View ▾ menu (General option). Widens every grid column and bumps up
-           font sizes so the timetable can be read without squinting — at
-           the cost of needing more horizontal scrolling. */
+           Toggled via the View Density ▾ menu (Comfortable option). Widens every grid
+           column and bumps up font sizes so the timetable can be read without
+           squinting — at the cost of needing more horizontal scrolling.
+           --row-h is redeclared here (not just the .cell-content min-height
+           below) because #tableWrap th/td cap their own height at var(--row-h)
+           — without this override the taller Comfortable cell-content would be
+           clipped by the row's own max-height. */
+        #tableWrap.comfortable-zoom {
+            --row-h: 52px;
+        }
         #tableWrap.comfortable-zoom .col-period {
-            width: 54px;
-            min-width: 52px;
-            max-width: 58px;
+            width: 92px;
+            min-width: 88px;
+            max-width: 100px;
         }
         #tableWrap.comfortable-zoom .col-break {
-            width: 46px;
-            min-width: 44px;
-            max-width: 52px;
-            font-size: 10.5px;
+            width: 52px;
+            min-width: 48px;
+            max-width: 58px;
+            font-size: 11px;
         }
         #tableWrap.comfortable-zoom .col-period .cell-content {
-            font-size: 12px;
-            min-height: 34px;
-            padding: 2px 3px;
+            font-size: 14px;
+            min-height: 48px;
+            padding: 4px 6px;
+            gap: 2px;
         }
         #tableWrap.comfortable-zoom .col-period .cell-content .subj {
-            font-size: 13px;
+            font-size: 16px;
+            white-space: normal;
+            text-align: center;
+            line-height: 1.25;
         }
         #tableWrap.comfortable-zoom .col-period .cell-content .tchr {
-            font-size: 10.5px;
+            font-size: 11.5px;
+            opacity: 1;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 1px 8px;
         }
         #tableWrap.comfortable-zoom th,
         #tableWrap.comfortable-zoom td {
-            font-size: 11.5px;
+            font-size: 12.5px;
+        }
+        #tableWrap.comfortable-zoom .col-class,
+        #tableWrap.comfortable-zoom .col-section {
+            font-size: 12.5px;
         }
         #tableWrap.comfortable-zoom .col-teacher {
-            width: 60px;
-            min-width: 60px;
-            max-width: 60px;
-            font-size: 11px;
+            width: 84px;
+            min-width: 84px;
+            max-width: 84px;
+            font-size: 12.5px;
+            white-space: normal;
         }
+
+        /* ───────────── FULL INFO VIEW (General view + specific classes filtered) ─────────────
+           When the Classes filter is narrowed to specific classes in General view, there
+           are far fewer rows, so widen columns further and show the full subject name +
+           full teacher ID instead of the abbreviated codes. Stacks on top of comfortable-zoom.
+           --row-h redeclared for the same clipping reason noted above. */
+        #tableWrap.full-info-zoom {
+            --row-h: 60px;
+        }
+        #tableWrap.full-info-zoom .col-period {
+            width: 150px;
+            min-width: 140px;
+            max-width: 170px;
+        }
+        #tableWrap.full-info-zoom .col-period .cell-content {
+            min-height: 56px;
+            padding: 6px 8px;
+        }
+        #tableWrap.full-info-zoom .col-period .cell-content .subj {
+            font-size: 15px;
+            white-space: normal;
+            word-break: break-word;
+        }
+        #tableWrap.full-info-zoom .col-period .cell-content .tchr {
+            font-size: 13px;
+        }
+        #tableWrap.full-info-zoom .col-teacher {
+            width: 100px;
+            min-width: 100px;
+            max-width: 120px;
+        }
+
+        /* ───────────── COMFORTABLE VIEW — PIVOTED GRID ─────────────
+           Working Space + Comfortable density only: periods (grouped by day)
+           become rows, classes become columns. Reuses .col-period cells (same
+           data-key/data-day/data-period attributes) so every existing click /
+           dblclick / selection / conflict / filter interaction keeps working
+           unchanged — only the header + row-grouping markup differs. */
+        #tableWrap .col-period-label {
+            background: var(--surface-bg-alt);
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            vertical-align: middle;
+            width: 74px;
+            min-width: 70px;
+            max-width: 90px;
+            border-right: 2px solid var(--card-border);
+        }
+        #tableWrap .col-day-label {
+            background: var(--surface-bg);
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+            vertical-align: middle;
+            width: 46px;
+            min-width: 44px;
+            max-width: 54px;
+        }
+        #tableWrap th.col-class-pivot {
+            text-align: center;
+            vertical-align: middle;
+            white-space: normal;
+        }
+        #tableWrap .col-class-pivot-teacher {
+            display: block;
+            font-weight: 500;
+            font-size: 8px;
+            text-transform: none;
+            letter-spacing: 0;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        #tableWrap .period-row-sep {
+            border-top: 2.5px solid var(--divider-strong) !important;
+        }
+        #tableWrap tr.col-break-row td.col-break {
+            width: auto;
+            border-left: none !important;
+            border-right: none !important;
+            border-top: 2px solid var(--color-break-border) !important;
+            border-bottom: 2px solid var(--color-break-border) !important;
+            letter-spacing: 0.5px;
+        }
+        #tableWrap.comfortable-zoom .col-period-label {
+            width: 110px;
+            min-width: 100px;
+            max-width: 130px;
+        }
+        #tableWrap.comfortable-zoom .col-day-label {
+            width: 60px;
+            min-width: 56px;
+            max-width: 70px;
+        }
+        #tableWrap.comfortable-zoom .col-class-pivot-teacher {
+            font-size: 10px;
+        }
+
         #btnViewToggle.active {
             background: #dbeafe;
             border-color: #93c5fd;
-            color: #1d4ed8;
+            color: var(--color-primary-hover);
+        }
+        #btnClassFilter.active {
+            background: #dbeafe;
+            border-color: #93c5fd;
+            color: var(--color-primary-hover);
         }
 
         /* ───────────── ELDER-FRIENDLY MASTER VIEW ───────────── */
@@ -527,8 +848,8 @@
             box-sizing: border-box;
         }
         .elder-header {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border-soft);
             border-radius: 8px;
             padding: 12px 14px;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
@@ -545,55 +866,55 @@
             font-size: 14px;
             font-weight: 700;
             border-radius: 8px;
-            border: 2px solid #e2e8f0;
-            background: #f8fafc;
-            color: #334155;
+            border: 2px solid var(--card-border-soft);
+            background: var(--surface-bg-alt);
+            color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.15s;
         }
         .elder-mode-btn:hover {
-            border-color: #94a3b8;
+            border-color: var(--divider-strong);
         }
         .elder-mode-btn.active {
-            background: #2563eb;
-            border-color: #2563eb;
+            background: var(--color-primary);
+            border-color: var(--color-primary);
             color: #fff;
         }
         .elder-select-row label {
             display: block;
             font-size: 13px;
             font-weight: 700;
-            color: #1e293b;
+            color: var(--text-primary);
             margin-bottom: 6px;
         }
         .elder-select-row select {
             width: 100%;
             font-size: 15px;
             padding: 8px 10px;
-            border: 2px solid #cbd5e1;
+            border: 2px solid var(--card-border);
             border-radius: 8px;
-            background: #ffffff;
-            color: #0f172a;
+            background: var(--card-bg);
+            color: var(--text-primary);
             height: 40px;
             cursor: pointer;
         }
         .elder-select-row select:focus {
             outline: none;
-            border-color: #2563eb;
+            border-color: var(--color-primary);
         }
         .elder-empty {
             text-align: center;
             font-size: 13px;
-            color: #64748b;
+            color: var(--text-muted);
             padding: 40px 16px;
-            background: #ffffff;
-            border: 1px dashed #cbd5e1;
+            background: var(--card-bg);
+            border: 1px dashed var(--card-border);
             border-radius: 8px;
         }
         .elder-name-banner {
             font-size: 16px;
             font-weight: 800;
-            color: #0f172a;
+            color: var(--text-primary);
             background: #eff6ff;
             border: 1px solid #bfdbfe;
             border-radius: 8px;
@@ -603,7 +924,7 @@
         .elder-name-banner .elder-sub {
             font-size: 11px;
             font-weight: 500;
-            color: #475569;
+            color: var(--text-secondary);
             margin-top: 2px;
         }
         .detail-picker-header {
@@ -616,7 +937,7 @@
         .detail-picker-header label {
             font-size: 13px;
             font-weight: 700;
-            color: #1e293b;
+            color: var(--text-primary);
         }
         .detail-picker-actions {
             display: flex;
@@ -627,14 +948,14 @@
             font-weight: 600;
             padding: 3px 10px;
             border-radius: 5px;
-            border: 1px solid #cbd5e1;
-            background: #f8fafc;
-            color: #334155;
+            border: 1px solid var(--card-border);
+            background: var(--surface-bg-alt);
+            color: var(--text-secondary);
             cursor: pointer;
         }
         .dp-mini-btn:hover {
             background: #eef2ff;
-            border-color: #94a3b8;
+            border-color: var(--divider-strong);
         }
         .detail-picker-list {
             display: grid;
@@ -643,25 +964,25 @@
             max-height: 180px;
             overflow-y: auto;
             padding: 8px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--card-border-soft);
             border-radius: 8px;
-            background: #f8fafc;
+            background: var(--surface-bg-alt);
         }
         .detail-check-item {
             display: flex;
             align-items: center;
             gap: 6px;
             font-size: 12px;
-            color: #1e293b;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
+            color: var(--text-primary);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border-soft);
             border-radius: 6px;
             padding: 5px 8px;
             cursor: pointer;
             user-select: none;
         }
         .detail-check-item:hover {
-            border-color: #94a3b8;
+            border-color: var(--divider-strong);
         }
         .detail-check-item input {
             cursor: pointer;
@@ -678,9 +999,9 @@
             font-weight: 600;
             padding: 6px 14px;
             border-radius: 999px;
-            border: 1.5px solid #cbd5e1;
-            background: #ffffff;
-            color: #334155;
+            border: 1.5px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.15s;
         }
@@ -688,36 +1009,36 @@
             border-color: #93c5fd;
         }
         .detail-tab-btn.active {
-            background: #2563eb;
-            border-color: #2563eb;
+            background: var(--color-primary);
+            border-color: var(--color-primary);
             color: #fff;
         }
         table.elder-table {
             width: 100%;
             border-collapse: collapse;
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
         }
         table.elder-table th,
         table.elder-table td {
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--card-border-soft);
             padding: 7px 6px;
             text-align: center;
             font-size: 12px;
         }
         table.elder-table thead th {
-            background: #2563eb;
+            background: var(--color-primary);
             color: #fff;
             font-size: 11.5px;
             font-weight: 700;
             padding: 8px 6px;
         }
         table.elder-table tbody th {
-            background: #f1f5f9;
-            color: #1e293b;
+            background: var(--surface-bg);
+            color: var(--text-primary);
             font-weight: 700;
             white-space: nowrap;
             text-align: left;
@@ -727,19 +1048,19 @@
             display: block;
             font-size: 9px;
             font-weight: 500;
-            color: #64748b;
+            color: var(--text-muted);
         }
         table.elder-table tbody tr:nth-child(even) td {
-            background: #f8fafc;
+            background: var(--surface-bg-alt);
         }
         table.elder-table td .elder-cell-subj {
             font-weight: 700;
-            color: #0f172a;
+            color: var(--text-primary);
             display: block;
         }
         table.elder-table td .elder-cell-sub2 {
             font-size: 10px;
-            color: #475569;
+            color: var(--text-secondary);
             display: block;
             margin-top: 1px;
         }
@@ -756,13 +1077,34 @@
             background: #f0fdf4 !important;
             box-shadow: inset 0 0 0 2px #86efac;
         }
+        /* Batch-selection highlight in Detailed View — mirrors the compact grid's
+           .cell-content.selected-cell look, but applied straight to the <td>
+           since Detailed View cells don't wrap content in a .cell-content div. */
+        table.elder-table td.elder-cell-editable.selected-cell {
+            background: #93c5fd !important;
+            box-shadow: inset 0 0 0 2px var(--color-primary) !important;
+        }
+        table.elder-table td.elder-cell-editable.selected-cell .elder-cell-subj,
+        table.elder-table td.elder-cell-editable.selected-cell .elder-cell-sub2 {
+            color: #1e3a8a;
+        }
+        /* Teacher/Subject highlight in Detailed View — a lighter, distinct blue from
+           batch-selection so the two states stay visually separate if ever combined. */
+        table.elder-table td.elder-cell-editable.detail-highlight {
+            background: #bfdbfe !important;
+            box-shadow: inset 0 0 0 2px #3b82f6 !important;
+        }
+        table.elder-table td.elder-cell-editable.detail-highlight .elder-cell-subj,
+        table.elder-table td.elder-cell-editable.detail-highlight .elder-cell-sub2 {
+            color: #1e40af;
+        }
         .detail-view-hint {
             font-size: 10.5px;
-            color: #64748b;
+            color: var(--text-muted);
             margin-left: 10px;
         }
         table.elder-table td.elder-free {
-            color: #94a3b8;
+            color: var(--divider-strong);
             font-style: italic;
         }
         table.elder-table tr.elder-break-row td {
@@ -787,19 +1129,19 @@
         .wl-title {
             font-size: 14px;
             font-weight: 700;
-            color: #1e293b;
+            color: var(--text-primary);
         }
         .wl-hint {
             font-size: 11px;
-            color: #64748b;
+            color: var(--text-muted);
         }
         .wl-dept-manager {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             gap: 6px;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border-soft);
             border-radius: 8px;
             padding: 8px 10px;
             margin-bottom: 10px;
@@ -807,7 +1149,7 @@
         .wl-dept-manager-label {
             font-size: 11.5px;
             font-weight: 700;
-            color: #475569;
+            color: var(--text-secondary);
             margin-right: 2px;
         }
         .wl-dept-chip {
@@ -845,13 +1187,13 @@
         .wl-dept-add input {
             font-size: 12px;
             padding: 5px 8px;
-            border: 1px solid #cbd5e1;
+            border: 1px solid var(--card-border);
             border-radius: 6px;
             width: 140px;
         }
         .wl-dept-add input:focus {
             outline: none;
-            border-color: #2563eb;
+            border-color: var(--color-primary);
         }
         .wl-dept-add button {
             font-size: 12px;
@@ -859,60 +1201,60 @@
             padding: 5px 10px;
             border: none;
             border-radius: 6px;
-            background: #2563eb;
+            background: var(--color-primary);
             color: #fff;
             cursor: pointer;
         }
         .wl-dept-add button:hover {
-            background: #1d4ed8;
+            background: var(--color-primary-hover);
         }
         table.workload-table {
             width: 100%;
             border-collapse: collapse;
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             border-radius: 8px;
             overflow: hidden;
             font-size: 12px;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
         }
         table.workload-table th, table.workload-table td {
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--card-border-soft);
             padding: 5px 6px;
             text-align: center;
             vertical-align: middle;
         }
         table.workload-table thead th {
-            background: #334155;
+            background: var(--text-secondary);
             color: #fff;
             font-size: 11px;
             font-weight: 700;
             padding: 7px 6px;
         }
         table.workload-table tbody tr:nth-child(even) {
-            background: #f8fafc;
+            background: var(--surface-bg-alt);
         }
         table.workload-table td.wl-name-cell {
             text-align: left;
             font-weight: 600;
-            color: #0f172a;
+            color: var(--text-primary);
         }
         table.workload-table .wl-name-text {
             white-space: nowrap;
         }
         table.workload-table .wl-name-clickable {
             cursor: pointer;
-            border-bottom: 1px dashed #cbd5e1;
+            border-bottom: 1px dashed var(--card-border);
             padding-bottom: 1px;
             transition: color 0.12s, border-color 0.12s;
         }
         table.workload-table .wl-name-clickable:hover {
-            color: #2563eb;
-            border-bottom-color: #2563eb;
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
         }
         table.workload-table td.wl-sections-cell {
             text-align: left;
-            color: #475569;
+            color: var(--text-secondary);
             font-size: 11px;
         }
         table.workload-table td.wl-dept-cell {
@@ -935,8 +1277,8 @@
             gap: 8px;
             margin: 10px 0 14px;
             padding: 10px 12px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            background: var(--surface-bg-alt);
+            border: 1px solid var(--card-border-soft);
             border-radius: 8px;
         }
         .ti-row {
@@ -946,12 +1288,12 @@
             font-size: 11.5px;
         }
         .ti-row .ti-label {
-            color: #64748b;
+            color: var(--text-muted);
             font-weight: 600;
             white-space: nowrap;
         }
         .ti-row .ti-value {
-            color: #0f172a;
+            color: var(--text-primary);
             text-align: right;
         }
         table.workload-table .wl-extra-input {
@@ -960,18 +1302,18 @@
             background: transparent;
             text-align: center;
             font-size: 11.5px;
-            color: #334155;
+            color: var(--text-secondary);
             padding: 4px 2px;
             border-radius: 4px;
         }
         table.workload-table .wl-load-input {
             width: 52px;
-            border: 1px solid #cbd5e1;
+            border: 1px solid var(--card-border);
             background: #fff;
             text-align: center;
             font-weight: 700;
             font-size: 12px;
-            color: #0f172a;
+            color: var(--text-primary);
             padding: 3px 2px;
             border-radius: 4px;
         }
@@ -982,17 +1324,17 @@
             cursor: help;
         }
         table.workload-table .wl-extra-input:hover {
-            background: #f1f5f9;
+            background: var(--surface-bg);
         }
         table.workload-table .wl-extra-input:focus,
         table.workload-table .wl-load-input:focus {
             outline: none;
-            border-color: #2563eb;
+            border-color: var(--color-primary);
             background: #eff6ff;
         }
         table.workload-table td.wl-empty {
             padding: 20px;
-            color: #94a3b8;
+            color: var(--divider-strong);
             font-style: italic;
         }
 
@@ -1008,24 +1350,24 @@
         }
 
         .period-group-sep {
-            border-left: 2.5px solid #94a3b8 !important;
+            border-left: 2.5px solid var(--divider-strong) !important;
         }
 
         #tableWrap tbody tr:hover td {
-            background: #f8fafc;
+            background: var(--surface-bg-alt);
         }
         #tableWrap tbody tr:hover td.col-class,
         #tableWrap tbody tr:hover td.col-section,
         #tableWrap tbody tr:hover td.col-teacher {
-            background: #f1f5f9;
+            background: var(--surface-bg);
         }
 
         /* right sidebar */
         #rightSidebar {
             flex-shrink: 0;
             width: 200px;
-            background: #ffffff;
-            border-left: 1px solid #e2e8f0;
+            background: var(--card-bg);
+            border-left: 1px solid var(--card-border-soft);
             overflow: hidden;
             transition: width 0.2s;
             display: flex;
@@ -1048,13 +1390,13 @@
             border: none;
             cursor: pointer;
             font-size: 14px;
-            color: #64748b;
+            color: var(--text-muted);
             padding: 4px 6px;
             width: 28px;
             text-align: center;
         }
         #rightSidebar .sidebar-toggle:hover {
-            color: #0f172a;
+            color: var(--text-primary);
         }
         #rightSidebar .sidebar-inner {
             flex: 1;
@@ -1065,7 +1407,7 @@
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #64748b;
+            color: var(--text-muted);
             margin: 6px 0 4px 0;
             border-bottom: 1px solid #e9eef3;
             padding-bottom: 3px;
@@ -1075,21 +1417,21 @@
             justify-content: space-between;
             font-size: 9px;
             padding: 1px 4px;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid var(--surface-bg);
             border-radius: 3px;
         }
         #rightSidebar .sidebar-inner .stat-row .label {
-            color: #475569;
+            color: var(--text-secondary);
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
         #rightSidebar .sidebar-inner .stat-row .value {
             font-weight: 600;
-            color: #0f172a;
+            color: var(--text-primary);
         }
         #rightSidebar .sidebar-inner .stat-row .value.highlight {
-            color: #2563eb;
+            color: var(--color-primary);
         }
         #rightSidebar .sidebar-inner .stat-row.teacher-filter {
             cursor: pointer;
@@ -1116,8 +1458,8 @@
         /* bottom bar */
         #bottomBar {
             flex-shrink: 0;
-            background: #ffffff;
-            border-top: 1px solid #e2e8f0;
+            background: var(--card-bg);
+            border-top: 1px solid var(--card-border-soft);
             transition: all 0.2s;
             overflow: hidden;
             position: relative;
@@ -1138,26 +1480,26 @@
             border: none;
             cursor: pointer;
             font-size: 14px;
-            color: #64748b;
+            color: var(--text-muted);
             padding: 0 4px;
         }
         #bottomBar .bar-toggle:hover {
-            color: #0f172a;
+            color: var(--text-primary);
         }
         #bottomBar .stat-item {
             display: inline-flex;
             align-items: center;
             gap: 4px;
             font-size: 10px;
-            background: #f1f5f9;
+            background: var(--surface-bg);
             padding: 1px 10px;
             border-radius: 12px;
-            color: #334155;
+            color: var(--text-secondary);
             white-space: nowrap;
         }
         #bottomBar .stat-item .num {
             font-weight: 700;
-            color: #2563eb;
+            color: var(--color-primary);
             margin: 0 2px;
         }
 
@@ -1166,20 +1508,65 @@
             display: none;
             background: #eff6ff;
             border-bottom: 1px solid #3b82f6;
-            color: #1d4ed8;
+            color: var(--color-primary-hover);
             padding: 4px 12px;
             font-size: 11px;
             font-weight: 600;
             align-items: center;
             justify-content: space-between;
+            gap: 10px;
+        }
+        #selectionBanner span { flex: 1; }
+        #selectionBanner .btn-selection-ok {
+            background: var(--color-commit, #059669);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            min-height: 32px;
+            white-space: nowrap;
+        }
+        #selectionBanner .btn-selection-ok:hover { filter: brightness(1.08); }
+
+        /* Exchange-pick mode indicator banner — shown after choosing "Exchange" from
+           the Quick Action popup, replacing the popup with the live timetable so the
+           user can click the period they want to swap with directly. */
+        #exchangePickBanner {
+            display: none;
+            background: #fff7ed;
+            border-bottom: 1px solid #f97316;
+            color: #9a3412;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        #exchangePickBanner span { flex: 1; }
+
+        /* Origin cell + hoverable targets while exchange-pick mode is active */
+        #tableWrap .col-period .cell-content.exchange-pick-origin,
+        table.elder-table td.elder-cell-editable.exchange-pick-origin {
+            background: #ffedd5 !important;
+            box-shadow: inset 0 0 0 2px #f97316 !important;
+        }
+        body.exchange-picking #tableWrap .col-period .cell-content:not(.exchange-pick-origin):hover,
+        body.exchange-picking table.elder-table td.elder-cell-editable:not(.exchange-pick-origin):hover {
+            background: #fef3c7 !important;
+            box-shadow: inset 0 0 0 2px #f59e0b !important;
+            cursor: crosshair !important;
         }
 
         /* context menu */
         #contextMenu {
             display: none;
             position: fixed;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border-soft);
             border-radius: 6px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
             padding: 4px 0;
@@ -1193,10 +1580,10 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #1e293b;
+            color: var(--text-primary);
         }
         #contextMenu .menu-item:hover {
-            background: #f1f5f9;
+            background: var(--surface-bg);
         }
         #contextMenu .menu-item.danger {
             color: #dc2626;
@@ -1206,7 +1593,7 @@
         }
         #contextMenu .menu-sep {
             height: 1px;
-            background: #e2e8f0;
+            background: var(--card-border-soft);
             margin: 3px 8px;
         }
 
@@ -1224,9 +1611,9 @@
             display: flex;
         }
         #modalOverlay .modal {
-            background: #ffffff;
+            background: var(--card-bg);
             border-radius: 12px;
-            padding: 16px 20px;
+            padding: 18px 22px;
             max-width: 500px;
             width: 90%;
             max-height: 85vh;
@@ -1235,6 +1622,14 @@
         }
         #modalOverlay .modal.modal-lg {
             max-width: 980px;
+        }
+        /* Small modal — used for the double-click Quick Action menu (Substitute /
+           Exchange choice) and short conflict notices, so the popup only takes the
+           space its content actually needs instead of the full modal-lg width. */
+        #modalOverlay .modal.modal-sm {
+            max-width: 320px;
+            width: auto;
+            min-width: 260px;
         }
 
         /* ───────────── CUSTOM CONFIRM DIALOG (replaces browser confirm()) ───────────── */
@@ -1251,9 +1646,9 @@
             display: flex;
         }
         #confirmOverlay .confirm-box {
-            background: #ffffff;
+            background: var(--card-bg);
             border-radius: 12px;
-            padding: 20px 22px;
+            padding: 22px 24px;
             max-width: 420px;
             width: 88%;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
@@ -1264,18 +1659,18 @@
             to { transform: scale(1); opacity: 1; }
         }
         #confirmOverlay .confirm-title {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
-            color: #0f172a;
+            color: var(--text-primary);
             margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 6px;
         }
         #confirmOverlay .confirm-message {
-            font-size: 12px;
-            color: #334155;
-            line-height: 1.5;
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            line-height: 1.55;
             white-space: pre-line;
         }
         #confirmOverlay .confirm-actions {
@@ -1285,25 +1680,26 @@
             margin-top: 18px;
         }
         #confirmOverlay .confirm-actions button {
-            padding: 6px 16px;
-            font-size: 11.5px;
+            padding: 8px 18px;
+            font-size: 12px;
             font-weight: 600;
             border-radius: 6px;
-            border: 1px solid #e2e8f0;
-            background: #f1f5f9;
-            color: #1e293b;
+            border: 1px solid var(--card-border-soft);
+            background: var(--pill-bg);
+            color: var(--text-primary);
             cursor: pointer;
+            min-height: 36px;
         }
         #confirmOverlay .confirm-actions button:hover {
-            background: #e2e8f0;
+            background: var(--card-border-soft);
         }
         #confirmOverlay .confirm-actions button.confirm-ok {
-            background: #2563eb;
-            border-color: #2563eb;
+            background: var(--color-primary);
+            border-color: var(--color-primary);
             color: #fff;
         }
         #confirmOverlay .confirm-actions button.confirm-ok:hover {
-            background: #1d4ed8;
+            background: var(--color-primary-hover);
         }
         #confirmOverlay .confirm-actions button.confirm-ok.danger {
             background: #dc2626;
@@ -1319,7 +1715,7 @@
         input:focus-visible,
         select:focus-visible,
         [tabindex]:focus-visible {
-            outline: 2px solid #2563eb;
+            outline: 2px solid var(--color-primary);
             outline-offset: 2px;
         }
 
@@ -1334,7 +1730,7 @@
             background: #e0e7ff;
         }
         .help-topic {
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--card-border-soft);
             border-radius: 8px;
             margin-bottom: 8px;
             overflow: hidden;
@@ -1344,8 +1740,8 @@
             padding: 8px 12px;
             font-weight: 700;
             font-size: 12px;
-            background: #f8fafc;
-            color: #0f172a;
+            background: var(--surface-bg-alt);
+            color: var(--text-primary);
             list-style: none;
             display: flex;
             align-items: center;
@@ -1354,7 +1750,7 @@
         .help-topic summary::-webkit-details-marker { display: none; }
         .help-topic summary::before {
             content: '▸';
-            color: #64748b;
+            color: var(--text-muted);
             font-size: 11px;
             transition: transform 0.15s;
         }
@@ -1365,18 +1761,18 @@
             padding: 10px 14px 14px 14px;
             font-size: 11.5px;
             line-height: 1.6;
-            color: #334155;
+            color: var(--text-secondary);
         }
         .help-topic .help-body ul {
             margin: 6px 0 6px 18px;
         }
         .help-topic .help-body b {
-            color: #0f172a;
+            color: var(--text-primary);
         }
         #helpSearchBox {
             width: 100%;
             padding: 7px 10px;
-            border: 1px solid #cbd5e1;
+            border: 1px solid var(--card-border);
             border-radius: 6px;
             font-size: 12px;
             margin-bottom: 12px;
@@ -1391,31 +1787,36 @@
             display: none;
             align-items: center;
             gap: 10px;
-            background: #fffbeb;
-            border-bottom: 1px solid #fde68a;
-            color: #92400e;
+            background: var(--color-combined-bg);
+            border-bottom: 1px solid var(--color-combined-border);
+            color: var(--color-combined-text);
             font-size: 11px;
-            padding: 5px 14px;
+            padding: 6px 14px;
         }
         #backupBanner.show { display: flex; }
         #backupBanner button {
-            background: #fbbf24;
+            background: var(--color-combined-border);
             border: none;
             border-radius: 4px;
-            padding: 2px 10px;
-            font-size: 10.5px;
+            padding: 4px 12px;
+            font-size: 11px;
             font-weight: 700;
             color: #78350f;
             cursor: pointer;
+            min-height: 30px;
         }
         #backupBanner .dismiss {
             background: none;
-            color: #92400e;
+            color: var(--color-combined-text);
             text-decoration: underline;
             font-weight: 500;
         }
 
-        /* SUBST module */
+        /* Toolbar dropdown module (Manage Data / Operations / Import-Export /
+           View Density / Substitution) — a generic open-toggle panel. overflow
+           is intentionally visible (not hidden) so a menu can host a nested
+           flyout (e.g. the class filter list inside View Density) without
+           being clipped; rounded corners are instead handled per-button. */
         .subst-wrap {
             position: relative;
             display: inline-block;
@@ -1426,13 +1827,14 @@
             top: 100%;
             left: 0;
             margin-top: 4px;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border-soft);
             border-radius: 8px;
             box-shadow: 0 10px 28px rgba(15, 23, 42, 0.18);
             z-index: 60;
-            min-width: 170px;
-            overflow: hidden;
+            min-width: 200px;
+            overflow: visible;
+            padding: 4px;
         }
         .subst-menu.open {
             display: block;
@@ -1441,15 +1843,59 @@
             display: block;
             width: 100%;
             text-align: left;
-            padding: 9px 13px;
+            padding: 10px 13px;
             border: none;
+            border-radius: 5px;
             background: none;
-            font-size: 11.5px;
+            font-size: 12px;
+            font-weight: 500;
             cursor: pointer;
-            color: #334155;
+            color: var(--text-primary);
+            min-height: 36px;
         }
         .subst-menu button:hover {
-            background: #f1f5f9;
+            background: var(--surface-bg);
+        }
+        /* Neutralize the solid chip styling (.primary/.success/.danger/.calendar-export)
+           when those existing buttons are reused as rows inside a dropdown menu —
+           inside a menu every row should read as a plain list item, with only a
+           subtle color cue for destructive or special actions. */
+        .subst-menu button.primary,
+        .subst-menu button.success,
+        .subst-menu button.calendar-export {
+            background: none !important;
+            border: none !important;
+            color: var(--text-primary) !important;
+            font-weight: 500;
+        }
+        .subst-menu button.danger {
+            background: none !important;
+            border: none !important;
+            color: #dc2626 !important;
+        }
+        .subst-menu button.danger:hover {
+            background: var(--color-conflict-bg) !important;
+        }
+        .subst-menu button.calendar-export {
+            color: var(--color-primary) !important;
+            font-weight: 600;
+        }
+        .subst-menu .dp-menu-sep {
+            height: 1px;
+            background: var(--card-border-soft);
+            margin: 4px 6px;
+        }
+        /* Class filter nested inside the View Density menu — stack as a full-width
+           row (JS toggles this element's display between 'none' and '' via
+           setGridViewMode(), so the CSS default here must already be the block
+           layout we want, not the .subst-wrap inline-block default). */
+        #classFilterWrap {
+            display: block;
+            width: 100%;
+        }
+        #classFilterWrap .subst-menu {
+            left: 0;
+            top: 100%;
         }
         #modalOverlay .modal label.subst-check-item {
             display: flex;
@@ -1457,7 +1903,7 @@
             gap: 6px;
             font-size: 11px;
             font-weight: 400;
-            color: #334155;
+            color: var(--text-secondary);
             margin: 0;
             padding: 3px 6px;
             border-radius: 4px;
@@ -1482,10 +1928,10 @@
         .subst-teacher-list {
             max-height: 160px;
             overflow-y: auto;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--card-border-soft);
             border-radius: 6px;
             padding: 4px 6px;
-            background: #f8fafc;
+            background: var(--surface-bg-alt);
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 0 8px;
@@ -1493,7 +1939,7 @@
         .subst-table-wrap {
             max-height: 220px;
             overflow: auto;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--card-border-soft);
             border-radius: 6px;
         }
         table.subst-table {
@@ -1502,12 +1948,12 @@
             font-size: 10.5px;
         }
         table.subst-table th, table.subst-table td {
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--card-border-soft);
             padding: 4px 6px;
             text-align: center;
         }
         table.subst-table th {
-            background: #f1f5f9;
+            background: var(--surface-bg);
             position: sticky;
             top: 0;
             z-index: 1;
@@ -1529,47 +1975,48 @@
             color: #991b1b;
         }
         table.subst-preview td.subst-empty {
-            color: #cbd5e1;
+            color: var(--card-border);
         }
         .subst-cell .strike {
             text-decoration: line-through;
             opacity: 0.75;
         }
         #modalOverlay .modal h3 {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
             margin-bottom: 8px;
-            color: #0f172a;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 6px;
         }
         #modalOverlay .modal h3 .badge {
-            font-size: 10px;
+            font-size: 10.5px;
             font-weight: 400;
-            color: #64748b;
+            color: var(--text-muted);
         }
         #modalOverlay .modal label {
             display: block;
-            font-size: 11px;
-            font-weight: 500;
-            color: #475569;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-secondary);
             margin-top: 6px;
             margin-bottom: 2px;
         }
         #modalOverlay .modal input,
         #modalOverlay .modal select {
             width: 100%;
-            padding: 4px 8px;
-            border: 1px solid #e2e8f0;
+            padding: 6px 9px;
+            border: 1px solid var(--card-border-soft);
             border-radius: 5px;
-            font-size: 11px;
-            background: #f8fafc;
+            font-size: 12px;
+            background: var(--surface-bg-alt);
+            min-height: 34px;
         }
         #modalOverlay .modal input:focus,
         #modalOverlay .modal select:focus {
             outline: none;
-            border-color: #2563eb;
+            border-color: var(--color-primary);
             box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
         }
         #modalOverlay .modal .form-row {
@@ -1583,51 +2030,54 @@
         }
         #modalOverlay .modal .btn-row {
             display: flex;
-            gap: 6px;
-            margin-top: 12px;
+            gap: 8px;
+            margin-top: 14px;
             justify-content: flex-end;
             flex-wrap: wrap;
         }
         #modalOverlay .modal .btn-row button {
-            padding: 4px 14px;
-            border-radius: 5px;
+            padding: 8px 16px;
+            border-radius: 6px;
             border: none;
-            font-size: 11px;
-            font-weight: 500;
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
+            min-height: 36px;
         }
         #modalOverlay .modal .btn-row .btn-primary {
-            background: #2563eb;
+            background: var(--color-primary);
             color: #fff;
         }
         #modalOverlay .modal .btn-row .btn-primary:hover {
-            background: #1d4ed8;
+            background: var(--color-primary-hover);
         }
         #modalOverlay .modal .btn-row .btn-secondary {
-            background: #f1f5f9;
-            color: #1e293b;
+            background: var(--pill-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--card-border-soft);
         }
         #modalOverlay .modal .btn-row .btn-secondary:hover {
-            background: #e2e8f0;
+            background: var(--card-border-soft);
         }
         #modalOverlay .modal .btn-row .btn-danger {
-            background: #dc2626;
-            color: #fff;
+            background: #fff;
+            color: #dc2626;
+            border: 1px solid var(--color-revert-border);
         }
         #modalOverlay .modal .btn-row .btn-danger:hover {
-            background: #b91c1c;
+            background: var(--color-conflict-bg);
         }
         #modalOverlay .modal .btn-row .btn-success {
-            background: #16a34a;
+            background: var(--color-commit);
             color: #fff;
         }
         #modalOverlay .modal .btn-row .btn-success:hover {
-            background: #15803d;
+            background: var(--color-commit-hover);
         }
         #modalOverlay .modal .item-list {
             max-height: 200px;
             overflow: auto;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--card-border-soft);
             border-radius: 6px;
             padding: 2px 0;
             margin-top: 4px;
@@ -1638,7 +2088,7 @@
             align-items: center;
             padding: 3px 8px;
             font-size: 11px;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid var(--surface-bg);
             background: #fff;
             transition: background 0.15s, transform 0.1s;
         }
@@ -1651,18 +2101,18 @@
             gap: 2px;
         }
         #modalOverlay .modal .item-list .item .actions button {
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
+            background: var(--surface-bg);
+            border: 1px solid var(--card-border);
             border-radius: 3px;
             cursor: pointer;
             font-size: 10px;
             padding: 1px 5px;
-            color: #475569;
+            color: var(--text-secondary);
             transition: all 0.1s;
         }
         #modalOverlay .modal .item-list .item .actions button:hover:not(:disabled) {
-            background: #e2e8f0;
-            color: #0f172a;
+            background: var(--card-border-soft);
+            color: var(--text-primary);
         }
         #modalOverlay .modal .item-list .item .actions button.del:hover {
             background: #fee2e2;
@@ -1671,14 +2121,14 @@
         }
         #modalOverlay .modal .item-list .item .code {
             font-weight: 600;
-            color: #0f172a;
+            color: var(--text-primary);
             margin-right: 6px;
         }
         #modalOverlay .modal .item-list .item .name {
-            color: #475569;
+            color: var(--text-secondary);
         }
         #modalOverlay .modal .item-list .item .meta {
-            color: #94a3b8;
+            color: var(--divider-strong);
             font-size: 9px;
         }
         #modalOverlay .modal .item-list .item .info {
@@ -1691,25 +2141,25 @@
         .subj-check-list {
             max-height: 180px;
             overflow-y: auto;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--card-border-soft);
             border-radius: 6px;
             padding: 4px;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 4px;
-            background: #f8fafc;
+            background: var(--surface-bg-alt);
         }
         .subj-check-item {
             display: flex;
             align-items: center;
             gap: 6px;
             font-size: 10.5px;
-            color: #334155;
+            color: var(--text-secondary);
             cursor: pointer;
             padding: 3px 6px;
             border-radius: 4px;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border-soft);
             transition: background 0.1s, border-color 0.1s;
         }
         .subj-check-item:hover {
@@ -1724,7 +2174,7 @@
         }
 
         #modalOverlay .modal .empty-msg {
-            color: #94a3b8;
+            color: var(--divider-strong);
             font-size: 11px;
             padding: 10px;
             text-align: center;
@@ -1732,7 +2182,7 @@
         #modalOverlay .modal .import-area {
             margin-top: 8px;
             padding: 6px;
-            border: 1px dashed #e2e8f0;
+            border: 1px dashed var(--card-border-soft);
             border-radius: 6px;
             display: flex;
             gap: 6px;
@@ -1757,8 +2207,8 @@
             width: 240px;
             min-width: 240px;
             padding: 10px 12px;
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             border-radius: 8px;
             box-shadow: 0 12px 40px rgba(15, 23, 42, 0.18);
             display: flex;
@@ -1789,7 +2239,7 @@
         }
         .cell-editor input:focus, 
         .cell-editor select:focus {
-            border-color: #2563eb;
+            border-color: var(--color-primary);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
         .cell-editor .btn-group {
@@ -1808,19 +2258,19 @@
             transition: all 0.15s;
         }
         .cell-editor .btn-save {
-            background: #2563eb;
+            background: var(--color-primary);
             color: white;
         }
         .cell-editor .btn-save:hover {
-            background: #1d4ed8;
+            background: var(--color-primary-hover);
         }
         .cell-editor .btn-cancel {
-            background: #f1f5f9;
-            color: #1e293b;
-            border-color: #cbd5e1;
+            background: var(--surface-bg);
+            color: var(--text-primary);
+            border-color: var(--card-border);
         }
         .cell-editor .btn-cancel:hover {
-            background: #e2e8f0;
+            background: var(--card-border-soft);
         }
         .cell-editor .btn-clear {
             background: #fee2e2;
@@ -1837,8 +2287,8 @@
             bottom: 60px;
             left: 50%;
             transform: translateX(-50%);
-            background: #0f172a;
-            color: #f8fafc;
+            background: var(--text-primary);
+            color: var(--surface-bg-alt);
             padding: 8px 22px;
             border-radius: 8px;
             font-size: 12px;
@@ -1919,14 +2369,14 @@
         .badge {
             display: inline-block;
             background: #dbeafe;
-            color: #1d4ed8;
+            color: var(--color-primary-hover);
             font-size: 8px;
             padding: 0 6px;
             border-radius: 8px;
             font-weight: 600;
         }
         .text-muted {
-            color: #94a3b8;
+            color: var(--divider-strong);
         }
         .flex {
             display: flex;
@@ -1951,11 +2401,11 @@
             white-space: nowrap;
         }
         .edit-form {
-            background: #f8fafc;
+            background: var(--surface-bg-alt);
             border-radius: 6px;
             padding: 8px 10px;
             margin-top: 6px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--card-border-soft);
         }
         .edit-form .form-row {
             display: flex;
@@ -1980,18 +2430,18 @@
             cursor: pointer;
         }
         .edit-form .btn-row .btn-save {
-            background: #2563eb;
+            background: var(--color-primary);
             color: #fff;
         }
         .edit-form .btn-row .btn-save:hover {
-            background: #1d4ed8;
+            background: var(--color-primary-hover);
         }
         .edit-form .btn-row .btn-cancel {
-            background: #f1f5f9;
-            color: #1e293b;
+            background: var(--surface-bg);
+            color: var(--text-primary);
         }
         .edit-form .btn-row .btn-cancel:hover {
-            background: #e2e8f0;
+            background: var(--card-border-soft);
         }
         .edit-form .btn-row .btn-danger {
             background: #dc2626;
@@ -2001,16 +2451,16 @@
             background: #b91c1c;
         }
         #btnUndo, #btnRedo {
-            background: #f1f5f9;
-            color: #334155;
-            border: 1.5px solid #cbd5e1;
+            background: var(--surface-bg);
+            color: var(--text-secondary);
+            border: 1.5px solid var(--card-border);
             border-radius: 6px;
             font-weight: 600;
             transition: background 0.15s, opacity 0.15s;
             cursor: pointer;
         }
         #btnUndo:hover:not(:disabled), #btnRedo:hover:not(:disabled) {
-            background: #e2e8f0;
+            background: var(--card-border-soft);
         }
         #btnUndo:disabled, #btnRedo:disabled {
             opacity: 0.38;
@@ -2029,21 +2479,34 @@
         <div id="topBar">
             <div class="bar-inner">
                 <button class="bar-toggle" id="topBarToggle" title="Toggle top stats" aria-label="Show or hide the stats bar">▾</button>
-                
+
+                <span class="app-title">🏫 Timetable Manager</span>
+
                 <!-- Single Interactive Mode Toggle Button -->
                 <button id="btnModeToggle" class="mode-toggle-btn working" onclick="toggleViewMode()" title="Click to switch space" aria-label="Switch between Working Space (editable draft) and Master Schedule (locked official copy)">
-                    🛠️ Working Space
+                    🛠️ Working Space (Draft)
                 </button>
 
-                <span class="stat-item">📚 Total: <span class="num" id="totalPeriods">0</span></span>
-                <span class="stat-item">📋 Classes: <span class="num" id="totalClasses">0</span></span>
-                <span class="stat-item">👨‍🏫 Teachers: <span class="num" id="totalTeachers">0</span></span>
-                <span class="stat-item">📖 Subjects: <span class="num" id="totalSubjects">0</span></span>
-                <span class="stat-item">⚠️ Conflicts: <span class="num danger" id="totalConflicts">0</span></span>
+                <!-- Status metric pills — shown only in Master Schedule (view-only) mode -->
+                <div id="topStatsGroup" style="display:none;align-items:center;gap:8px 14px;flex-wrap:wrap;">
+                    <span class="stat-item">📚 Total: <span class="num" id="totalPeriods">0</span></span>
+                    <span class="stat-item">📋 Classes: <span class="num" id="totalClasses">0</span></span>
+                    <span class="stat-item">👨‍🏫 Teachers: <span class="num" id="totalTeachers">0</span></span>
+                    <span class="stat-item">📖 Subjects: <span class="num" id="totalSubjects">0</span></span>
+                    <span class="stat-item">⚠️ Conflicts: <span class="num danger" id="totalConflicts">0</span></span>
+                </div>
+
                 <span style="flex:1;"></span>
-                <button id="btnLockMaster" class="success" style="font-size:9.5px;padding:2px 8px;" onclick="lockCurrentAsMaster()" title="Save working schedule as the fixed master schedule" aria-label="Save current working schedule as the official master schedule">📌 Set Current as Master</button>
-                <button id="btnResetToMaster" class="danger" style="font-size:9.5px;padding:2px 8px;" onclick="resetWorkingToMaster()" title="Discard changes and revert to original master schedule" aria-label="Discard all working changes and revert to the master schedule">↺ Revert to Master</button>
-                <span style="font-size:9px;color:#94a3b8;" id="lastSaved">ready</span>
+
+                <!-- Undo/Redo — shown only in Working Space (draft) mode -->
+                <div id="undoRedoGroup" class="shell-undo-redo" style="display:flex;">
+                    <button id="btnUndo" title="Undo (Ctrl+Z)" aria-label="Undo last change" disabled>&#8592; Undo</button>
+                    <button id="btnRedo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo last undone change" disabled>Redo &#8594;</button>
+                </div>
+
+                <button id="btnLockMaster" class="btn-commit" onclick="lockCurrentAsMaster()" title="Save working schedule as the fixed master schedule" aria-label="Save current working schedule as the official master schedule">✅ Save as Master</button>
+                <button id="btnResetToMaster" class="btn-revert" onclick="resetWorkingToMaster()" title="Discard changes and revert to original master schedule" aria-label="Discard all working changes and revert to the master schedule">↺ Revert</button>
+                <span style="font-size:10.5px;" id="lastSaved">ready</span>
             </div>
         </div>
 
@@ -2054,66 +2517,90 @@
             <button class="dismiss" onclick="dismissBackupBanner()">Remind me later</button>
         </div>
 
-        <!-- TOOLBAR -->
+        <!-- TOOLBAR (Row 2 — Task Toolbar): grouped dropdown menus -->
         <div id="toolbar">
-            <button class="primary" id="btnImport" aria-label="Import timetable data from a CSV file">📥 Import CSV</button>
+            <div class="subst-wrap" id="manageDataWrap">
+                <button id="btnManageData" onclick="toggleGenericMenu(event, 'manageDataMenu')" aria-haspopup="true" aria-label="Open data management menu">📋 Manage Data ▾</button>
+                <div id="manageDataMenu" class="subst-menu">
+                    <button id="btnSettings" aria-label="Open period times and break settings">⏱️ Timings &amp; Breaks</button>
+                    <button id="btnManageClasses" aria-label="Add, edit, or remove classes">📋 Classes</button>
+                    <button id="btnManageSubjects" aria-label="Add, edit, or remove subjects">📖 Subjects</button>
+                    <button id="btnManageTeachers" aria-label="Add, edit, or remove teachers">👨‍🏫 Teachers</button>
+                    <div class="dp-menu-sep"></div>
+                    <button id="btnClearAll" class="danger" aria-label="Permanently clear all data">🗑️ Clear Data</button>
+                </div>
+            </div>
+
+            <div class="subst-wrap">
+                <button id="btnImportExport" onclick="toggleGenericMenu(event, 'importExportMenu')" aria-haspopup="true" aria-label="Open import and export menu">📤 Import / Export ▾</button>
+                <div id="importExportMenu" class="subst-menu">
+                    <button id="btnImport" aria-label="Import timetable data from a CSV file">📥 Import CSV</button>
+                    <!-- Export items — visible ONLY in Master Schedule mode -->
+                    <div id="exportButtonGroup" class="export-btn-group hidden">
+                        <div class="dp-menu-sep"></div>
+                        <button class="success" id="btnExport" aria-label="Export the full timetable as a CSV file">📤 Export CSV</button>
+                        <button class="primary" id="btnExportClassesPDF" aria-label="Export class-wise timetables as a PDF">📄 Classes PDF</button>
+                        <button class="primary" id="btnExportTeachersPDF" aria-label="Export teacher-wise timetables as a PDF">📄 Teachers PDF</button>
+                        <button class="calendar-export" onclick="closeAllGenericMenus(); openCalendarExportModal();" aria-label="Export class or teacher timetables as a calendar file to import into a phone calendar app" title="Download a calendar file for one or more classes/teachers — import it on a phone for automatic reminders">📆 Calendar (.ics)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subst-wrap" id="viewDensityWrap">
+                <button id="btnViewToggle" onclick="toggleViewMenu(event)" title="Choose how the timetable is displayed: Compact, Comfortable, or Detailed Elder View" aria-label="Open view density menu" aria-haspopup="true">🔍 View Density: Comfortable ▾</button>
+                <div id="viewMenu" class="subst-menu">
+                    <button onclick="closeViewMenu(); setGridViewMode('compact');">🔍 Compact View</button>
+                    <button onclick="closeViewMenu(); setGridViewMode('general');">🔍 Comfortable View</button>
+                    <button onclick="closeViewMenu(); setGridViewMode('detailed');">👨‍🏫 Detailed Elder View</button>
+                    <div class="dp-menu-sep"></div>
+                    <div class="subst-wrap" id="classFilterWrap">
+                        <button id="btnClassFilter" onclick="toggleClassFilterMenu(event)" title="Show all classes (default) or only the ones you pick" aria-label="Open class filter menu" aria-haspopup="true" style="width:100%;text-align:left;">🏷️ Filter Classes: All ▾</button>
+                        <div id="classFilterMenu" class="subst-menu" style="min-width:200px;max-height:280px;overflow-y:auto;">
+                            <div style="display:flex;gap:6px;padding:6px 8px;">
+                                <button type="button" class="dp-mini-btn" onclick="setAllClassFilterCheckboxes(true)">Show All</button>
+                                <button type="button" class="dp-mini-btn" onclick="setAllClassFilterCheckboxes(false)">Clear</button>
+                            </div>
+                            <div id="classFilterList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="btnWorkloadRegister" class="workload-btn" onclick="jumpToWorkloadRegister()" aria-label="Jump to the teacher workload register">📋 Workload Register</button>
+
+            <!-- Working Space (draft) only: live edit operations -->
+            <div id="workingEditGroup" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                <div class="sep"></div>
+                <div class="subst-wrap">
+                    <button id="btnOperations" class="primary" onclick="toggleGenericMenu(event, 'operationsMenu')" aria-haspopup="true" aria-label="Open operations menu">🛠️ Operations ▾</button>
+                    <div id="operationsMenu" class="subst-menu">
+                        <button id="btnMultipleDays" onclick="closeAllGenericMenus(); handleMultipleDaysBtnClick();" aria-label="Select multiple timetable cells at once to edit together">📦 Batch Multi-Cell Assign</button>
+                        <button onclick="closeAllGenericMenus(); openTeacherSubModal();">🧑‍🏫 Teacher Substitution</button>
+                        <button onclick="closeAllGenericMenus(); openClassExchangeModal();">🔄 Class Exchange</button>
+                        <button onclick="closeAllGenericMenus(); openEventModal();">📌 Event Block</button>
+                        <div class="dp-menu-sep"></div>
+                        <button id="btnDateRange" onclick="closeAllGenericMenus(); openDateRangeModal();" aria-label="Switch to date-specific editing mode for exact calendar dates">📅 Date Mode</button>
+                    </div>
+                </div>
+                <div class="sep"></div>
+                <label>Periods/day: <input type="number" id="periodsPerDay" value="7" min="4" max="10" aria-label="Number of periods per day" /></label>
+                <label>Apply all days: <input type="checkbox" id="applyAllDays" aria-label="Apply the same period edit to all days" /></label>
+            </div>
+
+            <span style="flex:1;"></span>
             <button id="btnHelp" onclick="openHelpModal()" aria-label="Open help guide explaining every button and screen" title="Learn what every button and screen does">❓ Help</button>
-
-            <!-- Export Buttons (Visible ONLY in Master Schedule mode) -->
-            <div id="exportButtonGroup" class="export-btn-group hidden">
-                <button class="success" id="btnExport" aria-label="Export the full timetable as a CSV file">📤 Export CSV</button>
-                <button class="primary" id="btnExportClassesPDF" aria-label="Export class-wise timetables as a PDF">📄 Classes PDF</button>
-                <button class="primary" id="btnExportTeachersPDF" aria-label="Export teacher-wise timetables as a PDF">📄 Teachers PDF</button>
-                <button class="calendar-export" onclick="openCalendarExportModal()" aria-label="Export class or teacher timetables as a calendar file to import into a phone calendar app" title="Download a calendar file for one or more classes/teachers — import it on a phone for automatic reminders">📆 Calendar (.ics)</button>
-            </div>
-
-            <div class="sep"></div>
-            <button id="btnSettings" aria-label="Open period times and break settings">⚙️ Times</button>
-            <button id="btnManageClasses" aria-label="Add, edit, or remove classes">📋 Classes</button>
-            <button id="btnManageSubjects" aria-label="Add, edit, or remove subjects">📖 Subjects</button>
-            <button id="btnManageTeachers" aria-label="Add, edit, or remove teachers">👨‍🏫 Teachers</button>
-            <div class="sep"></div>
-            <button id="btnClearAll" class="danger" aria-label="Permanently clear all data">🗑️ Clear Data</button>
-            <div class="sep"></div>
-            
-            <!-- Undo/Redo Buttons ONLY for Working Space -->
-            <div id="undoRedoGroup" style="display: flex; gap: 6px;">
-                <button id="btnUndo" title="Undo (Ctrl+Z)" aria-label="Undo last change" disabled style="font-size:13px;padding:4px 10px;">&#8592; Undo</button>
-                <button id="btnRedo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo last undone change" disabled style="font-size:13px;padding:4px 10px;">Redo &#8594;</button>
-            </div>
-
-            <div class="sep"></div>
-            <label>Periods/day: <input type="number" id="periodsPerDay" value="7" min="4" max="10" aria-label="Number of periods per day" /></label>
-            <label>Apply all days: <input type="checkbox" id="applyAllDays" aria-label="Apply the same period edit to all days" /></label>
-            <div class="sep"></div>
-
-            <!-- Multiple Days & SUBST & DATE MODE Buttons ONLY for Working Space -->
-            <div id="workingEditGroup" style="display: flex; gap: 6px; flex-wrap: wrap;">
-                <button id="btnMultipleDays" class="primary" onclick="handleMultipleDaysBtnClick()" aria-label="Select multiple timetable cells at once to edit together">📅 Multiple Days</button>
-                <div class="subst-wrap">
-                    <button id="btnSubst" class="primary" onclick="toggleSubstMenu(event)" aria-label="Open substitution and exchange menu" aria-haspopup="true">🔁 Substitution ▾</button>
-                    <div id="substMenu" class="subst-menu">
-                        <button onclick="closeSubstMenu(); openTeacherSubModal();">🧑‍🏫 Teacher Sub</button>
-                        <button onclick="closeSubstMenu(); openClassExchangeModal();">🔄 Class Sub</button>
-                        <button onclick="closeSubstMenu(); openEventModal();">📌 Event</button>
-                    </div>
-                </div>
-                <button id="btnDateRange" class="primary" onclick="openDateRangeModal()" aria-label="Switch to date-specific editing mode for exact calendar dates">📅 Date Mode</button>
-                <div class="subst-wrap">
-                    <button id="btnViewToggle" onclick="toggleViewMenu(event)" title="Choose how the timetable is displayed: Compact, General, or Detailed (per-teacher, editable)" aria-label="Open view options menu" aria-haspopup="true">🔍 View: General ▾</button>
-                    <div id="viewMenu" class="subst-menu">
-                        <button onclick="closeViewMenu(); setGridViewMode('compact');">🔍 Compact View</button>
-                        <button onclick="closeViewMenu(); setGridViewMode('general');">🔍 General View</button>
-                        <button onclick="closeViewMenu(); setGridViewMode('detailed');">👨‍🏫 Detailed View</button>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- SELECTION BANNER -->
         <div id="selectionBanner">
-            <span>✨ <strong>Selection Mode Active:</strong> Click on cells in the timetable to select multiple slots, then click <strong>OK</strong> on the toolbar.</span>
+            <span>✨ <strong>Selection Mode Active:</strong> Click on cells in the timetable to select multiple slots, then click <strong>OK</strong>.</span>
+            <button class="btn-selection-ok" id="btnSelectionOk" onclick="handleMultipleDaysBtnClick()" aria-label="Confirm cell selection and open batch assign">✅ OK (<span id="selectionOkCount">0</span>)</button>
             <button style="background:none;border:none;color:#dc2626;cursor:pointer;font-weight:bold;" onclick="toggleSelectionMode(false)">Cancel Selection</button>
+        </div>
+
+        <div id="exchangePickBanner">
+            <span id="exchangePickBannerText">🔁 <strong>Exchange Mode:</strong> click another period in the timetable to swap with.</span>
+            <button style="background:none;border:none;color:#dc2626;cursor:pointer;font-weight:bold;" onclick="cancelExchangePick()">Cancel Exchange</button>
         </div>
 
         <!-- MAIN -->
@@ -2127,7 +2614,7 @@
                 <div id="masterElderView" style="display:none;"></div>
                 <div id="detailedTeacherView" style="display:none;"></div>
             </div>
-            <div id="rightSidebar">
+            <div id="rightSidebar" style="display:none;">
                 <button class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar" aria-label="Show or hide the statistics sidebar">◀</button>
                 <div class="sidebar-inner" id="sidebarInner">
                     <h4>📊 By Class</h4>
@@ -2273,11 +2760,17 @@
 
         let activeTeacherFilter = null;
         let tempBreaks = [];
+        let tempStudyHours = [];
         let clipboard = null;
         let contextTarget = null;
 
         let isSelectionMode = false;
         let selectedCells = [];
+        // Exchange-pick mode: after choosing "Exchange" in the Quick Action popup,
+        // the modal closes and the live timetable becomes clickable so the user can
+        // pick the target period directly, instead of a second popup/dropdown.
+        let exchangePickState = null; // { classKey, day, period, teacherA }
+        let exchangePendingSwap = null; // { classB, dayB, periodB } — set while a conflict-confirm modal is open
         let editingCell = null;
 
         // NEW: Date Range Mode Globals
@@ -2303,32 +2796,61 @@
             const undoRedoGroup = document.getElementById('undoRedoGroup');
             const workingEditGroup = document.getElementById('workingEditGroup');
             const resetMasterBtn = document.getElementById('btnResetToMaster');
+            const lockMasterBtn = document.getElementById('btnLockMaster');
+            const topStatsGroup = document.getElementById('topStatsGroup');
+            const rightSidebar = document.getElementById('rightSidebar');
+            const manageDataWrap = document.getElementById('manageDataWrap');
+            const viewDensityWrap = document.getElementById('viewDensityWrap');
+            const workloadBtn = document.getElementById('btnWorkloadRegister');
 
             if (viewMode === 'master') {
                 btn.className = 'mode-toggle-btn master';
-                btn.textContent = '🔒 Master Schedule';
-                
+                btn.textContent = '🔒 Master Schedule (Read-Only)';
+
                 // Show Export buttons, Hide edit tools
                 exportGroup.classList.remove('hidden');
                 undoRedoGroup.style.display = 'none';
                 workingEditGroup.style.display = 'none';
-                resetMasterBtn.style.display = 'none'; // Remove Revert to Master
+                resetMasterBtn.style.display = 'none'; // Remove Revert
+                if (lockMasterBtn) lockMasterBtn.style.display = 'none'; // Remove Save as Master
+
+                // Master mode: show the status metric pills and the analytics sidebar
+                if (topStatsGroup) topStatsGroup.style.display = 'flex';
+                if (rightSidebar) rightSidebar.style.display = '';
+
+                // Master Schedule: Manage Data / View Density aren't relevant (read-only,
+                // uses the Master Elder View instead) — hide them and show Workload Register.
+                if (manageDataWrap) manageDataWrap.style.display = 'none';
+                if (viewDensityWrap) viewDensityWrap.style.display = 'none';
+                if (workloadBtn) workloadBtn.style.display = 'inline-block';
 
                 // Swap the dense editable grid for the elder-friendly lookup view
                 document.getElementById('timetable').style.display = 'none';
                 document.getElementById('masterElderView').style.display = 'block';
                 renderMasterElderView();
-                
+
                 showToast('Switched to Master Schedule. Edits disabled.', 'success');
             } else {
                 btn.className = 'mode-toggle-btn working';
-                btn.textContent = '🛠️ Working Space';
-                
+                btn.textContent = '🛠️ Working Space (Draft)';
+
                 // Hide Export buttons, Show edit tools
                 exportGroup.classList.add('hidden');
                 undoRedoGroup.style.display = 'flex';
                 workingEditGroup.style.display = 'flex';
-                resetMasterBtn.style.display = 'inline-block'; // Restore Revert to Master
+                resetMasterBtn.style.display = 'inline-block'; // Restore Revert
+                if (lockMasterBtn) lockMasterBtn.style.display = 'inline-block'; // Restore Save as Master
+
+                // Working Space: hide the stat pills and the sidebar so the grid gets
+                // the full viewport width, per the elder-friendly density requirement.
+                if (topStatsGroup) topStatsGroup.style.display = 'none';
+                if (rightSidebar) rightSidebar.style.display = 'none';
+
+                // Working Space: Manage Data / View Density are the working tools;
+                // Workload Register is a Master Schedule-only report, so hide it here.
+                if (manageDataWrap) manageDataWrap.style.display = '';
+                if (viewDensityWrap) viewDensityWrap.style.display = '';
+                if (workloadBtn) workloadBtn.style.display = 'none';
 
                 // Restore the standard editable grid (or the active grid view mode, e.g. Detailed View)
                 document.getElementById('masterElderView').style.display = 'none';
@@ -2371,7 +2893,11 @@
 
             const options = elderViewState.mode === 'class' ?
                 classKeys.map(k => `<option value="${k}" ${k === elderViewState.selectedKey ? 'selected' : ''}>${k}</option>`).join('') :
-                teacherIds.map(id => `<option value="${id}" ${id === elderViewState.selectedKey ? 'selected' : ''}>${appData.teachers[id].name} (${id})</option>`).join('');
+                teacherIds.map(id => {
+                    const t = appData.teachers[id];
+                    const subStr = (t.subjects && t.subjects.length > 0) ? ` — ${t.subjects.map(s => getSubjectName(s)).join(', ')}` : '';
+                    return `<option value="${id}" ${id === elderViewState.selectedKey ? 'selected' : ''}>${t.name} (${id})${subStr}</option>`;
+                }).join('');
 
             let html = `
                 <div class="elder-header">
@@ -2440,7 +2966,7 @@
             let rows = '';
             periodKeys.forEach(p => {
                 const timeStr = getPeriodDisplay(p);
-                rows += `<tr><th>${p}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
+                rows += `<tr><th>${getPeriodLabel(p)}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
                 DAYS.forEach(d => {
                     const val = getCellValue(classKey, d, p);
                     if (val.subject && val.teacher) {
@@ -2471,7 +2997,7 @@
             let rows = '';
             periodKeys.forEach(p => {
                 const timeStr = getPeriodDisplay(p);
-                rows += `<tr><th>${p}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
+                rows += `<tr><th>${getPeriodLabel(p)}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
                 DAYS.forEach(d => {
                     const matches = classKeys
                         .map(key => ({ key, val: getCellValue(key, d, p) }))
@@ -2495,6 +3021,10 @@
 
         // ───────────── DETAILED VIEW (editable, by class or by teacher, multi-select with tabs) ─────────────
         let detailedViewState = { mode: 'teacher', selectedKeys: [], activeKey: '' };
+        // Highlight a specific teacher or subject across the currently open Detailed
+        // View table — matching cells get a blue highlight so they're easy to spot
+        // and edit, independent of the "By Class"/"By Teacher" tab mode above.
+        let detailedHighlightState = { type: '', value: '' };
 
         function renderDetailedTeacherView() {
             const container = document.getElementById('detailedTeacherView');
@@ -2517,11 +3047,71 @@
                         </div>
                     </div>
                     <div id="detailedPickerList" class="detail-picker-list">${buildDetailedPickerListHTML()}</div>
+                    <div id="detailedHighlightBar">${buildDetailedHighlightBarHTML()}</div>
                 </div>
                 <div id="detailedTabsArea">${buildDetailedTabsArea()}</div>
             `;
             attachDetailedViewCellEvents();
         }
+
+        function buildDetailedHighlightBarHTML() {
+            const { type, value } = detailedHighlightState;
+            let valueOpts = '<option value="">— select —</option>';
+            if (type === 'teacher') {
+                valueOpts += Object.keys(appData.teachers).filter(id => id !== 'EVENT')
+                    .sort((a, b) => (appData.teachers[a].name || '').localeCompare(appData.teachers[b].name || ''))
+                    .map(id => `<option value="${escAttr(id)}" ${id === value ? 'selected' : ''}>${escHTML(appData.teachers[id].name)} (${escHTML(id)})</option>`)
+                    .join('');
+            } else if (type === 'subject') {
+                valueOpts += Object.keys(appData.subjects).sort()
+                    .map(code => `<option value="${escAttr(code)}" ${code === value ? 'selected' : ''}>${escHTML(appData.subjects[code].name)} (${escAttr(code)})</option>`)
+                    .join('');
+            }
+            return `
+                <div class="detail-highlight-row" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px dashed #e2e8f0;">
+                    <label style="font-size:11px;font-weight:600;color:#334155;">🔎 Highlight:</label>
+                    <select id="dhType" style="width:auto;" onchange="onDetailedHighlightTypeChange(this.value)">
+                        <option value="" ${type === '' ? 'selected' : ''}>None</option>
+                        <option value="teacher" ${type === 'teacher' ? 'selected' : ''}>Teacher</option>
+                        <option value="subject" ${type === 'subject' ? 'selected' : ''}>Subject</option>
+                    </select>
+                    ${type ? `<select id="dhValue" style="width:auto;" onchange="onDetailedHighlightValueChange(this.value)">${valueOpts}</select>` : ''}
+                    ${type && value ? `<button type="button" class="dp-mini-btn" onclick="clearDetailedHighlight()">Clear</button>` : ''}
+                </div>
+            `;
+        }
+
+        function onDetailedHighlightTypeChange(type) {
+            detailedHighlightState = { type, value: '' };
+            const bar = document.getElementById('detailedHighlightBar');
+            if (bar) bar.innerHTML = buildDetailedHighlightBarHTML();
+            refreshDetailedActiveTable();
+        }
+
+        function onDetailedHighlightValueChange(value) {
+            detailedHighlightState.value = value;
+            refreshDetailedActiveTable();
+        }
+
+        function clearDetailedHighlight() {
+            detailedHighlightState = { type: '', value: '' };
+            const bar = document.getElementById('detailedHighlightBar');
+            if (bar) bar.innerHTML = buildDetailedHighlightBarHTML();
+            refreshDetailedActiveTable();
+        }
+
+        // Re-renders just the active tab's table (not the whole picker/tabs shell), so
+        // toggling a highlight doesn't reset scroll position or checkbox state.
+        function refreshDetailedActiveTable() {
+            const area = document.getElementById('detailedActiveTableArea');
+            if (!area) return;
+            const key = detailedViewState.activeKey;
+            if (!key) return;
+            area.innerHTML = detailedViewState.mode === 'class' ?
+                buildDetailedClassEditableTable(key) : buildDetailedTeacherEditableTable(key);
+            attachDetailedViewCellEvents();
+        }
+
 
         function buildDetailedPickerListHTML() {
             if (detailedViewState.mode === 'class') {
@@ -2599,13 +3189,23 @@
             let rows = '';
             periodKeys.forEach(p => {
                 const timeStr = getPeriodDisplay(p);
-                rows += `<tr><th>${p}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
+                rows += `<tr><th>${getPeriodLabel(p)}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
                 DAYS.forEach(d => {
                     const val = getCellValue(classKey, d, p);
+                    // When batch-selection mode is active, highlight cells that are already
+                    // in selectedCells — selections made on other class tabs stay in that
+                    // array and light back up here when their tab becomes active again.
+                    const selCls = (isSelectionMode && isCellSelected(classKey, d, p)) ? ' selected-cell' : '';
+                    // Highlight matches for the picked teacher/subject filter above the table.
+                    const hl = detailedHighlightState;
+                    const hlCls = (hl.type === 'teacher' && hl.value && val.teacher === hl.value) ||
+                                  (hl.type === 'subject' && hl.value && val.subject === hl.value) ? ' detail-highlight' : '';
+                    const originCls = (exchangePickState && exchangePickState.classKey === classKey &&
+                                  exchangePickState.day === d && exchangePickState.period === p) ? ' exchange-pick-origin' : '';
                     if (val.subject && val.teacher) {
-                        rows += `<td class="elder-cell-editable" data-key="${escAttr(classKey)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="Click to edit"><div class="cell-content"><span class="elder-cell-subj">${escHTML(getSubjectName(val.subject))}</span><span class="elder-cell-sub2">${escHTML(getTeacherName(val.teacher))}</span></div></td>`;
+                        rows += `<td class="elder-cell-editable${selCls}${hlCls}${originCls}" data-key="${escAttr(classKey)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="${isSelectionMode ? 'Click to select' : 'Click to edit'}"><div class="cell-content"><span class="elder-cell-subj">${escHTML(getSubjectName(val.subject))}</span><span class="elder-cell-sub2">${escHTML(getTeacherName(val.teacher))}</span></div></td>`;
                     } else {
-                        rows += `<td class="elder-free elder-cell-editable" data-key="${escAttr(classKey)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="Click to assign"><div class="cell-content">Free</div></td>`;
+                        rows += `<td class="elder-free elder-cell-editable${selCls}${hlCls}${originCls}" data-key="${escAttr(classKey)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="${isSelectionMode ? 'Click to select' : 'Click to assign'}"><div class="cell-content">Free</div></td>`;
                     }
                 });
                 rows += '</tr>';
@@ -2636,16 +3236,22 @@
             let rows = '';
             periodKeys.forEach(p => {
                 const timeStr = getPeriodDisplay(p);
-                rows += `<tr><th>${p}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
+                rows += `<tr><th>${getPeriodLabel(p)}${timeStr ? `<span class="elder-period-time">${timeStr}</span>` : ''}</th>`;
                 DAYS.forEach(d => {
                     const matches = classKeys
                         .map(key => ({ key, val: getCellValue(key, d, p) }))
                         .filter(({ val }) => val.teacher === teacherId);
                     if (matches.length > 0) {
                         const m = matches[0];
-                        rows += `<td class="elder-cell-editable" data-key="${escAttr(m.key)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="Click to edit"><div class="cell-content"><span class="elder-cell-subj">${escHTML(getSubjectName(m.val.subject))}</span><span class="elder-cell-sub2">Class ${escHTML(m.key)}</span></div></td>`;
+                        const selCls = (isSelectionMode && isCellSelected(m.key, d, p)) ? ' selected-cell' : '';
+                        const hl = detailedHighlightState;
+                        const hlCls = (hl.type === 'teacher' && hl.value && m.val.teacher === hl.value) ||
+                                      (hl.type === 'subject' && hl.value && m.val.subject === hl.value) ? ' detail-highlight' : '';
+                        const originCls = (exchangePickState && exchangePickState.classKey === m.key &&
+                                      exchangePickState.day === d && exchangePickState.period === p) ? ' exchange-pick-origin' : '';
+                        rows += `<td class="elder-cell-editable${selCls}${hlCls}${originCls}" data-key="${escAttr(m.key)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="${isSelectionMode ? 'Click to select' : 'Click to edit'}"><div class="cell-content"><span class="elder-cell-subj">${escHTML(getSubjectName(m.val.subject))}</span><span class="elder-cell-sub2">Class ${escHTML(m.key)}</span></div></td>`;
                     } else {
-                        rows += `<td class="elder-free detail-free-cell" data-teacher="${escAttr(teacherId)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="Click to assign"><div class="cell-content">Free</div></td>`;
+                        rows += `<td class="elder-free detail-free-cell" data-teacher="${escAttr(teacherId)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}" title="${isSelectionMode ? 'Switch to By Class mode to multi-select free slots' : 'Click to assign'}"><div class="cell-content">Free</div></td>`;
                     }
                 });
                 rows += '</tr>';
@@ -2671,12 +3277,40 @@
                     if (e.target.closest('.cell-editor')) return;
                     const key = this.dataset.key, day = this.dataset.day, period = this.dataset.period;
                     if (!key || !day || !period) return;
+                    if (exchangePickState) {
+                        handleExchangePickClick(key, day, period);
+                        return;
+                    }
+                    // Batch-selection mode: toggle this cell into selectedCells instead of
+                    // opening the single-cell editor. Works the same in By Class and By
+                    // Teacher mode, and selections persist as the user switches tabs —
+                    // toggleCellSelection() just re-renders, which re-reads selectedCells.
+                    if (isSelectionMode) {
+                        toggleCellSelection(key, day, period);
+                        return;
+                    }
                     startEditing(key, day, period, this);
+                });
+                td.addEventListener('dblclick', function(e) {
+                    if (viewMode === 'master' || isSelectionMode || exchangePickState) return;
+                    if (e.target.closest('.cell-editor')) return;
+                    const key = this.dataset.key, day = this.dataset.day, period = this.dataset.period;
+                    if (!key || !day || !period) return;
+                    stopEditing();
+                    openCellQuickActionModal(key, day, period);
                 });
             });
             document.querySelectorAll('#detailedTeacherView td.detail-free-cell').forEach(td => {
                 td.addEventListener('click', function() {
                     if (viewMode === 'master') return;
+                    if (exchangePickState) {
+                        showToast('Pick a filled period cell to exchange with', 'error');
+                        return;
+                    }
+                    if (isSelectionMode) {
+                        showToast('Switch to "By Class" mode to multi-select free slots', 'error');
+                        return;
+                    }
                     const teacherId = this.dataset.teacher, day = this.dataset.day, period = this.dataset.period;
                     if (!teacherId || !day || !period) return;
                     openDetailedFreeSlotAssign(teacherId, day, period);
@@ -3021,8 +3655,46 @@
         function getAllPeriodKeys() {
             const n = getPeriodsPerDay();
             const keys = [];
-            for (let i = 1; i <= n; i++) keys.push('P' + i);
+            const visited = new Set(); // guards against an accidental anchor cycle (SH1 after SH2 after SH1)
+            function appendAnchoredTo(anchor) {
+                getStudyHoursAnchoredTo(anchor).forEach(sh => {
+                    if (visited.has(sh.id)) return;
+                    visited.add(sh.id);
+                    keys.push(sh.id);
+                    appendAnchoredTo(sh.id); // a Study Hour can itself anchor more Study Hours — lets them stack
+                });
+            }
+            for (let i = 1; i <= n; i++) {
+                keys.push('P' + i);
+                appendAnchoredTo(i);
+            }
             return keys;
+        }
+
+        // Study Hours are extra, teachable slots (unlike Breaks, which are just a
+        // label column) — inserted after a given period, same as Breaks, but they
+        // participate in getAllPeriodKeys() so every render/export path treats them
+        // as a real, assignable period automatically. Their start/end time lives in
+        // appData.settings.periodTimes[id], same as normal periods, so getPeriodDisplay()
+        // needs no special-casing.
+        // sh.afterPeriod holds the anchor it's inserted after — either a period
+        // number (e.g. 2, meaning "after P2") or another Study Hour's id (e.g.
+        // "SH1", meaning "stacked directly after that Study Hour").
+        function isStudyHourKey(p) {
+            return typeof p === 'string' && p.indexOf('SH') === 0;
+        }
+        function getStudyHourById(id) {
+            return (appData.settings.studyHours || []).find(sh => sh.id === id);
+        }
+        function getStudyHoursAnchoredTo(anchor) {
+            return (appData.settings.studyHours || []).filter(sh => sh.afterPeriod === anchor);
+        }
+        function getPeriodLabel(p) {
+            if (isStudyHourKey(p)) {
+                const sh = getStudyHourById(p);
+                return sh ? sh.name : 'Study Hr';
+            }
+            return p;
         }
 
         // ───────────── DATE SPECIFIC HELPERS ─────────────
@@ -3160,7 +3832,7 @@ END:VTIMEZONE`;
                             const teacherName = val.teacher === 'EVENT' ? 'Event' : getTeacherName(val.teacher);
                             events.push(_icsBuildEvent({
                                 summary: `${subjName} — ${cls}-${sec}`,
-                                description: `Teacher: ${teacherName}\\nPeriod: ${p}`,
+                                description: `Teacher: ${teacherName}\\nPeriod: ${getPeriodLabel(p)}`,
                                 day, startTime: t.start, endTime: t.end,
                                 untilDate, reminderMinutes,
                                 uidSeed: 'cls-' + classKey + '-' + day + '-' + p
@@ -3181,7 +3853,7 @@ END:VTIMEZONE`;
                                 const subjName = getSubjectName(val.subject);
                                 events.push(_icsBuildEvent({
                                     summary: `${subjName} — ${classKey}`,
-                                    description: `Class: ${classKey}\\nPeriod: ${p}`,
+                                    description: `Class: ${classKey}\\nPeriod: ${getPeriodLabel(p)}`,
                                     day, startTime: t.start, endTime: t.end,
                                     untilDate, reminderMinutes,
                                     uidSeed: 'tch-' + teacherId + '-' + classKey + '-' + day + '-' + p
@@ -3383,7 +4055,13 @@ END:VTIMEZONE`;
             return getCellValue(classKey, dayName, period);
         }
 
-        function setCellValue(classKey, day, period, subject, teacher) {
+        // combinedGroup: optional id string. When set, this cell is tagged as part of a
+        // "Combined Class" group — cells sharing the same non-null combinedGroup are
+        // exempted from teacher-double-booking conflict detection and rendered yellow
+        // instead of red (see findConflicts() and render()). Omitting it (as almost every
+        // existing call site does) clears the tag, which is what we want: a manual
+        // single-cell edit intentionally detaches that cell from its combined group.
+        function setCellValue(classKey, day, period, subject, teacher, combinedGroup) {
             if (viewMode === 'master') {
                 showToast('Switch to Working Space to edit timetable', 'error');
                 return;
@@ -3395,7 +4073,7 @@ END:VTIMEZONE`;
                 if (!appData.dateOverrides) appData.dateOverrides = {};
                 if (!appData.dateOverrides[day]) appData.dateOverrides[day] = {};
                 if (!appData.dateOverrides[day][classKey]) appData.dateOverrides[day][classKey] = {};
-                appData.dateOverrides[day][classKey][period] = { subject: subject || null, teacher: teacher || null };
+                appData.dateOverrides[day][classKey][period] = { subject: subject || null, teacher: teacher || null, combined: combinedGroup || null };
                 return;
             }
 
@@ -3403,7 +4081,25 @@ END:VTIMEZONE`;
             pushHistory();
             if (!appData.timetable[classKey]) appData.timetable[classKey] = {};
             if (!appData.timetable[classKey][day]) appData.timetable[classKey][day] = {};
-            appData.timetable[classKey][day][period] = { subject: subject || null, teacher: teacher || null };
+            appData.timetable[classKey][day][period] = { subject: subject || null, teacher: teacher || null, combined: combinedGroup || null };
+        }
+
+        // Writes one cell directly into BOTH the Working timetable and the Master
+        // timetable, bypassing the "Master is locked" guard that setCellValue/
+        // clearCell enforce for manual, on-screen edits. Bulk CSV import is a
+        // data-loading operation, not a manual edit — it's expected to produce the
+        // exact same result whether the user happened to be in Working Space or
+        // Master Schedule when they clicked "Import CSV", so it always writes both
+        // tables together regardless of the current viewMode.
+        function importSetCellBoth(classKey, day, period, subject, teacher) {
+            const val = { subject: subject || null, teacher: teacher || null, combined: null };
+            if (!appData.timetable[classKey]) appData.timetable[classKey] = {};
+            if (!appData.timetable[classKey][day]) appData.timetable[classKey][day] = {};
+            appData.timetable[classKey][day][period] = val;
+
+            if (!masterTimetable[classKey]) masterTimetable[classKey] = {};
+            if (!masterTimetable[classKey][day]) masterTimetable[classKey][day] = {};
+            masterTimetable[classKey][day][period] = { subject: val.subject, teacher: val.teacher, combined: null };
         }
 
         function clearCell(classKey, day, period) {
@@ -3532,16 +4228,24 @@ END:VTIMEZONE`;
                         if (val.subject && val.teacher) {
                             const tKey = val.teacher + '|' + d + '|' + key;
                             if (!teacherSlots[tKey]) teacherSlots[tKey] = [];
-                            teacherSlots[tKey].push(c);
+                            teacherSlots[tKey].push({ cls: c, combined: val.combined || null });
                         }
                     }
                 });
             });
             Object.keys(teacherSlots).forEach(k => {
-                if (teacherSlots[k].length > 1) {
+                const entries = teacherSlots[k];
+                if (entries.length > 1) {
+                    // If every class sharing this teacher/day/period was tagged with the
+                    // SAME combined-group id, this is an intentional Combined Class
+                    // assignment, not a scheduling conflict — skip it.
+                    const firstGroup = entries[0].combined;
+                    const allSameGroup = !!firstGroup && entries.every(e => e.combined === firstGroup);
+                    if (allSameGroup) return;
+
                     const parts = k.split('|');
                     conflicts.push({ type: 'teacher', teacher: parts[0], day: parts[1], period: parts[2],
-                        classes: teacherSlots[k] });
+                        classes: entries.map(e => e.cls) });
                 }
             });
             return conflicts;
@@ -3706,10 +4410,54 @@ END:VTIMEZONE`;
         // ───────────── GRID VIEW MODE (Compact / General / Detailed) ─────────────
         const GRID_VIEW_PREF_KEY = 'timetableApp_gridViewMode';
         let gridViewMode = 'general'; // 'compact' | 'general' | 'detailed'
-        const GRID_VIEW_LABELS = { compact: '🔍 View: Compact ▾', general: '🔍 View: General ▾', detailed: '🔍 View: Detailed ▾' };
+        const GRID_VIEW_LABELS = { compact: '🔍 View Density: Compact ▾', general: '🔍 View Density: Comfortable ▾', detailed: '👨‍🏫 View Density: Detailed Elder ▾' };
+
+        // ───────────── GENERIC TOOLBAR DROPDOWNS (Manage Data / Import-Export / Operations) ─────────────
+        // Shared open/close toggle for the grouped toolbar menus. Each trigger button
+        // calls toggleGenericMenu(event, '<menuId>'); any menu item that navigates away
+        // (opens a modal, etc.) should call closeAllGenericMenus() first so the panel
+        // doesn't stay open behind the modal.
+        const GENERIC_MENU_IDS = ['manageDataMenu', 'importExportMenu', 'operationsMenu'];
+        function toggleGenericMenu(e, menuId) {
+            e.stopPropagation();
+            const menu = document.getElementById(menuId);
+            if (!menu) return;
+            const opening = !menu.classList.contains('open');
+            closeAllGenericMenus();
+            if (opening) menu.classList.add('open');
+        }
+        function closeAllGenericMenus() {
+            GENERIC_MENU_IDS.forEach(id => {
+                const menu = document.getElementById(id);
+                if (menu) menu.classList.remove('open');
+            });
+        }
+        document.addEventListener('click', function(e) {
+            GENERIC_MENU_IDS.forEach(id => {
+                const menu = document.getElementById(id);
+                if (menu && menu.classList.contains('open') && !menu.contains(e.target) && !(e.target.closest && e.target.closest('.subst-wrap') && e.target.closest('.subst-wrap').contains(menu))) {
+                    menu.classList.remove('open');
+                }
+            });
+        });
+
+        // Dedicated direct-jump: opens the Teacher Workload Register, switching into
+        // Master Schedule (read-only) mode first if the user is currently editing in
+        // Working Space, since the register only lives inside the Master Elder View.
+        function jumpToWorkloadRegister() {
+            closeAllGenericMenus();
+            if (viewMode !== 'master') {
+                toggleViewMode(); // toggleViewMode() already calls renderMasterElderView() via render()
+            }
+            setTimeout(() => {
+                const el = document.getElementById('teacherWorkloadSection');
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 60);
+        }
 
         function toggleViewMenu(e) {
             e.stopPropagation();
+            closeAllGenericMenus();
             document.getElementById('viewMenu').classList.toggle('open');
         }
         function closeViewMenu() {
@@ -3722,6 +4470,76 @@ END:VTIMEZONE`;
             }
         });
 
+        // ───────────── GENERAL/COMPACT VIEW — CLASS FILTER ─────────────
+        // By default the General/Compact grid shows every class (generalClassFilterKeys
+        // stays null). Picking a subset here narrows render()'s row list to just those
+        // classes, without touching Detailed View's separate picker/tabs.
+        let generalClassFilterKeys = null; // null = show all; array = show only these keys
+
+        function toggleClassFilterMenu(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('classFilterMenu');
+            const opening = !menu.classList.contains('open');
+            if (opening) {
+                document.getElementById('classFilterList').innerHTML = buildClassFilterListHTML();
+            }
+            menu.classList.toggle('open');
+        }
+        function closeClassFilterMenu() {
+            const menu = document.getElementById('classFilterMenu');
+            if (menu) menu.classList.remove('open');
+        }
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('classFilterMenu');
+            if (menu && menu.classList.contains('open') && !menu.contains(e.target) && e.target.id !== 'btnClassFilter') {
+                menu.classList.remove('open');
+            }
+        });
+
+        function buildClassFilterListHTML() {
+            const classKeys = getClassKeys().slice().sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+            if (classKeys.length === 0) return '<div class="elder-empty" style="padding:10px;">No classes yet.</div>';
+            const checked = (k) => (generalClassFilterKeys === null || generalClassFilterKeys.includes(k));
+            return classKeys.map(k =>
+                `<label class="detail-check-item"><input type="checkbox" class="class-filter-checkbox" value="${escAttr(k)}" ${checked(k) ? 'checked' : ''} onchange="onClassFilterCheckboxChange()"><span>${escHTML(k)}</span></label>`
+            ).join('');
+        }
+
+        function onClassFilterCheckboxChange() {
+            const allKeys = getClassKeys();
+            const checkedKeys = Array.from(document.querySelectorAll('#classFilterMenu .class-filter-checkbox:checked')).map(cb => cb.value);
+            // Checking every box is equivalent to "show all" — collapse back to null so
+            // newly-added classes show up automatically instead of needing re-checking.
+            generalClassFilterKeys = (checkedKeys.length === allKeys.length) ? null : checkedKeys;
+            updateClassFilterButtonLabel();
+            render();
+        }
+
+        function setAllClassFilterCheckboxes(checked) {
+            generalClassFilterKeys = checked ? null : [];
+            document.getElementById('classFilterList').innerHTML = buildClassFilterListHTML();
+            updateClassFilterButtonLabel();
+            render();
+        }
+
+        function updateClassFilterButtonLabel() {
+            const btn = document.getElementById('btnClassFilter');
+            if (!btn) return;
+            if (generalClassFilterKeys === null) {
+                btn.textContent = '🏷️ Filter Classes: All ▾';
+                btn.classList.remove('active');
+            } else {
+                btn.textContent = `🏷️ Filter Classes: ${generalClassFilterKeys.length} Selected ▾`;
+                btn.classList.add('active');
+            }
+        }
+
+        function getVisibleClassList() {
+            const full = getClassList();
+            if (generalClassFilterKeys === null) return full;
+            return full.filter(c => generalClassFilterKeys.includes(getClassKey(c.class, c.section)));
+        }
+
         function setGridViewMode(mode, skipSave) {
             if (!['compact', 'general', 'detailed'].includes(mode)) mode = 'general';
             gridViewMode = mode;
@@ -3729,11 +4547,15 @@ END:VTIMEZONE`;
             const btn = document.getElementById('btnViewToggle');
             const timetableEl = document.getElementById('timetable');
             const detailEl = document.getElementById('detailedTeacherView');
+            const classFilterWrap = document.getElementById('classFilterWrap');
             if (btn) {
                 btn.textContent = GRID_VIEW_LABELS[mode];
                 btn.classList.toggle('active', mode !== 'general');
             }
             if (wrap) wrap.classList.toggle('comfortable-zoom', mode === 'general');
+            // The class filter only affects the General/Compact grid, so hide its button
+            // in Detailed View, where it wouldn't visibly do anything.
+            if (classFilterWrap) classFilterWrap.style.display = (mode === 'detailed') ? 'none' : '';
 
             if (viewMode === 'working') {
                 if (mode === 'detailed') {
@@ -3743,6 +4565,10 @@ END:VTIMEZONE`;
                 } else {
                     if (detailEl) detailEl.style.display = 'none';
                     if (timetableEl) timetableEl.style.display = '';
+                    // Compact and Comfortable use different table structures (Comfortable
+                    // pivots periods/classes) — a full re-render is needed whenever we
+                    // switch between them, not just a CSS zoom-class toggle.
+                    if (typeof render === 'function') render();
                 }
             }
             if (!skipSave) {
@@ -3872,6 +4698,18 @@ END:VTIMEZONE`;
             const pCount = getPeriodsPerDay();
             const periodKeys = getAllPeriodKeys();
             const classList = getClassList();
+            // Only the General/Compact grid's visible ROWS respect the class filter —
+            // stats, sidebar, and conflict counts below still use the full classList so
+            // they keep reflecting the whole schedule regardless of what's filtered in view.
+            const visibleClassList = getVisibleClassList();
+            updateClassFilterButtonLabel();
+            // In General view, once the user has narrowed the Classes filter down to
+            // specific classes, there are far fewer rows on screen — use that extra
+            // room to show the full subject name and full teacher ID instead of the
+            // abbreviated codes.
+            const showFullCellInfo = gridViewMode === 'general' && generalClassFilterKeys !== null;
+            const tableWrapEl = document.getElementById('tableWrap');
+            if (tableWrapEl) tableWrapEl.classList.toggle('full-info-zoom', showFullCellInfo);
             const conflicts = findConflicts();
             // PERF: build a lookup Set once per render instead of letting isConflict()
             // re-run the full O(n) findConflicts() scan for every single cell below.
@@ -3887,11 +4725,10 @@ END:VTIMEZONE`;
                 currentViewDays = DAYS; // default day strings
             }
 
-            const thead = document.getElementById('tableHead');
-            let headerHtml = '<tr>';
-            headerHtml += '<th class="col-class" rowspan="2">Class</th>';
-            headerHtml += '<th class="col-section" rowspan="2">Sec</th>';
-            headerHtml += '<th class="col-teacher" rowspan="2">Teacher</th>';
+            // Working Space + Comfortable density only: periods (grouped by day) become
+            // rows, classes become columns. Compact, Detailed, and Master Schedule all
+            // keep the original class-rows / period-columns layout.
+            const isPivotMode = (viewMode === 'working' && gridViewMode === 'general');
 
             // Build mapping for Column Headers
             let viewLabels = {};
@@ -3901,33 +4738,101 @@ END:VTIMEZONE`;
                 viewLabels = DAY_SHORT;
             }
 
-            periodKeys.forEach((p, pi) => {
-                const timeStr = getPeriodDisplay(p);
-                const sepCls = pi !== 0 ? ' period-group-sep' : '';
-                headerHtml += `<th class="col-period${sepCls}" colspan="${currentViewDays.length}">${p}${timeStr ? '<span class="period-time">'+timeStr+'</span>' : ''}</th>`;
-                const pNum = parseInt(p.replace('P', ''), 10);
-                getBreaksAfterPeriod(pNum).forEach(b => {
-                    headerHtml += `<th class="col-break" rowspan="2">${b.name}${b.start ? '<span class="period-time">'+b.start+'–'+b.end+'</span>' : ''}</th>`;
-                });
-            });
-            headerHtml += '</tr><tr>';
+            // Shared cell-builder used by BOTH the normal (class-rows) and pivoted
+            // (period-rows) layouts — guarantees identical data-key/data-day/data-period
+            // attributes and conflict/selection/filter styling either way, so
+            // attachCellEvents() needs zero changes to support the pivoted grid.
+            function buildPeriodCellHtml(key, day, period, sepClass) {
+                const shCls = isStudyHourKey(period) ? ' col-studyhour' : '';
+                const clsTd = 'col-period' + (sepClass || '') + shCls;
 
-            periodKeys.forEach((p, pi) => {
-                currentViewDays.forEach((d, di) => {
-                    const sepCls = (pi !== 0 && di === 0) ? ' period-group-sep' : '';
-                    headerHtml += `<th class="col-period${sepCls}">${viewLabels[d]}</th>`;
+                // USE THE OVERRIDABLE ACTIVE GETTER HERE
+                const val = getCellValueActive(key, day, period);
+                const subj = val.subject;
+                const tchr = val.teacher;
+                const subjMin = getSubjectMinimal(subj);
+                const tchrMin = getTeacherMinimal(tchr);
+                const filled = !!(subj && tchr);
+                const isEvtCell = tchr === 'EVENT';
+                const conflict = !isEvtCell && conflictSet.has(key + '|' + day + '|' + period);
+                const isCombined = !isEvtCell && !conflict && !!val.combined;
+                const selected = isCellSelected(key, day, period);
+                const substMarked = isSubstituted(key, day, period);
+                const isExchangeOrigin = !!exchangePickState && exchangePickState.classKey === key &&
+                    exchangePickState.day === day && exchangePickState.period === period;
+                let filterClass = '';
+                if (activeTeacherFilter) {
+                    if (tchr === activeTeacherFilter) filterClass = ' filtered-match';
+                    else filterClass = ' filtered-dim';
+                }
+                const contentClass = 'cell-content' + (filled ? ' filled' : ' empty') +
+                    (isEvtCell ? ' event-cell' : (conflict ? ' conflict' : (isCombined ? ' combined-cell' : ''))) +
+                    (selected ? ' selected-cell' : '') + (substMarked ? ' subst-marked' : '') + filterClass +
+                    (isStudyHourKey(period) ? ' studyhour-cell' : '') + (isExchangeOrigin ? ' exchange-pick-origin' : '');
+                const titleText = filled ? `${subj} / ${getSubjectName(subj)} — ${tchr} / ${getTeacherName(tchr)}${substMarked ? ' (substituted)' : ''}${isCombined ? ' (combined class)' : ''}` : 'empty';
+                const subjDisplay = showFullCellInfo ? getSubjectName(subj) : subjMin;
+                const tchrDisplay = showFullCellInfo ? tchr : tchrMin;
+                return `<td class="${clsTd}" data-key="${escAttr(key)}" data-day="${escAttr(day)}" data-period="${escAttr(period)}">
+                                    <div class="${contentClass}" title="${escAttr(titleText)}">
+                                        ${filled ? `<span class="subj">${escHTML(subjDisplay)}</span><span class="tchr">${escHTML(tchrDisplay)}</span>` : '<span style="color:#cbd5e1;font-size:11px;">·</span>'}
+                                    </div>
+                                </td>`;
+            }
+
+            const thead = document.getElementById('tableHead');
+            let headerHtml = '<tr>';
+
+            if (isPivotMode) {
+                // ── PIVOTED HEADER: Period / Day row-label columns + one column per class ──
+                headerHtml += '<th class="col-period-label">Period</th>';
+                headerHtml += '<th class="col-day-label">Day</th>';
+                visibleClassList.forEach((clsObj) => {
+                    const key = getClassKey(clsObj.class, clsObj.section);
+                    const teacherId = getClassTeacher(key);
+                    const teacherMin = teacherId ? getTeacherMinimal(teacherId) : '';
+                    const teacherName = teacherId ? getTeacherName(teacherId) : '';
+                    headerHtml += `<th class="col-class-pivot" title="${escAttr(teacherName)}">${escHTML(clsObj.class)}-${escHTML(clsObj.section)}${teacherMin ? `<span class="col-class-pivot-teacher">${escHTML(teacherMin)}</span>` : ''}</th>`;
                 });
-            });
-            headerHtml += '</tr>';
+                headerHtml += '</tr>';
+            } else {
+                // ── NORMAL HEADER: Class/Sec/Teacher row-label columns + period/day columns ──
+                headerHtml += '<th class="col-class" rowspan="2">Class</th>';
+                headerHtml += '<th class="col-section" rowspan="2">Sec</th>';
+                headerHtml += '<th class="col-teacher" rowspan="2">Teacher</th>';
+
+                periodKeys.forEach((p, pi) => {
+                    const timeStr = getPeriodDisplay(p);
+                    const sepCls = pi !== 0 ? ' period-group-sep' : '';
+                    const shCls = isStudyHourKey(p) ? ' col-studyhour' : '';
+                    headerHtml += `<th class="col-period${sepCls}${shCls}" colspan="${currentViewDays.length}">${getPeriodLabel(p)}${timeStr ? '<span class="period-time">'+timeStr+'</span>' : ''}</th>`;
+                    const pNum = parseInt(p.replace('P', ''), 10);
+                    getBreaksAfterPeriod(pNum).forEach(b => {
+                        headerHtml += `<th class="col-break" rowspan="2">${b.name}${b.start ? '<span class="period-time">'+b.start+'–'+b.end+'</span>' : ''}</th>`;
+                    });
+                });
+                headerHtml += '</tr><tr>';
+
+                periodKeys.forEach((p, pi) => {
+                    currentViewDays.forEach((d, di) => {
+                        const sepCls = (pi !== 0 && di === 0) ? ' period-group-sep' : '';
+                        const shCls = isStudyHourKey(p) ? ' col-studyhour' : '';
+                        headerHtml += `<th class="col-period${sepCls}${shCls}">${viewLabels[d]}</th>`;
+                    });
+                });
+                headerHtml += '</tr>';
+            }
             thead.innerHTML = headerHtml;
 
             const tbody = document.getElementById('tableBody');
             let bodyHtml = '';
 
+            const emptyColspan = isPivotMode
+                ? (2 + Math.max(visibleClassList.length, 1))
+                : (3 + periodKeys.length * currentViewDays.length + (appData.settings.breaks || []).length);
+
             if (classList.length === 0) {
-                const breakColCount = (appData.settings.breaks || []).length;
                 bodyHtml =
-                    `<tr><td colspan="${3 + periodKeys.length * currentViewDays.length + breakColCount}" style="text-align:center;padding:30px 0;color:#94a3b8;font-size:13px;">No classes yet. Add classes via the 📋 Classes button.</td></tr>`;
+                    `<tr><td colspan="${emptyColspan}" style="text-align:center;padding:30px 0;color:#94a3b8;font-size:13px;">No classes yet. Add classes via the 📋 Classes button.</td></tr>`;
                 tbody.innerHTML = bodyHtml;
                 updateStats(conflicts.length);
                 updateSidebar();
@@ -3940,62 +4845,78 @@ END:VTIMEZONE`;
                 return;
             }
 
-            classList.forEach((clsObj) => {
-                const cls = clsObj.class;
-                const sec = clsObj.section;
-                const key = getClassKey(cls, sec);
-                const teacherId = getClassTeacher(key);
-                const teacherMin = teacherId ? getTeacherMinimal(teacherId) : '—';
-                const teacherName = teacherId ? getTeacherName(teacherId) : '';
+            if (visibleClassList.length === 0) {
+                bodyHtml =
+                    `<tr><td colspan="${emptyColspan}" style="text-align:center;padding:30px 0;color:#94a3b8;font-size:13px;">No classes match the current filter. <a href="#" onclick="setAllClassFilterCheckboxes(true); return false;" style="color:#2563eb;">Show all classes</a></td></tr>`;
+                tbody.innerHTML = bodyHtml;
+                updateStats(conflicts.length);
+                updateSidebar();
+                updateBottomBar();
+                document.getElementById('totalConflicts').textContent = conflicts.length;
+                saveData();
+                return;
+            }
 
-                bodyHtml += `<tr data-key="${escAttr(key)}">`;
-                bodyHtml += `<td class="col-class">${escHTML(cls)}</td>`;
-                bodyHtml += `<td class="col-section">${escHTML(sec)}</td>`;
-                bodyHtml +=
-                    `<td class="col-teacher" data-key="${escAttr(key)}" title="${escAttr(teacherName)}" style="cursor:pointer;">${escHTML(teacherMin)}</td>`;
-
+            if (isPivotMode) {
+                // ── PIVOTED BODY: one row per (period, day); classes become the columns ──
                 periodKeys.forEach((p, pi) => {
-                    let firstCell = true;
+                    const timeStr = getPeriodDisplay(p);
+                    const shCls = isStudyHourKey(p) ? ' col-studyhour' : '';
+                    const rowSepCls = pi !== 0 ? ' period-row-sep' : '';
 
                     currentViewDays.forEach((d, di) => {
-                        const needsSep = pi !== 0 && firstCell;
-                        const clsTd = needsSep ? 'col-period period-group-sep' : 'col-period';
-                        firstCell = false;
-
-                        // USE THE OVERRIDABLE ACTIVE GETTER HERE
-                        const val = getCellValueActive(key, d, p);
-                        const subj = val.subject;
-                        const tchr = val.teacher;
-                        const subjMin = getSubjectMinimal(subj);
-                        const tchrMin = getTeacherMinimal(tchr);
-                        const filled = !!(subj && tchr);
-                        const isEvtCell = tchr === 'EVENT';
-                        const conflict = !isEvtCell && conflictSet.has(key + '|' + d + '|' + p);
-                        const selected = isCellSelected(key, d, p);
-                        const substMarked = isSubstituted(key, d, p);
-                        let filterClass = '';
-                        if (activeTeacherFilter) {
-                            if (tchr === activeTeacherFilter) filterClass = ' filtered-match';
-                            else filterClass = ' filtered-dim';
+                        bodyHtml += '<tr>';
+                        if (di === 0) {
+                            bodyHtml += `<th class="col-period-label${rowSepCls}${shCls}" rowspan="${currentViewDays.length}">${getPeriodLabel(p)}${timeStr ? '<span class="period-time">'+timeStr+'</span>' : ''}</th>`;
                         }
-                        const contentClass = 'cell-content' + (filled ? ' filled' : ' empty') +
-                            (isEvtCell ? ' event-cell' : (conflict ? ' conflict' : '')) +
-                            (selected ? ' selected-cell' : '') + (substMarked ? ' subst-marked' : '') + filterClass;
-                        const titleText = filled ? `${subj} / ${getSubjectName(subj)} — ${tchr} / ${getTeacherName(tchr)}${substMarked ? ' (substituted)' : ''}` : 'empty';
-                        bodyHtml += `<td class="${clsTd}" data-key="${escAttr(key)}" data-day="${escAttr(d)}" data-period="${escAttr(p)}">
-                                    <div class="${contentClass}" title="${escAttr(titleText)}">
-                                        ${filled ? `<span class="subj">${escHTML(subjMin)}</span><span class="tchr">${escHTML(tchrMin)}</span>` : '<span style="color:#cbd5e1;font-size:11px;">·</span>'}
-                                    </div>
-                                </td>`;
+                        bodyHtml += `<td class="col-day-label${di === 0 ? rowSepCls : ''}${shCls}">${viewLabels[d]}</td>`;
+
+                        visibleClassList.forEach((clsObj) => {
+                            const key = getClassKey(clsObj.class, clsObj.section);
+                            bodyHtml += buildPeriodCellHtml(key, d, p, di === 0 ? rowSepCls : '');
+                        });
+
+                        bodyHtml += '</tr>';
                     });
 
                     const pNum = parseInt(p.replace('P', ''), 10);
                     getBreaksAfterPeriod(pNum).forEach(b => {
-                        bodyHtml += `<td class="col-break">${b.name}</td>`;
+                        bodyHtml += `<tr class="col-break-row"><td class="col-break" colspan="${2 + visibleClassList.length}">${b.name}${b.start ? ' <span class="period-time">'+b.start+'–'+b.end+'</span>' : ''}</td></tr>`;
                     });
                 });
-                bodyHtml += '</tr>';
-            });
+            } else {
+                // ── NORMAL BODY: one row per class; periods/days become the columns ──
+                visibleClassList.forEach((clsObj) => {
+                    const cls = clsObj.class;
+                    const sec = clsObj.section;
+                    const key = getClassKey(cls, sec);
+                    const teacherId = getClassTeacher(key);
+                    const teacherMin = teacherId ? getTeacherMinimal(teacherId) : '—';
+                    const teacherName = teacherId ? getTeacherName(teacherId) : '';
+
+                    bodyHtml += `<tr data-key="${escAttr(key)}">`;
+                    bodyHtml += `<td class="col-class">${escHTML(cls)}</td>`;
+                    bodyHtml += `<td class="col-section">${escHTML(sec)}</td>`;
+                    bodyHtml +=
+                        `<td class="col-teacher" data-key="${escAttr(key)}" title="${escAttr(teacherName)}" style="cursor:pointer;">${escHTML(teacherMin)}</td>`;
+
+                    periodKeys.forEach((p, pi) => {
+                        let firstCell = true;
+
+                        currentViewDays.forEach((d, di) => {
+                            const needsSep = pi !== 0 && firstCell;
+                            firstCell = false;
+                            bodyHtml += buildPeriodCellHtml(key, d, p, needsSep ? ' period-group-sep' : '');
+                        });
+
+                        const pNum = parseInt(p.replace('P', ''), 10);
+                        getBreaksAfterPeriod(pNum).forEach(b => {
+                            bodyHtml += `<td class="col-break">${b.name}</td>`;
+                        });
+                    });
+                    bodyHtml += '</tr>';
+                });
+            }
 
             tbody.innerHTML = bodyHtml;
 
@@ -4029,11 +4950,28 @@ END:VTIMEZONE`;
                     const day = this.dataset.day;
                     const period = this.dataset.period;
                     if (!key || !day || !period) return;
+                    if (exchangePickState) {
+                        handleExchangePickClick(key, day, period);
+                        return;
+                    }
                     if (isSelectionMode) {
                         toggleCellSelection(key, day, period);
                         return;
                     }
                     startEditing(key, day, period, this);
+                });
+                td.addEventListener('dblclick', function(e) {
+                    if (viewMode === 'master' || isSelectionMode || exchangePickState) return;
+                    if (e.target.closest('.cell-editor')) return;
+                    const key = this.dataset.key;
+                    const day = this.dataset.day;
+                    const period = this.dataset.period;
+                    if (!key || !day || !period) return;
+                    // The single click that precedes this dblclick already opened the
+                    // inline single-cell editor via startEditing() above — close it so
+                    // it doesn't sit open underneath the quick-action modal.
+                    stopEditing();
+                    openCellQuickActionModal(key, day, period);
                 });
                 td.addEventListener('contextmenu', function(e) {
                     e.preventDefault();
@@ -4165,15 +5103,20 @@ END:VTIMEZONE`;
 
             const btn = document.getElementById('btnMultipleDays');
             const banner = document.getElementById('selectionBanner');
+            const okCount = document.getElementById('selectionOkCount');
 
             if (isSelectionMode) {
                 btn.className = 'success';
                 btn.textContent = `✅ OK (${selectedCells.length})`;
+                if (okCount) okCount.textContent = selectedCells.length;
                 banner.style.display = 'flex';
                 showToast('Batch selection mode active. Click cells to select.');
+                // Refresh so Detailed View cell tooltips/selection styling reflect
+                // selection mode immediately, without needing a first click.
+                render();
             } else {
                 btn.className = 'primary';
-                btn.textContent = '📅 Multiple Days';
+                btn.textContent = '📦 Batch Multi-Cell Assign';
                 banner.style.display = 'none';
                 selectedCells = [];
                 render();
@@ -4194,6 +5137,8 @@ END:VTIMEZONE`;
 
             const btn = document.getElementById('btnMultipleDays');
             btn.textContent = `✅ OK (${selectedCells.length})`;
+            const okCount = document.getElementById('selectionOkCount');
+            if (okCount) okCount.textContent = selectedCells.length;
             render();
         }
 
@@ -4221,6 +5166,12 @@ END:VTIMEZONE`;
             const html = `
                 <h3>⚡ Assign Multiple Cells <span class="badge">${selectedCells.length} Selected</span></h3>
                 <p style="font-size:10.5px;color:#64748b;margin-bottom:8px;">Choose a Teacher or Subject to fill all selected slots.</p>
+
+                <label style="display:flex;align-items:center;gap:7px;padding:6px 9px;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;margin-bottom:8px;cursor:pointer;" title="Selected cells are treated as one joint session shared across different classes/sections — filled yellow, and the shared teacher won't be flagged as a conflict.">
+                    <input type="checkbox" id="batchCombinedClass" style="width:14px;height:14px;flex-shrink:0;margin:0;" />
+                    <span style="font-weight:600;color:#92400e;font-size:11.5px;">🔗 Combined Class</span>
+                    <span style="font-size:9.5px;color:#b45309;margin-left:auto;">shown in yellow · no conflict</span>
+                </label>
 
                 <div style="background:#f8fafc;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;">
                     <label style="font-weight:600;margin-top:0;">Option 1: Select Teacher (Auto-assigns Subject)</label>
@@ -4314,11 +5265,23 @@ END:VTIMEZONE`;
                 return;
             }
 
-            selectedCells.forEach(cell => {
-                setCellValue(cell.key, cell.day, cell.period, finalSubject, finalTeacher);
-            });
+            const isCombined = document.getElementById('batchCombinedClass').checked;
+            // Give this batch a unique group id so findConflicts() can recognize these
+            // specific cells as "combined together" and not flag the shared teacher as
+            // double-booked. Each batch assignment gets its own id, so combining classes
+            // A+B in one pass and C+D in another pass stays independent.
+            const combinedGroupId = isCombined ? ('combo_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8)) : null;
 
-            showToast(`Assigned ${getTeacherName(finalTeacher)} to ${selectedCells.length} cells`, 'success');
+            // Wrap every cell update in one transaction so the whole batch becomes a
+            // single undo step — one Ctrl+Z reverts all selected cells together, not
+            // one cell at a time.
+            beginTransaction();
+            selectedCells.forEach(cell => {
+                setCellValue(cell.key, cell.day, cell.period, finalSubject, finalTeacher, combinedGroupId);
+            });
+            endTransaction();
+
+            showToast(`Assigned ${getTeacherName(finalTeacher)} to ${selectedCells.length} cells${isCombined ? ' as a combined class' : ''}`, 'success');
 
             closeModal();
             toggleSelectionMode(false);
@@ -4724,11 +5687,35 @@ END:VTIMEZONE`;
                        <ul>
                         <li>Cells outlined in <b>red</b> mean a conflict — usually the same teacher assigned to two
                             classes at the same time.</li>
+                        <li>Cells outlined in <b>yellow 🔗</b> are a <b>Combined Class</b> — the same teacher was
+                            deliberately assigned across two or more classes/sections at once (e.g. joint assembly,
+                            games period). See "Combined Classes" below.</li>
                         <li><b>📅 Multiple Days</b> turns on selection mode so you can click several cells and edit
                             them all at once (e.g. assign the same subject to a class every Monday).</li>
                         <li>Right-click a cell for Copy / Paste / Clear / Apply to all days.</li>
                         <li>Clicking a class's <b>Teacher</b> column (left side) lets you set that class's homeroom/
                             class-teacher.</li>
+                       </ul>`
+            },
+            {
+                id: 'combined-classes',
+                icon: '🔗',
+                title: 'Combined Classes',
+                body: `Use this when several classes or sections genuinely share one teacher/subject for the same
+                       slot — e.g. a joint assembly, games period, or two small sections merged into one lesson.
+                       Normally the tool would flag that shared teacher as a <b>red</b> conflict; Combined Class
+                       tells it this is intentional.
+                       <ul>
+                        <li>Click <b>📅 Multiple Days</b> to enter selection mode, then click each cell that belongs
+                            to the combined session — these can be in different classes/sections, as long as they're
+                            the same day and period.</li>
+                        <li>Click <b>OK</b> on the toolbar to open the assign dialog, tick <b>🔗 Combined Class</b>,
+                            then choose the teacher (or subject).</li>
+                        <li>Those cells fill in <b>yellow</b> instead of red, and are excluded from conflict
+                            detection — as long as they're all part of the same combined batch.</li>
+                        <li>Editing one of those cells individually afterward (via the normal single-cell editor)
+                            detaches just that cell from the group — it goes back to being checked normally for
+                            conflicts.</li>
                        </ul>`
             },
             {
@@ -5081,6 +6068,9 @@ SUGGESTED QUESTIONS TO TRY ASKING
                     if (headers.length < 3 || headers[0] !== expectedHeader[0] || headers[1] !== expectedHeader[1]) {
                         showToast('Invalid timetable CSV header', 'error');
                     } else {
+                        // Single undo step for the whole import (mirrors the batch-assign
+                        // pattern) instead of one history snapshot per cell.
+                        beginTransaction();
                         let importedRows = 0;
                         const hasTeacherCol = headers[2] && headers[2].trim().toUpperCase() === 'CLASSTEACHERID';
                         const periodStartIdx = hasTeacherCol ? 3 : 2;
@@ -5091,12 +6081,17 @@ SUGGESTED QUESTIONS TO TRY ASKING
                                 appData.settings.periodsPerDay = targetPeriods;
                                 getClassKeys().forEach(c => {
                                     if (!appData.timetable[c]) appData.timetable[c] = {};
+                                    if (!masterTimetable[c]) masterTimetable[c] = {};
                                     DAYS.forEach(d => {
                                         if (!appData.timetable[c][d]) appData.timetable[c][d] = {};
+                                        if (!masterTimetable[c][d]) masterTimetable[c][d] = {};
                                         for (let p = 1; p <= targetPeriods; p++) {
                                             const key = 'P' + p;
                                             if (!appData.timetable[c][d][key]) {
                                                 appData.timetable[c][d][key] = { subject: null, teacher: null };
+                                            }
+                                            if (!masterTimetable[c][d][key]) {
+                                                masterTimetable[c][d][key] = { subject: null, teacher: null };
                                             }
                                         }
                                     });
@@ -5136,7 +6131,8 @@ SUGGESTED QUESTIONS TO TRY ASKING
                             row.slice(periodStartIdx).forEach((cell, index) => {
                                 const periodKey = 'P' + (index + 1);
                                 if (!cell || !cell.trim()) {
-                                    clearCell(key, day, periodKey);
+                                    // Bypasses the Master-locked guard — see importSetCellBoth.
+                                    importSetCellBoth(key, day, periodKey, null, null);
                                     return;
                                 }
                                 const parts = cell.split(':');
@@ -5157,14 +6153,17 @@ SUGGESTED QUESTIONS TO TRY ASKING
                                         minimalCode: subjectCode.slice(0, 2)
                                     };
                                 }
-                                setCellValue(key, day, periodKey, subjectCode, teacherId);
+                                // Writes into both Working and Master directly — an imported
+                                // CSV should produce an identical result in both spaces no
+                                // matter which one was active when Import was clicked.
+                                importSetCellBoth(key, day, periodKey, subjectCode, teacherId);
                             });
                             importedRows++;
                         });
 
-                        masterTimetable = JSON.parse(JSON.stringify(appData.timetable));
+                        endTransaction();
 
-                        showToast('Imported ' + importedRows + ' timetable rows as Master Timetable');
+                        showToast('Imported ' + importedRows + ' timetable rows into both Working and Master Schedule');
                         render();
                     }
                 }
@@ -5292,7 +6291,7 @@ SUGGESTED QUESTIONS TO TRY ASKING
             const head = ['Days / Periods'];
             periodKeys.forEach(p => {
                 const t = getPeriodDisplay(p);
-                head.push(t ? (p + '\n' + t) : p);
+                head.push(t ? (getPeriodLabel(p) + '\n' + t) : getPeriodLabel(p));
                 const pNum = parseInt(p.replace('P', ''), 10);
                 getBreaksAfterPeriod(pNum).forEach(b => {
                     head.push(b.name + (b.start ? ('\n' + b.start + '–' + b.end) : ''));
@@ -5528,20 +6527,21 @@ SUGGESTED QUESTIONS TO TRY ASKING
         // ───────────── SETTINGS (period times) ─────────────
         function openSettings() {
             tempBreaks = JSON.parse(JSON.stringify(appData.settings.breaks || []));
+            tempStudyHours = JSON.parse(JSON.stringify(appData.settings.studyHours || []));
             let html = `
-                        <div style="margin:0 0 12px;padding:8px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;">
-                            <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#334155;cursor:pointer;">
+                        <div style="margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid #e2e8f0;">
+                            <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#334155;cursor:pointer;white-space:nowrap;" title="Applies to the timetable grid, imports/exports, and PDFs.">
                                 <input type="checkbox" id="includeSaturday" ${appData.settings.includeSaturday !== false ? 'checked' : ''} />
-                                🗓️ 6-day week (include Saturday)
+                                🗓️ 6-day week
                             </label>
-                            <p style="font-size:9.5px;color:#94a3b8;margin:4px 0 0;">Uncheck for a 5-day week (Monday–Friday only). Applies to the timetable grid, imports/exports, and PDFs.</p>
+                            <span style="display:inline-block;margin-top:3px;font-size:9.5px;color:#94a3b8;">${getPeriodsPerDay()} periods/day</span>
                         </div>
                         <h3>⏱️ Period Times</h3>
                         <p style="font-size:10.5px;color:#475569;margin-bottom:6px;">Set start and end time for each period.</p>
                         <div style="max-height:220px;overflow:auto;border:1px solid #e2e8f0;border-radius:6px;padding:6px 8px;margin-top:4px;">
                     `;
             const periodKeys = [];
-            for (let p = 1; p <= 10; p++) periodKeys.push('P' + p);
+            for (let p = 1; p <= getPeriodsPerDay(); p++) periodKeys.push('P' + p);
             periodKeys.forEach(p => {
                 const t = appData.settings.periodTimes && appData.settings.periodTimes[p];
                 const start = t ? t.start : '08:00';
@@ -5559,6 +6559,13 @@ SUGGESTED QUESTIONS TO TRY ASKING
                         </div>
                         <div style="margin-top:12px;">
                             <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <h4 style="margin:0;font-size:12px;color:#5b21b6;">📚 Study Hours <span style="font-weight:400;color:#94a3b8;">(assignable, like a real period)</span></h4>
+                                <button type="button" class="btn-secondary" style="font-size:10px;padding:3px 8px;" onclick="addStudyHourRow()">+ Add Study Hour</button>
+                            </div>
+                            <div id="studyHoursList" style="margin-top:6px;max-height:160px;overflow:auto;border:1px solid #ddd6fe;border-radius:6px;padding:6px 8px;background:#faf9ff;"></div>
+                        </div>
+                        <div style="margin-top:12px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
                                 <h4 style="margin:0;font-size:12px;color:#334155;">🍽️ Breaks / Lunch <span style="font-weight:400;color:#94a3b8;">(shown as extra columns)</span></h4>
                                 <button type="button" class="btn-secondary" style="font-size:10px;padding:3px 8px;" onclick="addBreakRow()">+ Add Break</button>
                             </div>
@@ -5571,6 +6578,98 @@ SUGGESTED QUESTIONS TO TRY ASKING
                     `;
             openModal(html);
             renderBreaksList();
+            renderStudyHoursList();
+        }
+
+        function renderStudyHoursList() {
+            const container = document.getElementById('studyHoursList');
+            if (!container) return;
+            const periodsCount = getPeriodsPerDay();
+            if (tempStudyHours.length === 0) {
+                container.innerHTML =
+                    '<div style="font-size:10.5px;color:#a78bfa;">No study hours added yet. Click "+ Add Study Hour" to insert one as its own assignable period.</div>';
+                return;
+            }
+            container.innerHTML = tempStudyHours.map((sh, i) => {
+                const periodOptions = Array.from({ length: periodsCount }, (_, k) => k + 1).map(n =>
+                    `<option value="P${n}" ${sh.afterPeriod === n ? 'selected' : ''}>P${n}</option>`).join('');
+                // A Study Hour can also stack directly after another Study Hour (any
+                // row except itself) — that's what lets you pile several in a row
+                // in a controlled order, instead of only anchoring to a period.
+                const shOptions = tempStudyHours
+                    .filter((other, j) => j !== i)
+                    .map(other => `<option value="${other.id}" ${sh.afterPeriod === other.id ? 'selected' : ''}>${escHTML(other.name)}</option>`)
+                    .join('');
+                return `
+                        <div class="studyhour-row" data-idx="${i}" style="display:flex;gap:5px;align-items:center;margin:4px 0;font-size:10.5px;flex-wrap:wrap;">
+                            <input type="text" class="sh-name" value="${sh.name}" placeholder="Name" style="width:74px;padding:2px 4px;border:1px solid #ddd6fe;border-radius:3px;font-size:10px;" />
+                            <span style="color:#64748b;">after</span>
+                            <select class="sh-after" style="padding:2px 3px;border:1px solid #ddd6fe;border-radius:3px;font-size:10px;max-width:110px;">
+                                <optgroup label="Period">${periodOptions}</optgroup>
+                                ${shOptions ? `<optgroup label="Study Hour">${shOptions}</optgroup>` : ''}
+                            </select>
+                            <input type="time" class="sh-start" value="${sh.start}" style="width:76px;padding:1px 3px;border:1px solid #ddd6fe;border-radius:3px;font-size:10px;" />
+                            <span>–</span>
+                            <input type="time" class="sh-end" value="${sh.end}" style="width:76px;padding:1px 3px;border:1px solid #ddd6fe;border-radius:3px;font-size:10px;" />
+                            <button type="button" onclick="removeStudyHourRow(${i})" title="Remove" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:13px;">✕</button>
+                        </div>
+                    `;
+            }).join('');
+        }
+
+        function syncStudyHoursFromDOM() {
+            const rows = document.querySelectorAll('#studyHoursList .studyhour-row');
+            const updated = [];
+            rows.forEach((row, i) => {
+                const rawAfter = row.querySelector('.sh-after').value;
+                // "P2" -> anchor to period 2 (number); "SH3" -> anchor to that Study Hour (string, stacks after it)
+                const afterPeriod = rawAfter.indexOf('P') === 0 && !isStudyHourKey(rawAfter)
+                    ? parseInt(rawAfter.slice(1), 10) || 1
+                    : rawAfter;
+                updated.push({
+                    id: tempStudyHours[i] && tempStudyHours[i].id, // preserve existing id — assigned fresh only in addStudyHourRow
+                    name: row.querySelector('.sh-name').value.trim() || 'Study Hour',
+                    afterPeriod: afterPeriod,
+                    start: row.querySelector('.sh-start').value || '00:00',
+                    end: row.querySelector('.sh-end').value || '00:00'
+                });
+            });
+            tempStudyHours = updated;
+        }
+
+        function addStudyHourRow() {
+            syncStudyHoursFromDOM();
+            const periodsCount = getPeriodsPerDay();
+            appData.settings.studyHourSeq = (appData.settings.studyHourSeq || 0) + 1;
+            // Default: stack directly after the last Study Hour you added, so
+            // repeatedly clicking "+ Add Study Hour" piles them up in order.
+            // With none yet, anchor after period 1 instead.
+            const defaultAnchor = tempStudyHours.length > 0
+                ? tempStudyHours[tempStudyHours.length - 1].id
+                : Math.min(1, periodsCount);
+            tempStudyHours.push({
+                id: 'SH' + appData.settings.studyHourSeq,
+                name: tempStudyHours.length === 0 ? 'Study Hr' : 'Study Hr ' + (tempStudyHours.length + 1),
+                afterPeriod: defaultAnchor,
+                start: '11:00',
+                end: '11:45'
+            });
+            renderStudyHoursList();
+        }
+
+        function removeStudyHourRow(idx) {
+            syncStudyHoursFromDOM();
+            const removed = tempStudyHours[idx];
+            tempStudyHours.splice(idx, 1);
+            if (removed) {
+                // Anything stacked directly after the one being removed gets
+                // re-pointed to whatever IT was anchored to, so deleting a middle
+                // Study Hour in a stack doesn't silently drop the ones after it.
+                tempStudyHours.forEach(sh => {
+                    if (sh.afterPeriod === removed.id) sh.afterPeriod = removed.afterPeriod;
+                });
+            }
+            renderStudyHoursList();
         }
 
         function renderBreaksList() {
@@ -5631,8 +6730,11 @@ SUGGESTED QUESTIONS TO TRY ASKING
         }
 
         function saveSettings() {
-            const times = {};
-            for (let p = 1; p <= 10; p++) {
+            // Keep any existing saved times (e.g. for periods beyond the current
+            // periods/day count) and only overwrite the ones actually edited in
+            // this modal, so lowering periods/day temporarily doesn't lose data.
+            const times = Object.assign({}, appData.settings.periodTimes || {});
+            for (let p = 1; p <= getPeriodsPerDay(); p++) {
                 const start = document.getElementById('timeStart_P' + p)?.value || '08:00';
                 const end = document.getElementById('timeEnd_P' + p)?.value || '08:45';
                 times['P' + p] = { start, end };
@@ -5640,6 +6742,13 @@ SUGGESTED QUESTIONS TO TRY ASKING
             appData.settings.periodTimes = times;
             syncBreaksFromDOM();
             appData.settings.breaks = tempBreaks;
+            syncStudyHoursFromDOM();
+            appData.settings.studyHours = tempStudyHours;
+            // Study Hour times live in periodTimes too, keyed by their own id,
+            // so getPeriodDisplay()/getAllPeriodKeys() treat them like any period.
+            tempStudyHours.forEach(sh => {
+                appData.settings.periodTimes[sh.id] = { start: sh.start, end: sh.end };
+            });
             appData.settings.includeSaturday = document.getElementById('includeSaturday')?.checked !== false;
             recomputeDays();
             getClassKeys().forEach(c => {
@@ -6491,6 +7600,7 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
                 closeModal();
                 document.getElementById('contextMenu').style.display = 'none';
                 stopEditing();
+                if (exchangePickState) cancelExchangePick();
             }
             if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
                 e.preventDefault();
@@ -6705,6 +7815,254 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
             return !substIsTeacherFreeAt(teacherId, day, period, excludeClassKey);
         }
 
+        // Total periods a teacher is assigned across the whole week (all classes,
+        // all days) — used as a rough "workload" indicator in the quick-action panel
+        // so a substitute/exchange partner can be picked fairly, not just by who's free.
+        function getTeacherWeeklyLoad(teacherId) {
+            let count = 0;
+            getClassKeys().forEach(key => {
+                DAYS.forEach(d => {
+                    getAllPeriodKeys().forEach(p => {
+                        if (getCellValue(key, d, p).teacher === teacherId) count++;
+                    });
+                });
+            });
+            return count;
+        }
+
+        // ───────────── DOUBLE-CLICK QUICK ACTION (Substitute / Exchange for one cell) ─────────────
+        // Triggered by double-clicking any period cell (compact grid or Detailed View).
+        // Scoped to the single class+day+period that was double-clicked, unlike the
+        // full Teacher Sub / Class Sub modals which plan across a whole day.
+        let quickActionState = { classKey: '', day: '', period: '', mode: 'menu', teacherB: '' };
+
+        function openCellQuickActionModal(classKey, day, period) {
+            if (viewMode === 'master') {
+                showToast('Switch to Working Space to edit cells', 'error');
+                return;
+            }
+            // Normalize a date-mode date string back to its day-of-week — Substitute/
+            // Exchange plan against the recurring weekly grid, same as the existing
+            // Teacher Sub / Class Sub modals.
+            const dayKey = /^\d{4}-\d{2}-\d{2}$/.test(day) ? getDayFromDate(day) : day;
+            quickActionState = { classKey, day: dayKey, period, mode: 'menu', teacherB: '' };
+            renderCellQuickActionModal();
+        }
+
+        function renderCellQuickActionModal() {
+            const { classKey, day, period, mode } = quickActionState;
+            const val = getCellValue(classKey, day, period);
+            const currentText = (val.subject && val.teacher) ?
+                `${escHTML(getSubjectName(val.subject))} — ${escHTML(getTeacherName(val.teacher))}` :
+                '<span style="color:#94a3b8;font-style:italic;">Free slot</span>';
+
+            let bodyHtml = '';
+            if (mode === 'menu') {
+                bodyHtml = `
+                    <div class="btn-row" style="justify-content:flex-start;gap:8px;margin-top:4px;">
+                        <button class="btn-primary" onclick="setQuickActionMode('substitute')" ${val.teacher ? '' : 'disabled title="No teacher assigned to this slot yet"'}>🔁 Substitute</button>
+                        <button class="btn-primary" onclick="startExchangePick()" ${val.teacher ? '' : 'disabled title="No teacher assigned to this slot yet"'}>⇄ Exchange</button>
+                    </div>
+                    ${!val.teacher ? '<p style="font-size:10.5px;color:#94a3b8;margin-top:8px;">This slot is empty — click the cell once to assign a teacher/subject directly.</p>' : ''}
+                `;
+            } else if (mode === 'substitute') {
+                bodyHtml = renderQuickSubstitutePanel();
+            }
+
+            const html = `
+                <h3>⚡ Quick Action <span class="badge">${escHTML(classKey)} · ${escHTML(day)} · ${escHTML(period)}</span></h3>
+                <p style="font-size:11px;color:#475569;margin:2px 0 10px;">Currently: ${currentText}</p>
+                ${mode !== 'menu' ? `<button class="dp-mini-btn" style="margin-bottom:8px;" onclick="setQuickActionMode('menu')">← Back</button>` : ''}
+                <div id="quickActionBody">${bodyHtml}</div>
+                <div class="btn-row" style="justify-content:flex-end;margin-top:12px;">
+                    <button class="btn-secondary" onclick="closeModal()">Close</button>
+                </div>
+            `;
+            // The menu (just two buttons) and the substitute list only need as much
+            // space as their content — modal-lg is reserved for the wider table view.
+            openModal(html, mode === 'menu' ? 'modal-sm' : 'modal-lg');
+        }
+
+        function setQuickActionMode(mode) {
+            quickActionState.mode = mode;
+            quickActionState.teacherB = '';
+            renderCellQuickActionModal();
+        }
+
+        // ── Substitute: show teachers free at this exact slot, lightest workload first ──
+        function renderQuickSubstitutePanel() {
+            const { classKey, day, period } = quickActionState;
+            const val = getCellValue(classKey, day, period);
+            const currentTeacher = val.teacher;
+
+            const candidates = Object.keys(appData.teachers)
+                .filter(id => id !== 'EVENT' && id !== currentTeacher)
+                .filter(id => substIsTeacherFreeAt(id, day, period, classKey))
+                .map(id => ({ id, weeklyLoad: getTeacherWeeklyLoad(id), freeToday: substGetFreePeriodCount(id, day) }))
+                .sort((a, b) => a.weeklyLoad - b.weeklyLoad);
+
+            if (candidates.length === 0) {
+                return '<div class="empty-msg">No other teacher is free at this exact period. Try Exchange instead — it can swap with a teacher who\'s busy elsewhere.</div>';
+            }
+
+            let html = `<label style="display:block;font-weight:600;font-size:11px;color:#334155;margin-bottom:4px;">Available Teachers (${candidates.length}) — lightest workload first</label>
+                        <div class="subst-table-wrap"><table class="subst-table">
+                        <thead><tr><th>Teacher</th><th>Weekly Load</th><th>Free Today</th><th></th></tr></thead><tbody>`;
+            candidates.forEach(c => {
+                const t = appData.teachers[c.id];
+                html += `<tr>
+                            <td>${escHTML(t.name)} (${escHTML(c.id)})</td>
+                            <td>${c.weeklyLoad} periods</td>
+                            <td>${c.freeToday} free</td>
+                            <td><button class="btn-primary" style="padding:3px 8px;font-size:10.5px;" onclick="applyQuickSubstitute('${escAttr(c.id)}')">Assign</button></td>
+                        </tr>`;
+            });
+            html += '</tbody></table></div>';
+            return html;
+        }
+
+        async function applyQuickSubstitute(teacherId) {
+            const { classKey, day, period } = quickActionState;
+            const val = getCellValue(classKey, day, period);
+            if (!(await customConfirm(`Assign ${getTeacherName(teacherId)} to ${classKey} · ${day} · ${period}, replacing ${getTeacherName(val.teacher)}?`))) return;
+            setCellValue(classKey, day, period, val.subject, teacherId);
+            markSubstituted(classKey, day, period);
+            render();
+            saveData();
+            showToast(`${getTeacherName(teacherId)} substituted in`);
+            closeModal();
+        }
+
+        // ── Exchange: close the popup and let the user pick the swap target directly
+        // on the live timetable, instead of a second dropdown/table inside a popup. ──
+        function startExchangePick() {
+            const { classKey, day, period } = quickActionState;
+            const val = getCellValue(classKey, day, period);
+            if (!val.teacher) {
+                showToast('No teacher assigned to this slot yet', 'error');
+                return;
+            }
+            exchangePickState = { classKey, day, period, teacherA: val.teacher };
+            closeModal();
+            const bannerText = document.getElementById('exchangePickBannerText');
+            if (bannerText) {
+                bannerText.innerHTML = `🔁 <strong>Exchange Mode:</strong> ${escHTML(classKey)} · ${escHTML(day)} · ${escHTML(period)} (${escHTML(getTeacherName(val.teacher))}) — click any other period in the timetable to swap with it.`;
+            }
+            const banner = document.getElementById('exchangePickBanner');
+            if (banner) banner.style.display = 'flex';
+            document.body.classList.add('exchange-picking');
+            render();
+            showToast('Click the period you want to exchange with');
+        }
+
+        function cancelExchangePick() {
+            exchangePickState = null;
+            exchangePendingSwap = null;
+            const banner = document.getElementById('exchangePickBanner');
+            if (banner) banner.style.display = 'none';
+            document.body.classList.remove('exchange-picking');
+            render();
+        }
+
+        // Called by the grid's click handlers (both General/Compact and Detailed
+        // View) when exchangePickState is active — the click IS the period pick.
+        function handleExchangePickClick(classKey, day, period) {
+            const origin = exchangePickState;
+            if (!origin) return;
+            if (classKey === origin.classKey && day === origin.day && period === origin.period) {
+                showToast('Pick a different period to exchange with', 'error');
+                return;
+            }
+            showExchangeConflictConfirm(classKey, day, period);
+        }
+
+        async function showExchangeConflictConfirm(classB, dayB, periodB) {
+            const origin = exchangePickState;
+            if (!origin) return;
+            const valA = Object.assign({}, getCellValue(origin.classKey, origin.day, origin.period));
+            const valB = Object.assign({}, getCellValue(classB, dayB, periodB));
+            const teacherA = valA.teacher;
+            const teacherB = valB.teacher;
+
+            // Would moving teacherA into slot B double-book them elsewhere? And vice versa.
+            const conflictA = teacherA ? substWouldConflict(teacherA, dayB, periodB, classB) : false;
+            const conflictB = teacherB ? substWouldConflict(teacherB, origin.day, origin.period, origin.classKey) : false;
+
+            if (!conflictA && !conflictB) {
+                const summary = `Swap ${origin.classKey} · ${origin.day} · ${origin.period} (${teacherA ? getTeacherName(teacherA) : 'Free'}) with ${classB} · ${dayB} · ${periodB} (${teacherB ? getTeacherName(teacherB) : 'Free'})?`;
+                if (await customConfirm(summary)) {
+                    await commitExchangeSwap(classB, dayB, periodB);
+                }
+                return;
+            }
+
+            // Conflict found — explain it and offer a solution instead of silently blocking.
+            let html = `<h3>⚠ Exchange Conflict</h3>
+                <p style="font-size:11px;color:#475569;margin-bottom:8px;">${escHTML(origin.classKey)} · ${escHTML(origin.day)} · ${escHTML(origin.period)} &nbsp;⇄&nbsp; ${escHTML(classB)} · ${escHTML(dayB)} · ${escHTML(periodB)}</p>`;
+            if (conflictA) html += `<div class="empty-msg" style="margin-bottom:6px;">⚠ ${escHTML(getTeacherName(teacherA))} is already booked elsewhere at ${escHTML(dayB)} · ${escHTML(periodB)} — this swap would double-book them.</div>`;
+            if (conflictB) html += `<div class="empty-msg" style="margin-bottom:6px;">⚠ ${escHTML(getTeacherName(teacherB))} is already booked elsewhere at ${escHTML(origin.day)} · ${escHTML(origin.period)} — this swap would double-book them.</div>`;
+
+            if (conflictA) {
+                const alts = Object.keys(appData.teachers)
+                    .filter(id => id !== 'EVENT' && id !== teacherA)
+                    .filter(id => substIsTeacherFreeAt(id, dayB, periodB, classB))
+                    .map(id => ({ id, weeklyLoad: getTeacherWeeklyLoad(id) }))
+                    .sort((a, b) => a.weeklyLoad - b.weeklyLoad)
+                    .slice(0, 5);
+                if (alts.length > 0) {
+                    html += `<label style="display:block;font-weight:600;font-size:11px;color:#334155;margin:8px 0 4px;">💡 Solution — free at ${escHTML(classB)} · ${escHTML(dayB)} · ${escHTML(periodB)} instead:</label>
+                              <div class="subst-table-wrap"><table class="subst-table">
+                              <thead><tr><th>Teacher</th><th>Weekly Load</th><th></th></tr></thead><tbody>`;
+                    alts.forEach(a => {
+                        html += `<tr><td>${escHTML(getTeacherName(a.id))}</td><td>${a.weeklyLoad} periods</td>
+                                    <td><button class="btn-primary" style="padding:3px 8px;font-size:10.5px;" onclick="assignExchangeAlternative('${escAttr(classB)}','${escAttr(dayB)}','${escAttr(periodB)}','${escAttr(valB.subject || valA.subject)}','${escAttr(a.id)}')">Assign here</button></td></tr>`;
+                    });
+                    html += '</tbody></table></div>';
+                }
+            }
+
+            html += `<div class="btn-row" style="justify-content:space-between;margin-top:12px;">
+                        <button class="btn-secondary" onclick="closeModal()">← Pick a Different Period</button>
+                        <button class="btn-primary" style="background:#dc2626;" onclick="forceExchangeSwapConfirmed()">Swap Anyway</button>
+                      </div>`;
+            exchangePendingSwap = { classB, dayB, periodB };
+            openModal(html, 'modal-sm');
+        }
+
+        async function commitExchangeSwap(classB, dayB, periodB) {
+            const origin = exchangePickState;
+            if (!origin) return;
+            const valA = Object.assign({}, getCellValue(origin.classKey, origin.day, origin.period));
+            const valB = Object.assign({}, getCellValue(classB, dayB, periodB));
+            beginTransaction();
+            setCellValue(origin.classKey, origin.day, origin.period, valB.subject, valB.teacher);
+            setCellValue(classB, dayB, periodB, valA.subject, valA.teacher);
+            endTransaction();
+            markSubstituted(origin.classKey, origin.day, origin.period);
+            markSubstituted(classB, dayB, periodB);
+            cancelExchangePick();
+            render();
+            saveData();
+            showToast('Periods exchanged');
+        }
+
+        async function forceExchangeSwapConfirmed() {
+            if (!exchangePendingSwap || !exchangePickState) return;
+            const { classB, dayB, periodB } = exchangePendingSwap;
+            closeModal();
+            await commitExchangeSwap(classB, dayB, periodB);
+        }
+
+        function assignExchangeAlternative(classKey, day, period, subject, teacherId) {
+            setCellValue(classKey, day, period, subject, teacherId);
+            markSubstituted(classKey, day, period);
+            closeModal();
+            cancelExchangePick();
+            render();
+            saveData();
+            showToast(`${getTeacherName(teacherId)} assigned`);
+        }
+
         function exportWeeklyChangesCSV(filename, changeNotes) {
             if (!changeNotes || changeNotes.length === 0) { showToast('Nothing to export', 'error'); return; }
             const noteMap = {};
@@ -6867,7 +8225,7 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
             const periodKeys = getAllPeriodKeys();
             let html = `<label style="display:block;font-weight:600;font-size:11px;color:#334155;margin-bottom:4px;">Draft Preview — ${day}</label>
                         <div class="subst-table-wrap"><table class="subst-table subst-preview">
-                        <thead><tr><th>Class</th>${periodKeys.map(p => `<th>${p}</th>`).join('')}</tr></thead><tbody>`;
+                        <thead><tr><th>Class</th>${periodKeys.map(p => `<th>${getPeriodLabel(p)}</th>`).join('')}</tr></thead><tbody>`;
             affectedClasses.forEach(key => {
                 html += `<tr><td>${key}</td>`;
                 periodKeys.forEach(p => {
@@ -7333,7 +8691,7 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
                                 ${periodKeys.map(p => `
                                     <label class="subst-check-item" style="width:auto;">
                                         <input type="checkbox" value="${p}" ${eventState.periods.includes(p) ? 'checked' : ''} onchange="onEventPeriodToggle('${p}', this.checked)" />
-                                        <span>${p}</span>
+                                        <span>${getPeriodLabel(p)}</span>
                                     </label>
                                 `).join('')}
                             </div>
@@ -7575,6 +8933,9 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
         }
 
         // Expose functions globally
+        window.toggleGenericMenu = toggleGenericMenu;
+        window.closeAllGenericMenus = closeAllGenericMenus;
+        window.jumpToWorkloadRegister = jumpToWorkloadRegister;
         window.toggleViewMode = toggleViewMode;
         window.renderMasterElderView = renderMasterElderView;
         window.setElderMode = setElderMode;
