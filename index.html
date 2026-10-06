@@ -2614,7 +2614,49 @@
             cursor: not-allowed;
         }
     
-    </style>
+            /* ───────────── GUIDED TOUR (custom spotlight walkthrough) ─────────────
+           Sits above the modal (500) but below toasts (99999). The dim is made of four
+           panels around the target so the highlighted control stays clickable. */
+        .gt-root { position: fixed; inset: 0; z-index: 9000; pointer-events: none; }
+        .gt-shield, .gt-hole { position: fixed; pointer-events: auto; }
+        .gt-shield { background: rgba(15, 23, 42, 0.58); }
+        .gt-hole { background: transparent; display: none; }
+        .gt-ring { position: fixed; display: none; pointer-events: none; border: 2px solid #3b82f6; border-radius: 8px;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35), 0 0 18px rgba(59, 130, 246, 0.55); }
+        .gt-tip { position: fixed; pointer-events: auto; width: 340px; max-width: calc(100vw - 24px); max-height: calc(100vh - 24px); overflow: auto;
+            background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--card-border); border-radius: 12px;
+            padding: 14px 16px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35); font-size: 12px; line-height: 1.45; outline: none; }
+        .gt-tip.gt-final { width: 380px; }
+        .gt-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .gt-count { font-size: 10.5px; font-weight: 700; color: var(--color-primary); text-transform: uppercase; letter-spacing: .04em; }
+        .gt-x { background: none; border: none; font-size: 18px; line-height: 1; color: var(--text-muted); cursor: pointer; padding: 2px 6px; border-radius: 6px; }
+        .gt-x:hover { background: var(--surface-bg); color: var(--text-primary); }
+        .gt-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+        .gt-body { color: var(--text-secondary); }
+        .gt-body i { color: var(--text-muted); }
+        .gt-list { list-style: none; margin: 6px 0 8px; padding: 0; }
+        .gt-list li { padding: 1px 0; color: var(--color-success); font-weight: 600; }
+        .gt-wait { margin-top: 8px; padding: 6px 8px; background: var(--color-break-bg); color: var(--color-break-text); border: 1px solid var(--color-break-border); border-radius: 6px; }
+        .gt-dots { display: flex; gap: 4px; margin: 10px 0 8px; }
+        .gt-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--card-border); }
+        .gt-dots i.on { background: var(--color-primary); }
+        .gt-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 10px; }
+        .gt-btn { border: 1px solid var(--card-border-soft); background: var(--pill-bg); color: var(--text-primary); border-radius: 6px;
+            padding: 6px 12px; min-height: 32px; font: inherit; font-weight: 600; cursor: pointer; }
+        .gt-btn:hover:not(:disabled) { background: var(--card-border-soft); }
+        .gt-btn:disabled { opacity: .45; cursor: default; }
+        .gt-btn.gt-primary { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+        .gt-btn.gt-primary:hover { background: var(--color-primary-hover); }
+        .gt-link { background: none; border: none; color: var(--text-muted); font: inherit; cursor: pointer; text-decoration: underline; padding: 6px 2px; }
+        .gt-link:hover { color: var(--text-primary); }
+        .gt-tip button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+        .gt-guide-btn { background: var(--pill-bg); border: 1px solid var(--card-border-soft); color: var(--color-primary); border-radius: 6px;
+            padding: 3px 9px; font: inherit; font-size: 11px; font-weight: 600; cursor: pointer; }
+        .gt-guide-btn:hover { background: var(--card-border-soft); }
+        h3 .gt-guide-btn { float: right; }
+        @media (prefers-reduced-motion: no-preference) { .gt-ring { transition: left .15s, top .15s, width .15s, height .15s; } }
+        @media (max-width: 520px) { .gt-tip, .gt-tip.gt-final { width: calc(100vw - 24px); padding: 12px; } }
+</style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style id="introjs-vendor-css">
         /* Vendored intro.js v8.5.0 (https://introjs.com) — MIT License, bundled inline so the guided tour works fully offline. */
@@ -2684,6 +2726,92 @@
         .introjs-progressbar {
             background: var(--color-primary);
         }
+        /* "Don't show this again" row injected into every tour step */
+        .tour-dontshow-row {
+            margin-top: 8px;
+            padding-top: 2px;
+            text-align: center;
+        }
+        .tour-dontshow-btn {
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 2px 8px;
+        }
+        .tour-dontshow-btn:hover { color: var(--color-revert-border); }
+        /* ───── Compact tooltip spacing (removes the large empty gaps) ───── */
+        .introjs-tooltip {
+            min-width: 320px;
+            max-width: 380px;
+            max-height: calc(100vh - 16px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .introjs-tooltip-header {
+            padding: 12px 40px 0 16px;
+            min-height: 0;
+        }
+        .introjs-tooltip-title {
+            width: auto;
+            min-height: 0;
+            font-size: 15px;
+            line-height: 1.35;
+        }
+        .introjs-skipbutton {
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            font-size: 20px;
+        }
+        .introjs-tooltiptext {
+            padding: 8px 16px 6px;
+            font-size: 12.5px;
+            line-height: 1.45;
+        }
+        .introjs-bullets { padding: 4px 0 0; }
+        .introjs-progress {
+            height: 5px;
+            margin: 6px 16px 8px;
+        }
+        .introjs-tooltipbuttons { padding: 8px 12px; }
+        .introjs-button { padding: 6px 12px; }
+        @media (max-width: 520px) {
+            .introjs-tooltip {
+                min-width: 0;
+                width: calc(100vw - 24px);
+                max-width: 360px;
+            }
+        }
+        /* "Explain in detail" button under each operation step */
+        .tour-detail-prompt { margin-top: 10px; }
+        .tour-detail-prompt .tour-choice-btn { display: block; width: 100%; padding: 8px 10px; text-align: center; white-space: nowrap; }
+        .tour-choice-btn {
+            font-family: inherit;
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+        .tour-choice-btn:hover { background: var(--surface-bg-alt); }
+        .tour-choice-btn.yes {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: #fff;
+        }
+        .tour-choice-btn.yes:hover { background: var(--color-primary-hover); }
+        .tour-detail-list { margin: 6px 0 0 16px; padding: 0; }
+        .tour-detail-list li { margin-bottom: 4px; }
     </style>
     <script id="introjs-vendor-js">
     /* Vendored intro.js v8.5.0 (https://introjs.com) — MIT License, bundled inline so the guided tour works fully offline. */
@@ -2830,6 +2958,7 @@ var t,e,n="function"==typeof Symbol?Symbol:{},r=n.iterator||"@@iterator",i=n.toS
         <div id="selectionBanner">
             <span>✨ <strong>Selection Mode Active:</strong> Click on cells in the timetable to select multiple slots, then click <strong>OK</strong>.</span>
             <button class="btn-selection-ok" id="btnSelectionOk" onclick="handleMultipleDaysBtnClick()" aria-label="Confirm cell selection and open batch assign">✅ OK (<span id="selectionOkCount">0</span>)</button>
+            <button type="button" class="gt-guide-btn" onclick="startGuidedTour('batchAssign')" aria-label="Start the guided tour of Batch Multi-Cell Assign">🎓 Guide Me</button>
             <button style="background:none;border:none;color:#dc2626;cursor:pointer;font-weight:bold;" onclick="toggleSelectionMode(false)">Cancel Selection</button>
         </div>
 
@@ -5627,7 +5756,7 @@ END:VTIMEZONE`;
             });
 
             const html = `
-                <h3>⚡ Assign Multiple Cells <span class="badge">${selectedCells.length} Selected</span></h3>
+                <h3>⚡ Assign Multiple Cells <span class="badge">${selectedCells.length} Selected</span><button type="button" class="gt-guide-btn" onclick="startGuidedTour('batchAssign')" aria-label="Start the guided tour of Batch Multi-Cell Assign" title="Step-by-step guide to this screen">🎓 Guide Me</button></h3>
                 <p style="font-size:10.5px;color:#64748b;margin-bottom:8px;">Choose a Teacher or Subject to fill all selected slots.</p>
 
                 <label style="display:flex;align-items:center;gap:7px;padding:6px 9px;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;margin-bottom:8px;cursor:pointer;" title="Selected cells are treated as one joint session shared across different classes/sections — filled yellow, and the shared teacher won't be flagged as a conflict.">
@@ -6112,8 +6241,9 @@ END:VTIMEZONE`;
                         <li>Use <b>Master vs Working Space</b> to safely draft changes before making them official.</li>
                         <li>Export a CSV or PDF backup regularly — see "Backing up your data" below.</li>
                        </ul>
-                       New here? Click <b>🚀 Take a Tour</b> at any time for a guided, button-by-button walkthrough
-                       of the whole toolbar.`
+                       New here? When you open the app it starts with a short <b>welcome tour of the 🛠️ Operations
+                       menu</b> (see "Welcome tour" below). Click <b>🚀 Take a Tour</b> at any time for a guided,
+                       button-by-button walkthrough of the whole toolbar.`
             },
             {
                 id: 'master-working',
@@ -6216,7 +6346,63 @@ END:VTIMEZONE`;
                             weekly pattern; see "Date Mode" below for details.</li>
                        </ul>
                        All five apply changes only to <b>Working Space</b>, and everything they do can be undone
-                       with Ctrl+Z. Cells changed this way get a small marker showing they were substituted.`
+                       with Ctrl+Z. Cells changed this way get a small marker showing they were substituted.<br><br>
+                       Want each one explained? The <a href="#" onclick="openHelpModal('welcome-tour'); return false;">welcome
+                       tour</a> walks through all five and offers a <b>📖 Explain in detail</b> button for each.`
+            },
+            {
+                id: 'welcome-tour',
+                icon: '👋',
+                title: 'Welcome tour (Operations) & "Don\'t show this again"',
+                body: `When the app opens, a short <b>welcome tour</b> explains the five actions in the
+                       <b>🛠️ Operations</b> menu one by one: Batch Multi-Cell Assign, Teacher Substitution, Class
+                       Exchange, Event Block and Date Mode. It shows the real menu with each item highlighted.
+                       <ul>
+                        <li><b>Next → / ← Back</b> move between steps. <b>Esc</b> or the <b>×</b> closes the tour for
+                            this visit only — it will appear again the next time you open the app.</li>
+                        <li><b>📖 Explain in detail</b> (under each operation) opens a fuller explanation of that
+                            operation. For Teacher Substitution, Batch Multi-Cell Assign and Class Exchange this is the
+                            interactive guide on the real screen; for Event Block and Date Mode it is a short
+                            step-by-step explanation. When it ends (or you press Esc), the welcome tour carries on with
+                            the next operation. Skip the button and just press <b>Next →</b> if you don't need it.</li>
+                        <li><b>🚫 Don't show this again</b> (on the first welcome step) stops the tour opening
+                            automatically. Until you click it, the tour appears every time the app starts.</li>
+                       </ul>
+                       <b>Replay or turn it back on:</b>
+                       <ul>
+                        <li>Replay the welcome tour now:<br>
+                            <button type="button" class="gt-guide-btn" onclick="replayWelcomeTour()">▶ Replay welcome tour</button></li>
+                        <li>Make it open automatically again after you chose "Don't show this again":<br>
+                            <button type="button" class="gt-guide-btn" onclick="enableWelcomeTourAutoStart()">🔔 Show welcome tour at every start</button></li>
+                        <li>For a walkthrough of <i>every</i> button in the app (not only Operations), click
+                            <b>🚀 Take a Tour</b> in the toolbar.</li>
+                       </ul>
+                       The tour never changes your timetable. The "don't show again" choice is remembered per browser
+                       and device, so clearing browser data brings the tour back.`
+            },
+            {
+                id: 'guided-tours',
+                icon: '🎓',
+                title: 'Guided tours — Operations',
+                body: `Guided tours walk you through the <b>real screen</b>, highlighting each control and explaining it. They
+                       never change your timetable by themselves, and you can leave any time with Esc. Each one can also be
+                       started with the <b>🎓 Guide Me</b> button inside its window.
+                       <ul>
+                        <li><b>Teacher Substitution</b> — choose the day and absent teacher, review the affected classes, pick
+                            substitutes, apply, and export the notice.<br>
+                            <button type="button" class="gt-guide-btn" onclick="startGuidedTour('teacherSubstitution')">▶ Start this guide</button></li>
+                        <li><b>Batch Multi-Cell Assign</b> — select many cells, then fill them all with one teacher or subject
+                            (including Combined Classes).<br>
+                            <button type="button" class="gt-guide-btn" onclick="startGuidedTour('batchAssign')">▶ Start this guide</button></li>
+                        <li><b>Class Exchange</b> — swap two teachers' periods, or let one teacher borrow another's period.<br>
+                            <button type="button" class="gt-guide-btn" onclick="startGuidedTour('classExchange')">▶ Start this guide</button></li>
+                        <li><b>Event Block</b> — name the event, pick the dates, periods and classes, then apply.<br>
+                            <button type="button" class="gt-guide-btn" onclick="startOperationDetail(3)">▶ Show the explanation</button></li>
+                        <li><b>Date Mode</b> — edit one exact calendar date, or export a date-range report.<br>
+                            <button type="button" class="gt-guide-btn" onclick="startOperationDetail(4)">▶ Show the explanation</button></li>
+                       </ul>
+                       These same guides are offered by the <b>📖 Explain in detail</b> buttons in the
+                       <a href="#" onclick="openHelpModal('welcome-tour'); return false;">welcome tour</a>.`
             },
             {
                 id: 'date-mode',
@@ -6310,7 +6496,7 @@ END:VTIMEZONE`;
                     topic to expand it.
                 </p>
                 <input type="text" id="helpSearchBox" placeholder="Search help topics… (e.g. 'substitution', 'backup', 'master')"
-                       value="${escAttr(filter)}" oninput="renderHelpModal(this.value); document.getElementById('helpSearchBox').focus();" />
+                       value="${escAttr(filter)}" oninput="onHelpSearch(this.value)" />
                 <div class="help-copy-row">
                     <button class="btn-primary" onclick="copyHelpForAI()">📋 Copy Full Guide for AI Chat</button>
                     <span style="font-size:10.5px;color:#94a3b8;align-self:center;">
@@ -6322,6 +6508,13 @@ END:VTIMEZONE`;
                     <button class="btn-secondary" onclick="closeModal()">Close</button>
                 </div>
             `;
+        }
+
+        // Re-renders the Help list for the search text and keeps the cursor in the box.
+        function onHelpSearch(value) {
+            openModal(renderHelpModal(value), 'modal-lg');
+            const box = document.getElementById('helpSearchBox');
+            if (box) { box.focus(); const n = box.value.length; try { box.setSelectionRange(n, n); } catch (e) { /* ignore */ } }
         }
 
         function openHelpModal(jumpToId) {
@@ -8061,6 +8254,42 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
         // who presses Esc or clicks Skip partway through Working Space isn't dropped
         // into Master mode uninvited.
         const TOUR_SEEN_KEY = 'timetableApp_tourSeen';
+        // The welcome tour re-appears on EVERY app open until the user explicitly
+        // clicks "Don't show this again" (stored under this key).
+        const TOUR_DISMISS_KEY = 'timetableApp_tourDontShowAgain';
+
+        // "Don't show this again" + "detailed explanation?" buttons live INSIDE each step's
+        // intro HTML (intro.js re-renders its tooltip, so injected DOM would be wiped) and are
+        // handled by one delegated click listener below.
+        const TOUR_DONTSHOW_HTML = '<div class="tour-dontshow-row"><button type="button" class="tour-dontshow-btn" data-tour-act="dontshow" title="Stop opening this tour automatically. You can still replay it from Take a Tour.">🚫 Don\'t show this again</button></div>';
+        function decorateTourSteps(steps) {
+            return steps.map(s => Object.assign({}, s, { intro: (s.intro || '') + TOUR_DONTSHOW_HTML }));
+        }
+
+        let activeIntroTour = null;
+        let activeIntroAfterDismiss = null;
+        function attachDontShowAgain(tour, afterDismiss) {
+            activeIntroTour = tour;
+            activeIntroAfterDismiss = afterDismiss || null;
+        }
+
+        document.addEventListener('click', function (e) {
+            const btn = e.target && e.target.closest ? e.target.closest('[data-tour-act]') : null;
+            if (!btn) return;
+            e.preventDefault();
+            e.stopPropagation();
+            const act = btn.getAttribute('data-tour-act');
+            const idx = parseInt(btn.getAttribute('data-idx'), 10);
+            if (act === 'dontshow') {
+                try { localStorage.setItem(TOUR_DISMISS_KEY, '1'); } catch (err) { /* ignore */ }
+                if (activeIntroTour) activeIntroTour.exit(true);
+                if (typeof activeIntroAfterDismiss === 'function') activeIntroAfterDismiss();
+                showToast("Got it — the tour won't open automatically again. Replay it anytime with 🚀 Take a Tour.", 'success');
+            } else if (act === 'detail') {
+                showOperationDetail(idx);
+            }
+        }, true);
+
         const TOUR_COMMON_OPTIONS = {
             showBullets: true,
             showProgress: true,
@@ -8095,7 +8324,7 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
             return [
                 {
                     title: 'Welcome 👋',
-                    intro: 'This is a School Timetable Manager — you build your timetable by clicking cells in a grid, right here in this browser tab. There\'s no login and no server; everything saves automatically to this device as you work. This tour walks through every button so you know exactly what each one does. Press Esc anytime to leave, and replay it later from the 🚀 Take a Tour button.'
+                    intro: 'This is a School Timetable Manager — you build your timetable by clicking cells in a grid, right here in this browser tab. There\'s no login and no server; everything saves automatically to this device as you work. This tour walks through every button so you know exactly what each one does. Press Esc anytime to leave. This tour will show again each time you open the app until you click \"Don\'t show this again\" — and you can always replay it from the 🚀 Take a Tour button.'
                 },
                 {
                     element: '#btnModeToggle',
@@ -8337,6 +8566,7 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
                     const id = targetElement ? targetElement.id : '';
                     setTourMenuOpen('importExportMenu', IMPORT_EXPORT_MASTER_IDS.includes(id));
                 });
+                attachDontShowAgain(tour, () => { if (viewMode === 'master') { toggleViewMode(); } });
                 tour.onComplete(() => {
                     if (viewMode === 'master') { toggleViewMode(); }
                     showToast('Tour complete — enjoy! 🎉', 'success');
@@ -8375,6 +8605,7 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
                         setTourMenuOpen('classFilterMenu', false);
                     }
                 });
+                attachDontShowAgain(tour);
                 tour.onComplete(startMasterScheduleTour);
                 tour.onexit(() => {
                     tourActive = false;
@@ -8384,6 +8615,144 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
             }, 80);
         }
 
+        // Short first-open tour: explains ONLY the five items in the 🛠️ Operations menu.
+        // After each operation the user is asked whether they want a DETAILED explanation:
+        //   Yes -> the detailed guide runs (interactive guide, or step-by-step text), then the
+        //          tour resumes at the next operation.   No -> straight on to the next one.
+        // (The full walkthrough of every button is still available via 🚀 Take a Tour.)
+        const OPERATIONS_INTRO = [
+            { id: 'btnMultipleDays', title: '📦 Batch Multi-Cell Assign',
+              intro: 'Select several cells at once — across days, periods, or classes — and assign the same subject and teacher to all of them in one step.',
+              guideId: 'batchAssign' },
+            { id: 'btnTeacherSub', title: '🧑‍🏫 Teacher Substitution',
+              intro: 'A teacher is out? Pick who\'s absent and who\'s covering, and this fills in for them across the periods you choose.',
+              guideId: 'teacherSubstitution' },
+            { id: 'btnClassExchange', title: '🔄 Class Exchange',
+              intro: 'Swap two periods between classes — handy when two sections need to trade time slots with each other.',
+              guideId: 'classExchange' },
+            { id: 'btnEventBlock', title: '📌 Event Block',
+              intro: 'Block out an exam, holiday, or special event over one or more dates without disturbing the regular schedule underneath.',
+              detail: [
+                  { title: '📌 Event Block — what it is for', intro: 'Use it when normal lessons must stop for a while — Sports Day, exams, a school trip or a holiday. The chosen periods are blocked on the working timetable for the dates you pick.' },
+                  { title: 'Step 1 — Name and dates', intro: 'Open <b>🛠️ Operations → 📌 Event Block</b>. Type an <b>Event Name</b> (for example “Annual Exam”), then choose a <b>Start Date</b> and an <b>End Date</b>. For a single day, set both to the same date.' },
+                  { title: 'Step 2 — Choose the period(s)', intro: 'Tick the periods to block. You can tick one, several, or all of them — for example only the first three periods on an exam day.' },
+                  { title: 'Step 3 — Choose the classes', intro: '<b>Apply to all classes</b> is ticked by default. Untick it to see the class list and pick only the classes taking part in the event.' },
+                  { title: 'Step 4 — Apply and check', intro: 'Confirm at the bottom of the dialog. The block is applied immediately to your <b>Working Space</b> (the draft). Happy with it? Use <b>✅ Save as Master</b>. Made a mistake? Use <b>← Undo</b> or <b>↺ Revert</b>.' }
+              ] },
+            { id: 'btnDateRange', title: '📅 Date Mode',
+              intro: 'Switch from generic weekdays to exact calendar dates — useful for a one-off change that only applies on a specific day.',
+              detail: [
+                  { title: '📅 Date Mode — what it is for', intro: 'Your normal timetable repeats every week by weekday. Date Mode lets you change just <b>one exact calendar date</b> (for example 14 October) without touching the weekly schedule.' },
+                  { title: 'Edit a specific date', intro: 'Open <b>🛠️ Operations → 📅 Date Mode</b>, pick the date and click <b>✅ Start Editing This Date</b>. The grid switches to a single clean column per period for that date. Edit cells exactly as you normally do.' },
+                  { title: 'Your weekly schedule stays safe', intro: 'Changes made in Date Mode apply only to that date — the recurring weekly schedule is unaffected. To go back, open Date Mode again and click <b>✖ Stop Editing This Date</b>.' },
+                  { title: 'Export a date-range report', intro: 'The same dialog lets you pick a <b>Start</b> and <b>End</b> date and export a <b>CSV</b> or <b>PDF</b> report. This is for printing and sharing only — it does not change the grid on screen.' }
+              ] }
+        ];
+
+        function getOperationsIntroSteps() {
+            const steps = [{
+                element: '#btnOperations',
+                title: '🛠️ Welcome — start with Operations',
+                intro: 'Before anything else, here is what the <b>Operations</b> menu does. It holds five actions for changing the timetable quickly. Let\'s open it and look at each one.' + TOUR_DONTSHOW_HTML,
+                position: 'bottom'
+            }];
+            OPERATIONS_INTRO.forEach((op, i) => {
+                const prompt = '<div class="tour-detail-prompt">' +
+                    '<button type="button" class="tour-choice-btn yes" data-tour-act="detail" data-idx="' + i + '">📖 Explain in detail</button>' +
+                    '</div>';
+                steps.push({ element: '#' + op.id, title: op.title, intro: op.intro + prompt, position: 'right' });
+            });
+            steps.push({
+                element: '#btnTakeTour',
+                title: 'Want to see the rest?',
+                intro: 'That covers Operations. Click <b>🚀 Take a Tour</b> anytime for the full walkthrough of every other button, or <b>❓ Help</b> for the written guide.',
+                position: 'bottom'
+            });
+            return steps;
+        }
+
+        // startIndex = which step to begin on (0 = the welcome step). Used to resume after a detailed guide.
+        function startOperationsIntroTour(startIndex) {
+            closeAllGenericMenus();
+            if (typeof closeModal === 'function') closeModal();
+            if (viewMode !== 'working') { toggleViewMode(); }
+            setTimeout(() => {
+                tourActive = true;
+                const tour = introJs.tour('#app');
+                tour.setOptions(Object.assign({}, TOUR_COMMON_OPTIONS, { steps: getOperationsIntroSteps().slice(startIndex || 0) }));
+                tour.onbeforechange(function(targetElement) {
+                    const id = targetElement ? targetElement.id : '';
+                    setTourMenuOpen('operationsMenu', OPERATIONS_MENU_STEP_IDS.includes(id));
+                });
+                attachDontShowAgain(tour);
+                tour.onexit(() => {
+                    if (activeIntroTour === tour) { tourActive = false; closeAllGenericMenus(); }
+                });
+                tour.start();
+            }, 80);
+        }
+
+        // "Yes, explain in detail" — leave the intro tour, run the detailed guide, then resume.
+        // standalone = launched from Help (no welcome tour to return to afterwards).
+        function showOperationDetail(i, standalone) {
+            const op = OPERATIONS_INTRO[i];
+            if (!op) return;
+            const tour = standalone ? null : activeIntroTour;
+            if (tour) tour.exit(true);
+            const resume = standalone ? function () {} : () => { startOperationsIntroTour(i + 2); }; // step index of the NEXT operation (welcome step is 0)
+            setTimeout(() => {
+                tourActive = false;
+                closeAllGenericMenus();
+                if (op.guideId && window.guidedTour) {
+                    startGuidedTour(op.guideId);
+                    let wasActive = false;
+                    const t0 = Date.now();
+                    const iv = setInterval(() => {
+                        const a = guidedTour.isActive();
+                        if (a) wasActive = true;
+                        if ((wasActive && !a) || (!wasActive && Date.now() - t0 > 3000)) {
+                            clearInterval(iv);
+                            if (typeof closeModal === 'function') closeModal();
+                            resume();
+                        }
+                    }, 300);
+                } else if (op.detail) {
+                    const d = introJs.tour('#app');
+                    tourActive = true;
+                    d.setOptions(Object.assign({}, TOUR_COMMON_OPTIONS, {
+                        steps: op.detail.map(s => ({ title: s.title, intro: s.intro })),
+                        showProgress: true,
+                        doneLabel: 'Continue →'
+                    }));
+                    let finished = false;
+                    d.onComplete(() => { finished = true; });
+                    d.onexit(() => {
+                        tourActive = false;
+                        if (finished) setTimeout(resume, 150);
+                    });
+                    d.start();
+                }
+            }, 250);
+        }
+
+        // Entry points used by the ❓ Help topics.
+        function replayWelcomeTour() {
+            if (typeof closeModal === 'function') closeModal();
+            startOperationsIntroTour(0);
+        }
+        function enableWelcomeTourAutoStart() {
+            try { localStorage.removeItem(TOUR_DISMISS_KEY); } catch (e) { /* ignore */ }
+            showToast('Done — the welcome tour will open every time you start the app.', 'success');
+        }
+        function startOperationDetail(i) {
+            if (typeof closeModal === 'function') closeModal();
+            if (viewMode !== 'working') { toggleViewMode(); }
+            showOperationDetail(i, true);
+        }
+        window.replayWelcomeTour = replayWelcomeTour;
+        window.enableWelcomeTourAutoStart = enableWelcomeTourAutoStart;
+        window.startOperationDetail = startOperationDetail;
+
         // Manual entry point — the 🚀 Take a Tour button always restarts from the top.
         function startAppTour() {
             startWorkingSpaceTour();
@@ -8391,16 +8760,421 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
         window.startAppTour = startAppTour;
 
         function maybeAutoStartTour() {
-            let seen = true;
-            try { seen = localStorage.getItem(TOUR_SEEN_KEY) === '1'; } catch (e) { /* ignore */ }
-            if (seen) return;
-            try { localStorage.setItem(TOUR_SEEN_KEY, '1'); } catch (e) { /* ignore */ }
+            // Show on every open until the user clicks "Don't show this again".
+            let dismissed = false;
+            try { dismissed = localStorage.getItem(TOUR_DISMISS_KEY) === '1'; } catch (e) { /* ignore */ }
+            if (dismissed) return;
             // Guard against a double-start: if the visitor has already opened the tour
             // by hand (🚀 Take a Tour) in this brief window before the auto-tour fires,
             // tourActive is already true — skip so a second tour instance doesn't stack
             // on top of the one already running.
-            setTimeout(() => { if (!tourActive) startWorkingSpaceTour(); }, 700);
+            setTimeout(() => { if (!tourActive) startOperationsIntroTour(); }, 700);
         }
+
+        // ───────────── GUIDED TOUR ENGINE (custom, reusable) ─────────────
+        // Lightweight Intro.js-style spotlight tour that runs on the REAL UI. It never
+        // changes timetable data. Add a new tour by adding an entry to GUIDED_TOURS:
+        //   { storageKey, welcome:{title,body}, isOpen(), open(), steps:[{ title, body,
+        //     target, fallback, ready(), waitBody, interactive }] }
+        // `target`/`fallback` are selectors (or functions); `ready()` gates steps whose
+        // target only exists after the user acts (e.g. the coverage table).
+        // Helpers shared by the Operations tours (state checks + idempotent "enter" actions).
+        const gtOverlayOpen = () => { const ov = document.getElementById('modalOverlay'); return !!(ov && ov.classList.contains('open')); };
+        const gtBatchModalOpen = () => gtOverlayOpen() && !!document.getElementById('batchTeacherSelect');
+        const gtExchangeModalOpen = () => gtOverlayOpen() && !!document.getElementById('ceDay');
+        const gtBatchLeaveModal = s => { if (gtBatchModalOpen()) { closeModal(); s.openedBatch = false; } };
+        const gtBatchEnsureSel = s => { if (!isSelectionMode) { toggleSelectionMode(true); s.enabledSel = true; } };
+        const gtBatchEnsureModal = s => {
+            if (!gtBatchModalOpen() && selectedCells.length > 0) { openBatchAssignModal(); s.openedBatch = true; }
+        };
+
+        const GUIDED_TOURS = {
+            teacherSubstitution: {
+                storageKey: 'schoolTimetable_teacherSubstitutionTourCompleted',
+                welcome: {
+                    title: '👋 Welcome to Teacher Substitution',
+                    body: 'A teacher absent today? This guided tour shows you how to assign substitute teachers step by step.<br><br>It only takes about a minute.'
+                },
+                isOpen() {
+                    const ov = document.getElementById('modalOverlay');
+                    return !!(ov && ov.classList.contains('open') && document.getElementById('tsDay'));
+                },
+                open() {
+                    if (viewMode === 'master') { showToast('Switch to Working Space to use the Teacher Substitution guide', 'error'); return false; }
+                    if (!this.isOpen()) { if (typeof closeAllGenericMenus === 'function') closeAllGenericMenus(); openTeacherSubModal(); }
+                    return true;
+                },
+                steps: [
+                    { title: 'Teacher Substitution', target: '#modalContent h3', interactive: false,
+                      body: 'Use this screen when a teacher is absent and other teachers need to cover their scheduled classes.<br><br>Click <b>Next</b> to continue.' },
+                    { title: 'Select the day', target: '#tsDay',
+                      body: 'Choose the day on which the teacher is absent. The system will then look up the periods assigned to that teacher on that day.<br><br><i>Changing the day clears any substitutes you have already picked.</i>' },
+                    { title: 'Select the absent teacher(s)', target: '.subst-teacher-list',
+                      body: 'Tick the teacher who is absent (you can tick more than one). The system uses their timetable to find the classes that need cover.<br><br>Try ticking a teacher now.' },
+                    { title: 'Review the affected classes', target: '#tsCoverageWrap', fallback: '.subst-teacher-list',
+                      ready: () => !!document.querySelector('#tsCoverageWrap table'),
+                      waitBody: 'Tick at least one absent teacher who has classes on the selected day. The affected classes will appear here automatically.',
+                      body: 'These are the classes the absent teacher was scheduled to teach, period by period. You do not need to search through the timetable manually.' },
+                    { title: 'Assign substitute teachers', target: '#tsCoverageWrap select', fallback: '#tsCoverageWrap',
+                      ready: () => !!document.querySelector('#tsCoverageWrap select'),
+                      waitBody: 'The substitute dropdowns appear once the affected classes are listed. Tick an absent teacher with classes on this day.',
+                      body: 'Choose a substitute for each affected period. Different periods can have different substitutes.<br><br><b>Conflict check:</b> each dropdown only lists teachers who are free in that period (with their free-period count that day), so a substitute is never double-booked. If it says “No free teacher”, that period cannot be covered from the current timetable.<br><br>Try picking one now — nothing is applied yet.' },
+                    { title: 'Check the draft preview', target: '#tsPreviewWrap', fallback: '#tsCoverageWrap',
+                      ready: () => !!document.querySelector('#tsPreviewWrap table'),
+                      waitBody: 'The draft preview appears once the affected classes are listed.',
+                      body: 'The preview shows each affected class. A struck-through name is the original teacher, “→” shows the substitute, and <b>⚠ unfilled</b> means no substitute is chosen yet. Nothing is saved until you apply.' },
+                    { title: 'Apply the substitutions', target: '#modalContent button[onclick^="applyTeacherSubChanges"]', interactive: false,
+                      body: 'When you are happy with your selections, click <b>✅ Apply</b> (you will be asked to confirm).<br><br><b>These changes are made in the Working Space.</b> Review the substitutions before making them part of your official Master Schedule. Substituted classes are marked in the timetable.<br><br><i>The guide never applies anything for you.</i>' },
+                    { title: 'Export the substitution notice', target: '#modalContent button[onclick^="exportTeacherSubCSV"]', interactive: false,
+                      body: 'After applying, click <b>⬇️ Export</b> to generate a formal substitution notice as a PDF if your school needs a printable record.' },
+                    { title: '🎉 You\'re ready!', target: null, final: true,
+                      body: 'You now know how to:<ul class="gt-list"><li>✓ Select the day</li><li>✓ Select the absent teacher(s)</li><li>✓ Review affected classes</li><li>✓ Assign substitute teachers</li><li>✓ Apply substitutions</li><li>✓ Export the substitution notice</li></ul>You can run this guide again anytime using <b>🎓 Guide Me</b>.' }
+                ]
+            },
+            batchAssign: {
+                storageKey: 'schoolTimetable_batchAssignTourCompleted',
+                usesMenu: true, observeApp: true,
+                isOpen() { return viewMode !== 'master'; },
+                open() {
+                    if (viewMode === 'master') { showToast('Switch to Working Space to use the Batch Multi-Cell Assign guide', 'error'); return false; }
+                    if (gtOverlayOpen() && !gtBatchModalOpen()) closeModal();
+                    return true;
+                },
+                // Put the app back exactly as it was: the guide never assigns anything.
+                cleanup(s) {
+                    if (s.openedBatch && gtBatchModalOpen()) closeModal();
+                    if (s.enabledSel && isSelectionMode) toggleSelectionMode(false);
+                    closeAllGenericMenus();
+                },
+                steps: [
+                    { title: 'Batch Multi-Cell Assign', target: '#btnMultipleDays', menu: 'operationsMenu', interactive: false, enter: gtBatchLeaveModal,
+                      body: 'Fill <b>many timetable cells in one go</b> with the same teacher and subject, instead of editing them one at a time. The cells can be on different days, periods or classes.<br><br>Handy for setting up a teacher\'s weekly pattern, filling Period 1 across the whole week, or creating a Combined Class. It lives in <b>🛠️ Operations</b> (Working Space only), and one Ctrl+Z undoes the whole batch.<br><br>Click <b>Next</b> — the guide will switch on Selection Mode for you.' },
+                    { title: 'Selection Mode is on', target: '#selectionBanner', interactive: false, enter: s => { gtBatchLeaveModal(s); gtBatchEnsureSel(s); },
+                      body: 'This banner shows while you are choosing cells. Clicking a cell now <b>selects</b> it instead of editing it, and the <b>OK</b> counter shows how many are selected.<br><br><b>Cancel Selection</b> leaves this mode and clears the selection. Nothing in your timetable has changed yet.' },
+                    { title: 'Select the cells', target: '#tableWrap', free: true, enter: s => { gtBatchLeaveModal(s); gtBatchEnsureSel(s); },
+                      body: 'Click the cells you want to fill — they highlight. Click a highlighted cell again to deselect it. Try a few now.<br><br><i>Tip: empty (free) slots can be selected in By Class view. Your selection is kept if you switch tabs.</i>' },
+                    { title: 'Confirm with OK', target: '#btnSelectionOk', fallback: '#tableWrap', waitFree: true, interactive: false,
+                      enter: s => { gtBatchLeaveModal(s); gtBatchEnsureSel(s); },
+                      ready: () => selectedCells.length > 0,
+                      waitBody: 'Click at least one cell in the timetable first — the OK button counts your selection.',
+                      body: 'Happy with your selection? Click <b>✅ OK</b> (the number is how many cells you picked) to open the Assign dialog. Click <b>Next</b> and the guide will open it for you.' },
+                    { title: 'The Assign dialog', target: '#modalContent h3', interactive: false, enter: gtBatchEnsureModal,
+                      body: 'This one dialog applies a single choice to <b>every selected cell</b> (the badge shows how many). Nothing changes until you press <b>OK (Assign)</b>.' },
+                    { title: 'Combined Class (optional)', target: () => { const c = document.getElementById('batchCombinedClass'); return c && c.closest('label'); }, enter: gtBatchEnsureModal,
+                      body: 'Tick this when the selected cells are <b>one shared class</b> — for example two sections taught together by the same teacher at the same time. They are shown in yellow and are not flagged as a clash.<br><br>Leave it unticked for normal assignments.' },
+                    { title: 'Option 1 — choose a teacher', target: '#batchTeacherSelect', enter: gtBatchEnsureModal,
+                      body: 'Pick a teacher and the <b>subject is filled in automatically</b> from that teacher\'s first assigned subject.<br><br>If the teacher has no subject assigned, the app will ask you to fix that first. Choosing a teacher clears Option 2.' },
+                    { title: 'Option 2 — choose a subject', target: '#batchSubjectSelect', enter: gtBatchEnsureModal,
+                      body: 'Prefer to start from the subject? Pick it here. A second dropdown then appears listing the teachers who teach that subject, so you can choose one.<br><br>Use <b>either</b> Option 1 <b>or</b> Option 2, not both.' },
+                    { title: 'Apply to all selected cells', target: '#modalContent button[onclick^="applyBatchAssignment"]', interactive: false, enter: gtBatchEnsureModal,
+                      body: '<b>OK (Assign)</b> fills every selected cell at once and leaves Selection Mode. It is a <b>single undo step</b> (Ctrl+Z). A teacher who ends up in two classes at the same time is flagged on the timetable, unless the cells are marked Combined.<br><br><i>The guide never presses this for you.</i>' },
+                    { title: '🎉 You\'re ready!', target: null, final: true,
+                      body: 'You now know how to:<ul class="gt-list"><li>✓ Switch on Selection Mode</li><li>✓ Select cells across days, periods and classes</li><li>✓ Open the Assign dialog with OK</li><li>✓ Assign by teacher or by subject</li><li>✓ Mark cells as a Combined Class</li></ul>When you press <b>Finish</b> the practice selection is cleared and nothing is changed. Run this again any time from <b>❓ Help</b> or the <b>🎓 Guide Me</b> button.' }
+                ]
+            },
+            classExchange: {
+                storageKey: 'schoolTimetable_classExchangeTourCompleted',
+                usesMenu: true,
+                isOpen() { return viewMode !== 'master'; },
+                open() {
+                    if (viewMode === 'master') { showToast('Switch to Working Space to use the Class Exchange guide', 'error'); return false; }
+                    if (gtOverlayOpen() && !gtExchangeModalOpen()) closeModal();
+                    return true;
+                },
+                cleanup(s) { if (s.openedModal && gtExchangeModalOpen()) closeModal(); closeAllGenericMenus(); },
+                steps: [
+                    { title: 'Class Exchange', target: '#btnClassExchange', menu: 'operationsMenu', interactive: false,
+                      skipIf: s => gtExchangeModalOpen() && !s.openedModal,
+                      enter: s => { if (s.openedModal && gtExchangeModalOpen()) { closeModal(); s.openedModal = false; } },
+                      body: 'Use this when two teachers want to <b>swap periods</b>, or when one teacher needs to <b>cover (borrow)</b> another teacher\'s period — without marking anyone absent.<br><br>It is in <b>🛠️ Operations</b> (Working Space only). Click <b>Next</b> and the guide opens it for you.' },
+                    { title: 'The Class Exchange window', target: '#modalContent h3', interactive: false,
+                      enter: s => { if (!gtExchangeModalOpen()) { openClassExchangeModal(); s.openedModal = true; } },
+                      body: 'Everything here applies <b>straight to the Working Space</b> timetable, and Ctrl+Z can undo it. Affected periods are marked as substituted.<br><br>You will pick a day, two teachers, and one period from each.' },
+                    { title: 'Select the day', target: '#ceDay',
+                      body: 'Choose the day the exchange is for. The period lists below are filled from each teacher\'s timetable on this day.' },
+                    { title: 'Teacher A (requesting)', target: '#ceTeacherA',
+                      body: 'Choose the teacher who is <b>asking</b> for the change. In an exchange, A gives their period to B. In a borrow, A is the teacher who <b>covers</b>.' },
+                    { title: 'Teacher B (target)', target: '#ceTeacherB',
+                      body: 'Choose the other teacher — the one whose period is being swapped or borrowed.' },
+                    { title: 'Teacher A\'s period', target: '#cePeriodA', fallback: '#ceTeacherA',
+                      ready: () => document.querySelectorAll('#cePeriodA option').length > 1,
+                      waitBody: 'Pick a day and Teacher A first. If A has no classes on that day, try another day or teacher.',
+                      body: 'These are the periods Teacher A teaches that day, shown as period — class (subject). Pick the one involved in the change. (Not needed for Borrow.)' },
+                    { title: 'Teacher B\'s period', target: '#cePeriodB', fallback: '#ceTeacherB',
+                      ready: () => document.querySelectorAll('#cePeriodB option').length > 1,
+                      waitBody: 'Pick a day and Teacher B first. If B has no classes on that day, try another day or teacher.',
+                      body: 'Now pick the period of Teacher B that is being swapped, or the one A will borrow.' },
+                    { title: 'Exchange or Borrow', interactive: false,
+                      target: () => { const b = document.querySelector('#modalContent button[onclick^="doClassExchangeAction"]'); return b && b.parentElement; },
+                      body: '<b>⇄ Exchange</b> swaps the two periods: A\'s class goes to B and B\'s class goes to A.<br><br><b>➜ Borrow</b> makes A teach B\'s period (B\'s class is covered by A). It only needs B\'s period.<br><br>If a teacher is already booked at that time, the app asks <i>“Proceed anyway?”</i> before changing anything. <i>The guide never presses these for you.</i>' },
+                    { title: 'Applied changes', target: '#ceChangesWrap', interactive: false,
+                      body: 'Every exchange or borrow you make appears here with its before and after, so you have a running record for this session.' },
+                    { title: 'Export the changes', target: '#modalContent button[onclick^="exportClassExchangeCSV"]', interactive: false,
+                      body: 'Click <b>⬇️ Export</b> to download the week\'s changes as a CSV file you can share or keep. It needs at least one change to export.' },
+                    { title: '🎉 You\'re ready!', target: null, final: true,
+                      body: 'You now know how to:<ul class="gt-list"><li>✓ Pick the day and the two teachers</li><li>✓ Choose each teacher\'s period</li><li>✓ Exchange or Borrow a period</li><li>✓ Review and export the changes</li></ul><b>Another way:</b> double-click a filled cell in the timetable, choose <b>⇄ Exchange</b>, then click the period to swap with. Safe periods are shown in green.<br><br>Run this guide again any time from <b>❓ Help</b> or <b>🎓 Guide Me</b>.' }
+                ]
+            }
+        };
+
+        const guidedTour = (function () {
+            const PAD = 6, GAP = 12;
+            let S = null; // the one active session (or null)
+
+            function seen(def) { try { return localStorage.getItem(def.storageKey); } catch (e) { return null; } }
+            function mark(def, val) {
+                try { if (localStorage.getItem(def.storageKey) !== 'completed') localStorage.setItem(def.storageKey, val); } catch (e) { /* storage unavailable */ }
+            }
+            function markDone(def) { try { localStorage.setItem(def.storageKey, 'completed'); } catch (e) { /* ignore */ } }
+            function resolve(sel) {
+                if (!sel) return null;
+                try {
+                    const el = typeof sel === 'function' ? sel() : document.querySelector(sel);
+                    return el && el.getClientRects().length ? el : null;
+                } catch (e) { return null; }
+            }
+            function isReady(step) { try { return !step.ready || !!step.ready(); } catch (e) { return false; } }
+            // Runs a step's state-setting hook (e.g. switch on selection mode, open a dialog).
+            // Hooks are idempotent and only change UI state, never timetable data.
+            function enterStep(step) {
+                try {
+                    if (step.enter) step.enter(S);
+                    if (S.def.usesMenu && typeof setTourMenuOpen === 'function') setTourMenuOpen('operationsMenu', step.menu === 'operationsMenu');
+                } catch (e) { console.warn('[GuidedTour] enter failed:', e); }
+            }
+            function usable(step) {
+                try { if (step.skipIf && step.skipIf(S)) return false; } catch (e) { /* ignore */ }
+                enterStep(step);
+                if (!step.target) return true;
+                if (isReady(step)) return !!resolve(step.target);
+                return !!resolve(step.fallback || step.target);
+            }
+            function waitFor(fn, ms) {
+                return new Promise(res => {
+                    const t0 = Date.now();
+                    (function poll() { if (fn()) return res(true); if (Date.now() - t0 > ms) return res(false); setTimeout(poll, 50); })();
+                });
+            }
+
+            function build() {
+                const root = document.createElement('div');
+                root.className = 'gt-root';
+                root.innerHTML = '<div class="gt-shield"></div><div class="gt-shield"></div><div class="gt-shield"></div><div class="gt-shield"></div>' +
+                    '<div class="gt-hole"></div><div class="gt-ring"></div>' +
+                    '<div class="gt-tip" role="dialog" aria-labelledby="gtTitle" aria-describedby="gtBody" tabindex="-1"></div>';
+                document.body.appendChild(root);
+                const k = root.children;
+                S.root = root;
+                S.p = { t: k[0], b: k[1], l: k[2], r: k[3], hole: k[4], ring: k[5] };
+                S.tip = k[6];
+                root.addEventListener('click', onClick);
+                S.onKey = function (e) {
+                    if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); skip(); }
+                };
+                S.onMove = schedule;
+                window.addEventListener('keydown', S.onKey, true);
+                window.addEventListener('resize', S.onMove);
+                window.addEventListener('scroll', S.onMove, true);
+                S.obs = new MutationObserver(schedule);
+                const mc = document.getElementById('modalContent'), ov = document.getElementById('modalOverlay');
+                if (mc) S.obs.observe(mc, { childList: true, subtree: true });
+                if (ov) S.obs.observe(ov, { attributes: true, attributeFilter: ['class'] });
+                if (S.def.observeApp) { const app = document.getElementById('app'); if (app) S.obs.observe(app, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] }); }
+                S.prevFocus = document.activeElement;
+            }
+
+            function close() {
+                if (!S) return;
+                const s = S; S = null;
+                if (s.raf) cancelAnimationFrame(s.raf);
+                if (s.obs) s.obs.disconnect();
+                if (s.onKey) window.removeEventListener('keydown', s.onKey, true);
+                if (s.onMove) { window.removeEventListener('resize', s.onMove); window.removeEventListener('scroll', s.onMove, true); }
+                if (s.root) s.root.remove();
+                if (s.def && s.def.cleanup) { try { s.def.cleanup(s); } catch (e) { console.warn('[GuidedTour] cleanup failed:', e); } }
+                try { if (s.prevFocus && document.contains(s.prevFocus) && s.prevFocus.focus) s.prevFocus.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
+            }
+            function skip() { if (!S) return; mark(S.def, 'skipped'); close(); }
+            function finish() { if (!S) return; markDone(S.def); close(); }
+
+            function schedule() {
+                if (!S || S.raf) return;
+                S.raf = requestAnimationFrame(refresh);
+            }
+            function refresh() {
+                if (!S) return;
+                S.raf = 0;
+                if (!S.def.isOpen()) { close(); return; } // the modal was closed from outside the tour
+                if (S.mode === 'step') {
+                    const step = S.steps[S.i];
+                    const ready = isReady(step);
+                    const t = resolve(ready ? step.target : (step.fallback || step.target));
+                    if (ready !== S.ready || t !== S.target) { show(S.i, false); return; }
+                }
+                position();
+            }
+
+            function setBox(el, l, t, w, h, on) {
+                el.style.display = on === false ? 'none' : 'block';
+                el.style.left = l + 'px'; el.style.top = t + 'px';
+                el.style.width = Math.max(0, w) + 'px'; el.style.height = Math.max(0, h) + 'px';
+            }
+
+            function position() {
+                if (!S || !S.tip) return;
+                const vw = window.innerWidth, vh = window.innerHeight, p = S.p;
+                let r = null;
+                if (S.target && document.contains(S.target)) {
+                    const b = S.target.getBoundingClientRect();
+                    const x1 = Math.max(0, b.left - PAD), y1 = Math.max(0, b.top - PAD);
+                    const x2 = Math.min(vw, b.right + PAD), y2 = Math.min(vh, b.bottom + PAD);
+                    if (x2 > x1 && y2 > y1) r = { x1, y1, x2, y2 };
+                }
+                if (r && S.free) {
+                    [p.t, p.b, p.l, p.r, p.hole].forEach(e => { e.style.display = 'none'; });
+                    setBox(p.ring, r.x1, r.y1, r.x2 - r.x1, r.y2 - r.y1);
+                } else if (!r) {
+                    setBox(p.t, 0, 0, vw, vh);
+                    [p.b, p.l, p.r, p.ring, p.hole].forEach(e => { e.style.display = 'none'; });
+                } else {
+                    setBox(p.t, 0, 0, vw, r.y1);
+                    setBox(p.b, 0, r.y2, vw, vh - r.y2);
+                    setBox(p.l, 0, r.y1, r.x1, r.y2 - r.y1);
+                    setBox(p.r, r.x2, r.y1, vw - r.x2, r.y2 - r.y1);
+                    setBox(p.ring, r.x1, r.y1, r.x2 - r.x1, r.y2 - r.y1);
+                    setBox(p.hole, r.x1, r.y1, r.x2 - r.x1, r.y2 - r.y1, !S.interactive); // blocks clicks on non-interactive steps
+                }
+                const tip = S.tip, tw = tip.offsetWidth, th = tip.offsetHeight;
+                const clampX = x => Math.min(Math.max(GAP, x), Math.max(GAP, vw - tw - GAP));
+                const clampY = y => Math.min(Math.max(GAP, y), Math.max(GAP, vh - th - GAP));
+                let left, top;
+                if (!r) { left = (vw - tw) / 2; top = (vh - th) / 2; }
+                else if (S.free) { left = Math.max(GAP, vw - tw - GAP); top = Math.max(GAP, vh - th - GAP); } // dock bottom-right so the grid stays clickable
+                else {
+                    const cx = (r.x1 + r.x2) / 2, cy = (r.y1 + r.y2) / 2;
+                    const spots = {
+                        bottom: () => r.y2 + GAP + th <= vh - GAP && [clampX(cx - tw / 2), r.y2 + GAP],
+                        top: () => r.y1 - GAP - th >= GAP && [clampX(cx - tw / 2), r.y1 - GAP - th],
+                        right: () => r.x2 + GAP + tw <= vw - GAP && [r.x2 + GAP, clampY(cy - th / 2)],
+                        left: () => r.x1 - GAP - tw >= GAP && [r.x1 - GAP - tw, clampY(cy - th / 2)]
+                    };
+                    let pos = null;
+                    for (const side of ['bottom', 'top', 'right', 'left']) { pos = spots[side](); if (pos) break; }
+                    if (!pos) { // no room beside the target: dock to the roomier edge of the viewport
+                        pos = [Math.max(GAP, vw - tw - GAP), (vh - r.y2) >= r.y1 ? vh - th - GAP : GAP];
+                    }
+                    left = pos[0]; top = pos[1];
+                }
+                tip.style.left = Math.round(left) + 'px';
+                tip.style.top = Math.round(top) + 'px';
+            }
+
+            function onClick(e) {
+                const b = e.target.closest('[data-gt]');
+                if (!b || !S || b.disabled) return;
+                const act = b.getAttribute('data-gt');
+                if (act === 'next') { S.i >= S.steps.length - 1 ? finish() : go(1); }
+                else if (act === 'back') go(-1);
+                else if (act === 'skip') skip();
+                else if (act === 'start') { S.mode = 'step'; show(0, true); }
+            }
+
+            function go(delta) {
+                let j = S.i + delta;
+                S.dir = delta;
+                while (j >= 0 && j < S.steps.length) {
+                    if (usable(S.steps[j])) { show(j, true); return; }
+                    console.warn('[GuidedTour] Target not found:', S.steps[j].target);
+                    j += delta;
+                }
+                if (delta > 0) finish();
+            }
+
+            function show(i, nav) {
+                const step = S.steps[i];
+                try { if (step.skipIf && step.skipIf(S)) { S.i = i; go(S.dir || 1); return; } } catch (e) { /* ignore */ }
+                S.i = i; S.mode = 'step';
+                enterStep(step);
+                const ready = isReady(step);
+                S.free = !!step.free || (!ready && !!step.waitFree);
+                const target = step.target ? resolve(ready ? step.target : (step.fallback || step.target)) : null;
+                if (step.target && !target) { console.warn('[GuidedTour] Target not found:', step.target); go(S.dir || 1); return; }
+                const hadFocus = S.tip.contains(document.activeElement);
+                S.ready = ready; S.target = target; S.interactive = step.interactive !== false;
+                const n = S.steps.length, last = i === n - 1;
+                const dots = S.steps.map((_, k) => '<i class="' + (k === i ? 'on' : '') + '"></i>').join('');
+                S.tip.className = 'gt-tip' + (step.final ? ' gt-final' : '');
+                S.tip.innerHTML =
+                    '<div class="gt-head"><span class="gt-count">' + (step.final ? 'All done' : 'Step ' + (i + 1) + ' of ' + (n - 1)) + '</span>' +
+                    '<button type="button" class="gt-x" data-gt="skip" aria-label="Close the guide">×</button></div>' +
+                    '<div class="gt-title" id="gtTitle">' + step.title + '</div>' +
+                    '<div class="gt-body" id="gtBody">' + step.body + '</div>' +
+                    (ready ? '' : '<div class="gt-wait" role="status">⏳ ' + step.waitBody + '</div>') +
+                    '<div class="gt-dots" aria-hidden="true">' + dots + '</div>' +
+                    '<div class="gt-foot"><button type="button" class="gt-link" data-gt="skip">' + (last ? 'Close' : 'Skip tour') + '</button><span>' +
+                    '<button type="button" class="gt-btn" data-gt="back"' + (i === 0 ? ' disabled' : '') + ' aria-label="Previous step">← Back</button> ' +
+                    '<button type="button" class="gt-btn gt-primary" data-gt="next" aria-label="' + (last ? 'Finish the guide' : 'Next step') + '">' +
+                    (last ? 'Finish' : (ready ? 'Next →' : 'Skip step →')) + '</button></span></div>';
+                if (target) target.scrollIntoView({ block: S.free ? 'nearest' : (target.getBoundingClientRect().height > window.innerHeight * 0.5 ? 'start' : 'center'), inline: 'nearest' });
+                position();
+                if (nav || hadFocus) { const nb = S.tip.querySelector('.gt-primary'); if (nb) nb.focus({ preventScroll: true }); }
+            }
+
+            function showWelcome() {
+                const w = S.def.welcome;
+                S.mode = 'welcome'; S.target = null; S.interactive = false;
+                S.tip.className = 'gt-tip gt-final';
+                S.tip.innerHTML =
+                    '<div class="gt-title" id="gtTitle">' + w.title + '</div><div class="gt-body" id="gtBody">' + w.body + '</div>' +
+                    '<div class="gt-foot"><button type="button" class="gt-link" data-gt="skip">Skip</button>' +
+                    '<button type="button" class="gt-btn gt-primary" data-gt="start">Start Guide</button></div>';
+                position();
+                S.tip.querySelector('.gt-primary').focus({ preventScroll: true });
+            }
+
+            function newSession(id) {
+                const def = GUIDED_TOURS[id];
+                return { id, def, steps: def.steps, i: 0, mode: 'step', dir: 1, raf: 0 };
+            }
+
+            return {
+                // Manual launch (Guide Me button / Help). Never touches timetable data or existing selections.
+                async start(id) {
+                    id = id || 'teacherSubstitution';
+                    if (!GUIDED_TOURS[id]) { console.warn('[GuidedTour] Unknown tour:', id); return; }
+                    if (typeof tourActive !== 'undefined' && tourActive) return; // the app-wide Intro.js tour is running
+                    if (S) close();
+                    const s = S = newSession(id);
+                    try {
+                        if (!s.def.open()) { if (S === s) S = null; return; }
+                        const ok = await waitFor(() => s.def.isOpen(), 2000);
+                        if (S !== s) return;
+                        if (!ok) { console.warn('[GuidedTour] UI did not open for', id); S = null; return; }
+                        build();
+                        show(0, true);
+                    } catch (err) {
+                        console.warn('[GuidedTour] Could not start:', err);
+                        close();
+                    }
+                },
+                // First-visit prompt: shown once, never forced. Called after the modal renders.
+                offerWelcome(id) {
+                    const def = GUIDED_TOURS[id];
+                    if (!def || S || seen(def)) return;
+                    if (typeof tourActive !== 'undefined' && tourActive) return;
+                    setTimeout(() => {
+                        if (S || !def.isOpen() || seen(def)) return;
+                        S = newSession(id);
+                        build();
+                        showWelcome();
+                    }, 350);
+                },
+                close: close,
+                isActive() { return !!S; }
+            };
+        })();
+        window.guidedTour = guidedTour;
+        window.startGuidedTour = function (id) { return guidedTour.start(id); };
 
         // ───────────── INIT ─────────────
         function init() {
@@ -8940,13 +9714,14 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
             }
             teacherSubState = { day: teacherSubState.day || 'Monday', absentIds: [], subs: {} };
             renderTeacherSubModal();
+            if (window.guidedTour) guidedTour.offerWelcome('teacherSubstitution');
         }
 
         function renderTeacherSubModal() {
             const teacherIds = Object.keys(appData.teachers).sort((a, b) =>
                 (appData.teachers[a].name || '').localeCompare(appData.teachers[b].name || ''));
             const html = `
-                        <h3>🧑‍🏫 Teacher Sub <span class="badge">draft</span></h3>
+                        <h3>🧑‍🏫 Teacher Sub <span class="badge">draft</span><button type="button" class="gt-guide-btn" onclick="startGuidedTour('teacherSubstitution')" aria-label="Start the guided tour of Teacher Substitution" title="Step-by-step guide to this screen">🎓 Guide Me</button></h3>
                         <p style="font-size:10.5px;color:#475569;margin:2px 0 8px;">Mark absent teacher(s), auto-find free substitutes, then pick from the dropdowns below.</p>
                         <div class="form-row">
                             <div>
@@ -9324,7 +10099,7 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
             const periodsA = classExState.teacherA ? substGetTeacherPeriodsForDay(classExState.teacherA, classExState.day) : [];
             const periodsB = classExState.teacherB ? substGetTeacherPeriodsForDay(classExState.teacherB, classExState.day) : [];
             const html = `
-                        <h3>🔄 Class Sub — Exchange / Borrow</h3>
+                        <h3>🔄 Class Sub — Exchange / Borrow<button type="button" class="gt-guide-btn" onclick="startGuidedTour('classExchange')" aria-label="Start the guided tour of Class Exchange" title="Step-by-step guide to this screen">🎓 Guide Me</button></h3>
                         <p style="font-size:10.5px;color:#475569;margin:2px 0 8px;">Exchange or Borrow apply straight to the working timetable.</p>
                         <div class="form-row">
                             <div>
