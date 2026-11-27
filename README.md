@@ -121,3 +121,16 @@ No server, database, or network connection required – everything runs client�
 - **My imported data doesn’t appear** – ensure your CSV files use the correct column headers and are saved as plain UTF‑8 CSV.
 - **Conflicts not showing** – conflicts are only detected for teachers; make sure each teacher has a unique ID and that you’ve assigned them properly.
 - **Changes not saving** – check that your browser allows `localStorage` (it’s enabled by default). If you clear your browser cache, data will be lost – use **Export CSV** regularly.
+
+---
+
+## 🏫 Multi-school login & Supabase storage
+
+On opening the app, users first see a **School Connect** screen and enter a **school code** (e.g. `DPSS`). Only after a valid code is entered does the app ask for the email + password of that school.
+
+- Schools are listed in `supabase-config.js` (`window.SCHOOLS`): one entry per school with its code, name, Supabase URL and **publishable** key. Never put a service-role key there.
+- The chosen code is remembered in the browser; "Not your school? Change school" on the login page clears it (and the old login session).
+- A link such as `index.html?school=DPSS` also works (used automatically when the browser blocks storage).
+- The timetable is stored in Supabase (`public.timetable`, saved via the `save_timetable()` RPC with a version check) instead of `localStorage`. Principal/admin can edit; everyone else gets a read-only view of the published (master) timetable.
+- Database setup SQL is in `supabase/migrations/`, the account-management edge function in `supabase/functions/manage-account/`.
+- Run locally with `START.bat` (or `py -m http.server 8765`) and open `http://localhost:8765/index.html`.
