@@ -9133,7 +9133,6 @@ FILES GENERATED: Confirmation of the 4 downloadable .csv files.`;
             if (!hasData || getClassList().length === 0) {
                 appData.settings.periodTimes = initDefaultTimes();
                 appData.settings.periodsPerDay = 7;
-                saveData();
             }
             recomputeDays();
             document.getElementById('periodsPerDay').value = getPeriodsPerDay();
