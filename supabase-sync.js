@@ -27,6 +27,7 @@
         return !!(window.supabase && window.supabase.createClient);
     }
 
+
     let remoteVersion = 0;      // config-row version we last loaded/saved (optimistic concurrency)
     let saving = false, queued = false, dirty = false, conflictOpen = false;
     let profile = null;
@@ -92,6 +93,7 @@
         const o = overlay(
             '<h2 style="margin:0 0 2px;font-size:20px">Timetable Editor</h2>' +
             '<p style="margin:0 0 10px;font-size:13px;color:#2563eb;font-weight:600">\uD83C\uDFEB ' + (window.SCHOOL_NAME || '') + ' (' + (window.SCHOOL_CODE || '') + ')</p>' +
+
             '<p style="margin:0 0 16px;color:#64748b;font-size:13px">Sign in with your school account. Everyone can view the timetable; only the principal and admin can edit it.</p>' +
             '<form id="sbLoginForm"><input id="sbEmail" type="email" required autocomplete="username" placeholder="Email" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box">' +
             '<input id="sbPass" type="password" required autocomplete="current-password" placeholder="Password" style="width:100%;padding:10px;margin-bottom:10px;border:1px solid #cbd5e1;border-radius:8px;box-sizing:border-box">' +
@@ -99,6 +101,7 @@
             '<button id="sbLoginBtn" style="width:100%;padding:10px;border:0;border-radius:8px;background:#2563eb;color:#fff;font-weight:600;cursor:pointer">Sign in</button></form>' +
             '<p style="margin:14px 0 0;text-align:center;font-size:13px"><a href="#" id="sbChangeSchool" style="color:#64748b">Not your school? Change school</a></p>');
         $('sbChangeSchool').onclick = (e) => { e.preventDefault(); window.changeSchool(); };
+
         if (msg) $('sbLoginMsg').textContent = msg;
         $('sbLoginForm').onsubmit = async (e) => {
             e.preventDefault();
@@ -168,6 +171,7 @@
             from += step;
         }
         return all;
+
     }
     function applyRemote(rows) {
         const cfgRow = rows.find(r => r.row_kind === 'config' && r.status === 'working');
@@ -209,6 +213,7 @@
             // Rows exist but the config row is missing: incomplete load. Stop instead of opening an empty editor.
             throw new Error('Timetable loaded incompletely (' + rows.length + ' rows, no config). Please retry.');
         }
+
         if (applyRemote(rows)) { lastSnap = snap(); status('loaded from Supabase', ''); return true; }
         const legacy = legacyLocal();
         if (legacy && confirm('The database has no timetable yet, but this browser holds an older local timetable.\n\nImport it into Supabase now?')) {
@@ -240,6 +245,7 @@
             toast('Save blocked: the timetable has no periods, so nothing was written.', true);
             return;
         }
+
         saving = true; status('saving…', 'busy');
         const sleep = (ms) => new Promise(r => setTimeout(r, ms));
         let lastErr = null;
@@ -255,6 +261,7 @@
                 remoteVersion = Number(data && data.version) || remoteVersion;
                 lastSnap = mySnap; dirty = snap() !== mySnap; saving = false;
                 status('saved ' + nWorking + ' working / ' + nMaster + ' master periods – ' + new Date().toLocaleTimeString(), '');
+
                 if (queued) { queued = false; doSave(); }
                 return;
             } catch (e) {
@@ -292,6 +299,7 @@
                 auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: 'school-auth' }
             });
             window.sbClient = sb;
+
             const { data: { session } } = await sb.auth.getSession();
             if (!session) return showLogin();
             profile = await loadProfile(session.user);
@@ -320,6 +328,7 @@
             const bar = $('lastSaved') && $('lastSaved').parentElement;
             if (bar) {
                 const b = document.createElement('button'); b.textContent = 'Logout (' + (profile.name || profile.email) + ' \u00b7 ' + (window.SCHOOL_CODE || '') + ')';
+
                 b.style.cssText = 'margin-left:8px;padding:2px 8px;font-size:11px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;cursor:pointer';
                 b.onclick = window.sbLogout; bar.appendChild(b);
             }
@@ -328,6 +337,7 @@
         } catch (e) {
             console.error(e);
             overlay('<p style="margin:0 0 10px;font:14px system-ui;color:#dc2626">Could not connect: ' + (e.message || e) + '</p><button onclick="location.reload()" style="padding:8px 14px;border:0;border-radius:8px;background:#2563eb;color:#fff;cursor:pointer">Retry</button> <button onclick="changeSchool()" style="padding:8px 14px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;cursor:pointer">Change school</button>');
+
         }
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
