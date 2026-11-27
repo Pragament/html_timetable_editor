@@ -16,12 +16,6 @@ window.SCHOOLS = {
     // 'ABC': { name: 'ABC Public School', url: 'https://xxxx.supabase.co', key: 'sb_publishable_...' },
 };
 
-// Default shared Supabase connection for scripts that use it directly.
-window.SCHOOL_SUPABASE = {
-    url: 'https://lntvobybgpnsixyxigku.supabase.co',
-    key: 'sb_publishable_2Z_SZDYa5ohZ_KKIskcXSQ_ZfppUo4r'
-};
-
 (function () {
     var CODE_KEY = 'school-code';
 

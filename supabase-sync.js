@@ -5,7 +5,8 @@
 // Saves go through the existing save_timetable() RPC: atomic replace with optimistic-concurrency version check.
 (function () {
     'use strict';
-    const CFG = window.SCHOOL_SUPABASE;
+    // Only set by supabase-config.js after a valid school code was chosen (never a default).
+    const CFG = window.SCHOOL_CODE ? window.SCHOOL_SUPABASE : null;
     const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const EDIT_ROLES = ['admin', 'super_admin', 'principal', 'vice_principal'];
     const LEGACY_KEYS = ['timetableAppData_v2', 'masterTimetableData_v2'];
